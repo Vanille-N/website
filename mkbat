@@ -1,0 +1,42 @@
+#! /bin/bash
+
+# Build structured tree of html refs
+
+FILE="$1"
+SHORT="${FILE/www/}"
+HTML="$FILE.html"
+ROOT="$( dirname "$SHORT" | sed -E 's,[a-zA-Z0-9]+,..,g ; s,^,../,' )"
+
+: > "$HTML"
+echo "\
+<head>
+    <meta charset=\"utf-8\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+    <title>vanille :: $SHORT</title>
+    <link rel=\"stylesheet\" type=\"text/css\" href=\"$ROOT/style.css\">
+    <link rel=\"stylesheet\" type=\"text/css\" href=\"$ROOT/colorcodes.css\">
+</head>
+
+<body class=\"f9 b9\">
+    <pre>
+<span class=\"bold\"><span class=\"f2\">\$</span></span> \
+<span class=\"f3\"><span class=\"bold\">bat</span> --style=grid</span> \
+<span class=\"bold\"><span class=\"f4\">$SHORT</span></span>
+<span style=\"font-size:75%\"> \
+" >> "$HTML"
+
+bat --style=grid --color=always "$FILE" |
+ansi2html --bg=dark --body-only >> "$HTML"
+
+echo "\
+</span></span>
+[<a href=\"./index.html\">::</a>] \
+<span class=\"f4\"><span class=\"bold\">.</span></span>
+[<a href=\"../index.html\">::</a>] \
+<span class=\"f4\"><span class=\"bold\">..</span></span>
+[<a href=\"$ROOT/index.html\">::</a>] \
+<span class=\"f4\"><span class=\"bold\">/</span></span>
+[<a href=\"$ROOT/share/index.html\">::</a>] \
+<span class=\"f4\"><span class=\"bold\">/share</span></span></pre>
+</body>
+" >> "$HTML"
