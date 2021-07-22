@@ -55,6 +55,19 @@ echo "\
 [<a href=\"$ROOT/index.html\">::</a>] \
 <span class=\"f4\"><span class=\"bold\">/</span></span>
 [<a href=\"$ROOT/share/index.html\">::</a>] \
-<span class=\"f4\"><span class=\"bold\">/share</span></span></pre>
-</body>
+<span class=\"f4\"><span class=\"bold\">/share</span></span>
+
+
+<span class=\"bold\"><span class=\"f2\">\$</span></span> \
+<span class=\"f3\"><span class=\"bold\">tree</span> -Ca</span> \
+<span style=\"line-height:1\">
+" >> "$INDEX"
+
+cd "$DIR"
+tree -aC -I '*html' |
+ansi2html --bg=dark --body-only >> 'index.html'
+cd -
+
+echo "\
+</span></pre></body>
 " >> "$INDEX"

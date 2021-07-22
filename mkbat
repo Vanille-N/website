@@ -22,7 +22,7 @@ echo "\
 <span class=\"bold\"><span class=\"f2\">\$</span></span> \
 <span class=\"f3\"><span class=\"bold\">bat</span> --style=grid</span> \
 <span class=\"bold\"><span class=\"f4\">$SHORT</span></span>
-<span style=\"font-size:75%\"> \
+<span style=\"font-size:75%; line-height:1.2\"> \
 " >> "$HTML"
 
 bat --style=grid --color=always "$FILE" |
