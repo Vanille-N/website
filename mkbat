@@ -20,9 +20,9 @@ echo "\
 <body class=\"f9 b9\">
     <pre>
 <span class=\"bold\"><span class=\"f2\">\$</span></span> \
-<span class=\"f3\"><span class=\"bold\">bat</span> --style=grid</span> \
+<span class=\"f3\"><span class=\"bold\">bat</span></span> \
 <span class=\"bold\"><span class=\"f4\">$SHORT</span></span>
-<span style=\"font-size:75%; line-height:1.2\"> \
+<span style=\"font-size:75%; line-height:1.1\"> \
 " >> "$HTML"
 
 bat --style=grid --color=always "$FILE" |
@@ -30,13 +30,14 @@ ansi2html --bg=dark --body-only >> "$HTML"
 
 echo "\
 </span></span>
-[<a href=\"./index.html\">::</a>] \
-<span class=\"f4\"><span class=\"bold\">.</span></span>
-[<a href=\"../index.html\">::</a>] \
-<span class=\"f4\"><span class=\"bold\">..</span></span>
-[<a href=\"$ROOT/index.html\">::</a>] \
-<span class=\"f4\"><span class=\"bold\">/</span></span>
-[<a href=\"$ROOT/share/index.html\">::</a>] \
-<span class=\"f4\"><span class=\"bold\">/share</span></span></pre>
-</body>
+<span style=\"line-height:1.1\">\
+<a href=\"./index.html\">\
+<span class=\"f4\"><span class=\"bold\">.</span></span></a>
+<a href=\"../index.html\">\
+<span class=\"f4\"><span class=\"bold\">..</span></span></a>
+<a href=\"$ROOT/index.html\">\
+<span class=\"f4\"><span class=\"bold\">/</span></span></a>
+<a href=\"$ROOT/share/index.html\">\
+<span class=\"f4\"><span class=\"bold\">/share</span></span></a>
+</span></pre></body>
 " >> "$HTML"

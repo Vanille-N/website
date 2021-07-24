@@ -1,4 +1,5 @@
 pre { white-space: pre-wrap; }
+.reset { color: #fbecb2; background-color: #282828; }
 .ef0,.f0 { color: #000000; } .eb0,.b0 { background-color: #000000; }
 .ef1,.f1 { color: #cc241d; } .eb1,.b1 { background-color: #AA0000; }
 .ef2,.f2 { color: #98971a; } .eb2,.b2 { background-color: #00AA00; }

@@ -21,21 +21,23 @@ echo "\
     <pre>
 <span class=\"bold\"><span class=\"f2\">\$</span></span> \
 <span class=\"f3\"><span class=\"bold\">exa</span> -Flah</span> \
-<span class=\"bold\"><span class=\"f4\">$SHORT</span></span>
+<span class=\"bold\"><span class=\"f4\">$SHORT</span></span> \
+<span style=\"line-height:1.1\">
 " >> "$INDEX"
 
 exa -lahF --color=always "$DIR" |
 ansi2html --bg=dark --body-only >> "$INDEX"
 sed -i '/.html/d' "$INDEX"
 sed -Ei 's,<span class="underline"><([^>]+)>,<\1><span class="underline">,g' "$INDEX"
-sed -Ei 's,^(.*Permissions),<span class="underline">Link</span> \1,' "$INDEX"
+#sed -Ei 's,^(.*Permissions),<span class="underline">Link</span> \1,' "$INDEX"
+sed -Ei 's,((<span[^>]*>)*Name), \1,' "$INDEX"
 
 for f in $( /bin/ls "$DIR" ); do
     if [[ "$f" =~ .*html ]]; then
         continue
     fi
     if [ -d "$DIR/$f" ]; then
-        sed -Ei "s,(.*$f),[<a href=\"$f/index.html\">::</a>] \1," "$INDEX"
+        sed -Ei "s,((<span[^>]*>)*$f(</span[^>]*>)*),<a href=\"$f/index.html\">\1</a>," "$INDEX"
     else
         link="$f"
         case "$( file "$DIR/$f" )" in
@@ -44,28 +46,31 @@ for f in $( /bin/ls "$DIR" ); do
                 ;;
             (*) ;;
         esac
-        sed -Ei "s,(.*$f),[<a href=\"$link\">::</a>] \1,g" "$INDEX"
+        sed -Ei "s,((<span[^>]*>)*$f(</span[^>]*>)*),<a href=\"$link\"><span class=\"reset\">\1</span></a>,g" "$INDEX"
     fi
 done
 
 echo "\
 
-[<a href=\"../index.html\">::</a>] \
-<span class=\"f4\"><span class=\"bold\">..</span></span>
-[<a href=\"$ROOT/index.html\">::</a>] \
-<span class=\"f4\"><span class=\"bold\">/</span></span>
-[<a href=\"$ROOT/share/index.html\">::</a>] \
-<span class=\"f4\"><span class=\"bold\">/share</span></span>
+<a href=\"../index.html\">\
+<span class=\"f4\"><span class=\"bold\">..</span></span></a>
+<a href=\"$ROOT/index.html\">\
+<span class=\"f4\"><span class=\"bold\">/</span></span></a>
+<a href=\"$ROOT/share/index.html\">\
+<span class=\"f4\"><span class=\"bold\">/share</span></span></a>
+</span>
 
 
 <span class=\"bold\"><span class=\"f2\">\$</span></span> \
 <span class=\"f3\"><span class=\"bold\">tree</span> -Ca</span> \
+<span class=\"bold\"><span class=\"f4\">$SHORT</span></span>
 <span style=\"line-height:1\">
 " >> "$INDEX"
 
-cd "$DIR"
-tree -aC -I '*html' |
-ansi2html --bg=dark --body-only >> 'index.html'
+cd www
+tree -aC "${DIR/www\//}" -I '*html' |
+sed 's,share,/share,' |
+ansi2html --bg=dark --body-only >> "${INDEX/www\//}"
 cd -
 
 echo "\
