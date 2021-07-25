@@ -1,43 +1,35 @@
 #! /bin/bash
 
-# Build structured tree of html refs
+# Colorful display of text files
 
 FILE="$1"
 SHORT="${FILE/www/}"
 HTML="$FILE.html"
 ROOT="$( dirname "$SHORT" | sed -E 's,[a-zA-Z0-9]+,..,g ; s,^,../,' )"
-
 : > "$HTML"
-echo "\
-<head>
-    <meta charset=\"utf-8\">
-    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
-    <title>vanille :: $SHORT</title>
-    <link rel=\"stylesheet\" type=\"text/css\" href=\"$ROOT/style.css\">
-    <link rel=\"stylesheet\" type=\"text/css\" href=\"$ROOT/colorcodes.css\">
-</head>
 
-<body class=\"f9 b9\">
-    <pre>
-<span class=\"bold\"><span class=\"f2\">\$</span></span> \
-<span class=\"f3\"><span class=\"bold\">bat</span></span> \
-<span class=\"bold\"><span class=\"f4\">$SHORT</span></span>
-<span style=\"font-size:75%; line-height:1.1\"> \
+. htmldef.sh
+echo "$HEADER" >> "$HTML"
+
+# Print `bat` command
+echo "\
+$(bold "$(green '$')") $(yellow "$(bold "bat")") $(bold "$(blue "$SHORT")")
 " >> "$HTML"
 
+style "font-size:75%; line-height:1.1" >> "$HTML"
+
 bat --style=grid --color=always "$FILE" |
-ansi2html --bg=dark --body-only >> "$HTML"
+ansi_cvt >> "$HTML"
 
 echo "\
 </span></span>
-<span style=\"line-height:1.1\">\
-<a href=\"./index.html\">\
-<span class=\"f4\"><span class=\"bold\">.</span></span></a>
-<a href=\"../index.html\">\
-<span class=\"f4\"><span class=\"bold\">..</span></span></a>
-<a href=\"$ROOT/index.html\">\
-<span class=\"f4\"><span class=\"bold\">/</span></span></a>
-<a href=\"$ROOT/share/index.html\">\
-<span class=\"f4\"><span class=\"bold\">/share</span></span></a>
+$(style "line-height:1.1")\
+$(href "./index.html" "$(blue "$(bold ".")")")
+$(href "../index.html" "$(blue "$(bold "..")")")
+$(href "$ROOT/index.html" "$(blue "$(bold "/")")")
+$(href "$ROOT/share/index.html" "$(blue "$(bold "/share")")")
+" >> "$HTML"
+
+echo "\
 </span></pre></body>
 " >> "$HTML"

@@ -6,38 +6,48 @@ DIR="$1"
 SHORT="${DIR/www/}"
 INDEX="$DIR/index.html"
 ROOT="$( echo "$SHORT" | sed -E 's,[a-zA-Z0-9]+,..,g ; s,^,../,' )"
-
 : > "$INDEX"
-echo "\
-<head>
-    <meta charset=\"utf-8\">
-    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
-    <title>vanille :: $SHORT</title>
-    <link rel=\"stylesheet\" type=\"text/css\" href=\"$ROOT/style.css\">
-    <link rel=\"stylesheet\" type=\"text/css\" href=\"$ROOT/colorcodes.css\">
-</head>
 
-<body class=\"f9 b9\">
-    <pre>
-<span class=\"bold\"><span class=\"f2\">\$</span></span> \
-<span class=\"f3\"><span class=\"bold\">exa</span> -Flah</span> \
-<span class=\"bold\"><span class=\"f4\">$SHORT</span></span> \
-<span style=\"line-height:1.1\">
+. htmldef.sh
+echo "$HEADER" >> "$INDEX"
+
+# Print `ls` command
+echo "\
+$(bold "$(green '$')") \
+$(yellow "$(bold "exa") -Flah") \
+$(bold "$(blue "$SHORT")") \
 " >> "$INDEX"
 
-exa -lahF --color=always "$DIR" |
-ansi2html --bg=dark --body-only >> "$INDEX"
-sed -i '/.html/d' "$INDEX"
-sed -Ei 's,<span class="underline"><([^>]+)>,<\1><span class="underline">,g' "$INDEX"
-#sed -Ei 's,^(.*Permissions),<span class="underline">Link</span> \1,' "$INDEX"
-sed -Ei 's,((<span[^>]*>)*Name), \1,' "$INDEX"
+echo "$(style "line-height:1.1")
+" >> "$INDEX"
 
+# `ls` contents
+exa -lahF --color=always "$DIR" |
+ansi_cvt >> "$INDEX"
+sed -i '/.html/d' "$INDEX" # Filter out `index.html` + `file.txt.html` lines
+# Move <underline> span inside so that it has the right color
+sed -Ei 's,<span class="underline"><([^>]+)>,<\1><span class="underline">,g' "$INDEX"
+# 'fi' ligature makes 'Name' too much to the left
+sed -Ei "s,($(re_span "Name")), \\1," "$INDEX"
+
+# Navigation links (.. / /share)
+echo "\
+
+$(href "../index.html" "$(blue "$(bold "..")")")
+$(href "$ROOT/index.html" "$(blue "$(bold "/")")")
+$(href "$ROOT/share/index.html" "$(blue "$(bold "/share")")")
+</span>
+" >> "$INDEX"
+
+# Insert hrefs to files & subdirs
 for f in $( /bin/ls "$DIR" ); do
+    # Skip html files
     if [[ "$f" =~ .*html ]]; then
         continue
     fi
     if [ -d "$DIR/$f" ]; then
-        sed -Ei "s,((<span[^>]*>)*$f(</span[^>]*>)*),<a href=\"$f/index.html\">\1</a>," "$INDEX"
+        # directory foo has link to foo/index.html which contains info
+        sed -Ei "s,($(re_span "$f")),$(href "$f/index.html" '\1')," "$INDEX"
     else
         link="$f"
         case "$( file "$DIR/$f" )" in
@@ -46,33 +56,30 @@ for f in $( /bin/ls "$DIR" ); do
                 ;;
             (*) ;;
         esac
-        sed -Ei "s,((<span[^>]*>)*$f(</span[^>]*>)*),<a href=\"$link\"><span class=\"reset\">\1</span></a>,g" "$INDEX"
+        # Text file foo.bar has link to foo.bar.html which contains `bat`ed contents
+        # Other files are directly linked
+        sed -Ei \
+            "s,($(re_span "$f")),$(href "$link" "$(span_class "reset" "\1")"),g" \
+            "$INDEX"
     fi
 done
 
+
+# Show `tree` command
 echo "\
-
-<a href=\"../index.html\">\
-<span class=\"f4\"><span class=\"bold\">..</span></span></a>
-<a href=\"$ROOT/index.html\">\
-<span class=\"f4\"><span class=\"bold\">/</span></span></a>
-<a href=\"$ROOT/share/index.html\">\
-<span class=\"f4\"><span class=\"bold\">/share</span></span></a>
-</span>
-
-
-<span class=\"bold\"><span class=\"f2\">\$</span></span> \
-<span class=\"f3\"><span class=\"bold\">tree</span> -Ca</span> \
-<span class=\"bold\"><span class=\"f4\">$SHORT</span></span>
-<span style=\"line-height:1\">
+$(bold "$(green '$')") $(yellow "$(bold "tree") -Ca") $(bold "$(blue "$SHORT")")
 " >> "$INDEX"
 
+style "line-height:1" >> "$INDEX"
+
+# Write `tree` contents
 cd www
 tree -aC "${DIR/www\//}" -I '*html' |
 sed 's,share,/share,' |
-ansi2html --bg=dark --body-only >> "${INDEX/www\//}"
+ansi_cvt >> "${INDEX/www\//}"
 cd -
 
+# Footer
 echo "\
 </span></pre></body>
 " >> "$INDEX"

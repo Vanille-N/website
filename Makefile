@@ -11,10 +11,10 @@ sharestruct: $(SHARE:%=%/index.html)
 FILES = $(shell find www/share -type f -not -name '*.html')
 sharefiles: $(FILES:%=%.html)
 
-%/index.html: % $(wildcard %/*) Makefile mkstruct
+%/index.html: % $(wildcard %/*) Makefile mkstruct htmldef.sh
 	./mkstruct $<
 
-%.html: % Makefile mkbat
+%.html: % Makefile mkbat htmldef.sh
 	./mkbat $<
 
 clean:
