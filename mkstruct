@@ -33,10 +33,9 @@ sed -Ei "s,($(re_span "Name")), \\1," "$INDEX"
 # Navigation links (.. / /share)
 echo "\
 
-$(href "../index.html" "$(blue "$(bold "..")")")
-$(href "$ROOT/index.html" "$(blue "$(bold "/")")")
-$(href "$ROOT/share/index.html" "$(blue "$(bold "/share")")")
-</span>
+
+$NAVIGATION
+
 " >> "$INDEX"
 
 getlink() {
@@ -83,23 +82,21 @@ sed 's,share,/share,' |
 ansi_cvt >> "${INDEX/www\//}"
 cd -
 
+# Insert hrefs in tree
 for f in $(
     cd "$DIR" &>/dev/null;
     find . -not -name '*.html';
     cd - &>/dev/null
 ); do
     if [[ "$f" = '.' ]]; then
-        echo "$DIR ignore $f"
         continue
     fi
-    echo "$DIR full $f"
     sed -Ei \
         "0,/─.*$(basename "$f")/s,─ ($(re_span "$(basename "$f")")),─ $(href "$(getlink "$DIR" "$f")" "$(span_class "reset" "\1")")," \
         "$INDEX"
 done
 
-
-# Footer
 echo "\
-</span></pre></body>
-" >> "$INDEX"
+
+
+$FOOTER" >> "$INDEX"

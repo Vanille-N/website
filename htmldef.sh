@@ -13,6 +13,7 @@ HEADER="\
     <pre>
 "
 
+
 ansi_cvt() { ansi2html --bg=dark --body-only; }
 span_class() { echo -n "<span class=\"$1\">$2</span>"; }
 bold() { span_class 'bold' "$1"; }
@@ -25,3 +26,17 @@ style() { echo -n "<span style=\"$1\">"; }
 href() { echo -n "<a href=\"$1\">$2</a>"; }
 
 re_span() { echo -n "(<span[^>]*>)*$1(</span>)*"; }
+
+NAVIGATION="\
+$(style "line-height:1.1")\
+     $(href "./index.html" "$(blue "$(bold ".")")")\
+          $(href "../index.html" "$(blue "$(bold "..")")")\
+          $(href "$ROOT/index.html" "$(blue "$(bold "/")")")\
+          $(href "$ROOT/share/index.html" "$(blue "$(bold "/share")")")\
+</span>"
+
+FOOTER="\
+$(style "font-size:70%")
+Powered by $(href "https://github.com/Vanille-N/website" 'Vanille-N/website')
+</span></pre></body>
+"

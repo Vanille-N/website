@@ -22,14 +22,7 @@ bat --style=grid --color=always "$FILE" |
 ansi_cvt >> "$HTML"
 
 echo "\
-</span></span>
-$(style "line-height:1.1")\
-$(href "./index.html" "$(blue "$(bold ".")")")
-$(href "../index.html" "$(blue "$(bold "..")")")
-$(href "$ROOT/index.html" "$(blue "$(bold "/")")")
-$(href "$ROOT/share/index.html" "$(blue "$(bold "/share")")")
-" >> "$HTML"
+</span>
+$NAVIGATION
 
-echo "\
-</span></pre></body>
-" >> "$HTML"
+$FOOTER" >> "$HTML"
