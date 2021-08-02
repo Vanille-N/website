@@ -22,7 +22,7 @@ bat --style=grid --color=always "$FILE" |
 ansi_cvt >> "$HTML"
 
 echo "\
-</span>
+</span></span>
 $NAVIGATION
 
 $FOOTER" >> "$HTML"
