@@ -11,6 +11,7 @@ ROOT="$( echo "$SHORT" | sed -E 's,[a-zA-Z0-9]+,..,g ; s,^,../,' )"
 : > "$INDEX"
 
 . htmldef.sh
+
 echo "$HEADER" >> "$INDEX"
 cat "$INDEX_LS" <(echo) "$INDEX_TREE" >> "$INDEX"
 
