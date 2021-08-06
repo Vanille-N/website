@@ -8,7 +8,9 @@ sync: sharestruct
 share: sharestruct sharefiles
 
 SHARE = $(shell find www/share -type d)
-sharestruct: $(SHARE:%=%/index.html)
+sharestruct: $(SHARE:%=%/index.html) \
+	$(SHARE:%=%/index-tree.html) \
+	$(SHARE:%=%/index-ls.html)
 
 FILES = $(shell find www/share -type f -not -name '*.html')
 sharefiles: $(FILES:%=%.html)
@@ -20,17 +22,17 @@ sharefiles: $(FILES:%=%.html)
 #	done
 
 #include subdirs.mk
-%/index.html: % %/index-ls.html %/index-tree.html mkstruct $(CFG)
-	./mkstruct $<
+%/index.html: % %/index-ls.html %/index-tree.html struct.sh $(CFG)
+	./struct.sh $<
 
-%/index-ls.html: % $(FILES) mkls $(CFG)
-	./mkls $<
+%/index-ls.html: % $(FILES) ls.sh $(CFG)
+	./ls.sh $<
 
-%/index-tree.html: % $(SHARE) mktree $(CFG)
-	./mktree $<
+%/index-tree.html: % $(SHARE) tree.sh $(CFG)
+	./tree.sh $<
 
-%.html: % mkbat $(CFG)
-	./mkbat $<
+%.html: % bat.sh $(CFG)
+	./bat.sh $<
 
 clean:
 	find www/share \
@@ -39,3 +41,7 @@ clean:
 		-exec rm {} +
 
 .PHONY: sync share sharestruct sharefiles clean
+
+include share-update.mk
+share-update.mk: sharelist sync.sh
+	./sync.sh > $@
