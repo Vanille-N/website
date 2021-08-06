@@ -19,7 +19,7 @@ HEADER="\
 # Wrapper around ansi2html for uniformized conversion
 # --body-only: header is in www/colorcodes.css
 ansi_cvt() {
-    ansi2html --bg=dark --body-only
+    ansi2html --bg=dark --body-only 2>/tmp/ansi2html.log
 }
 
 # Safe manual ANSI formatting

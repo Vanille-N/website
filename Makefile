@@ -1,35 +1,34 @@
 CFG = Makefile htmldef.sh
-
 all: sync
 
-sync: sharestruct
+sync: share
 	remote send zamok www/ www
 
-share: sharestruct sharefiles
+share:
+	./make sharefiles
+	./make sharestruct
 
-SHARE = $(shell find www/share -type d)
-sharestruct: $(SHARE:%=%/index.html) \
-	$(SHARE:%=%/index-tree.html) \
-	$(SHARE:%=%/index-ls.html)
+SHARE = $(shell find www/share -type d | tac)
+sharestruct:
+	@for f in $(SHARE:%=%/index-ls.html); do ./make $$f; done
+	@for f in $(SHARE:%=%/index-tree.html); do ./make $$f; done
+	@for f in $(SHARE:%=%/index.html); do ./make $$f; done
 
-FILES = $(shell find www/share -type f -not -name '*.html')
+FILES = $(shell find www/share -type f -not -name '*.html' | tac)
 sharefiles: $(FILES:%=%.html)
 
-#subdirs.mk: $(FILES) Makefile
-#	: > subdirs.mk
-#	for d in $$(find www/share -type d); do\
-#		echo "$$d/index.html: $$(find $$d/ | tr '\n' ' ')" >> subdirs.mk; \
-#	done
+subdirs.mk: $(FILES) Makefile subdirs.sh
+	./subdirs.sh > $@
 
-#include subdirs.mk
-%/index.html: % %/index-ls.html %/index-tree.html struct.sh $(CFG)
-	./struct.sh $<
+include subdirs.mk
+%/index.html: %/index-ls.html %/index-tree.html %/extra.html struct.sh $(CFG)
+	./struct.sh $(shell dirname $@)
 
-%/index-ls.html: % $(FILES) ls.sh $(CFG)
-	./ls.sh $<
+%/index-ls.html: ls.sh $(CFG)
+	./ls.sh $(shell dirname $@)
 
-%/index-tree.html: % $(SHARE) tree.sh $(CFG)
-	./tree.sh $<
+%/index-tree.html: tree.sh $(CFG)
+	./tree.sh $(shell dirname $@)
 
 %.html: % bat.sh $(CFG)
 	./bat.sh $<

@@ -10,6 +10,7 @@ ROOT="$( echo "$SHORT" | sed -E 's,[a-zA-Z0-9]+,..,g ; s,^,../,' )"
 
 . htmldef.sh
 
+
 getlink() {
     local link
     case "$(file "$1/$2")" in
@@ -34,11 +35,11 @@ $(bold "$(green '$')") $(yellow "$(bold "tree") -Ca") $(bold "$(blue "$SHORT")")
 style "line-height:1" >> "$INDEX"
 
 # Write `tree` contents
-cd www
+cd www &>/dev/null
 tree -aC "${DIR/www\//}" -I '*html' |
 sed 's,share,/share,' |
 ansi_cvt >> "${INDEX/www\//}"
-cd -
+cd - &>/dev/null
 
 # Insert hrefs in tree
 for f in $(
