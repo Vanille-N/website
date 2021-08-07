@@ -5,6 +5,7 @@ sync: share
 	remote send zamok www/ www
 
 share:
+	./make sharebuild
 	./make sharefiles
 	./make sharestruct
 
