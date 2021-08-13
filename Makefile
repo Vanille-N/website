@@ -11,9 +11,11 @@ share:
 
 SHARE = $(shell find www/share -type d | tac)
 sharestruct:
-	@for f in $(SHARE:%=%/index-ls.html); do ./make $$f; done
-	@for f in $(SHARE:%=%/index-tree.html); do ./make $$f; done
-	@for f in $(SHARE:%=%/index.html); do ./make $$f; done
+	@for f in $(SHARE); do \
+		./make $$f/index-ls.html; \
+		./make $$f/index-tree.html; \
+		./make $$f/index.html; \
+	done
 
 FILES = $(shell find www/share -type f -not -name '*.html' | tac)
 sharefiles: $(FILES:%=%.html)
@@ -39,6 +41,11 @@ clean:
 		-name '*.html' \
 		-and -not -name 'extra.html' \
 		-exec rm {} +
+	rm -f subdirs.mk share-update.mk
+
+force:
+	make clean
+	make
 
 .PHONY: sync share sharestruct sharefiles clean
 

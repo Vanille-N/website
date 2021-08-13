@@ -29,14 +29,14 @@ getlink() {
 
 # Show `tree` command
 echo "\
-$(bold "$(green '$')") $(yellow "$(bold "tree") -Ca") $(bold "$(blue "$SHORT")")
+$(bold "$(green '$')") $(yellow "$(bold "tree") -CaL 3") $(bold "$(blue "$SHORT")")
 " >> "$INDEX"
 
 style "line-height:1" >> "$INDEX"
 
 # Write `tree` contents
 cd www &>/dev/null
-tree -aC "${DIR/www\//}" -I '*html' |
+tree -aC -L 3 "${DIR/www\//}" -I '*html' |
 sed 's,share,/share,' |
 ansi_cvt >> "${INDEX/www\//}"
 cd - &>/dev/null

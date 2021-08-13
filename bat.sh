@@ -9,7 +9,10 @@ ROOT="$( dirname "$SHORT" | sed -E 's,[a-zA-Z0-9]+,..,g ; s,^,../,' )"
 : > "$HTML"
 
 . htmldef.sh
-echo "$HEADER" >> "$HTML"
+echo "$HEADER
+$NAVIGATION
+
+" >> "$HTML"
 
 # Print `bat` command
 echo "\
@@ -23,6 +26,5 @@ ansi_cvt >> "$HTML"
 
 echo "\
 </span></span>
-$NAVIGATION
 
 $FOOTER" >> "$HTML"

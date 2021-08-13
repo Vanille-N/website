@@ -10,6 +10,13 @@ ROOT="$( echo "$SHORT" | sed -E 's,[a-zA-Z0-9]+,..,g ; s,^,../,' )"
 
 . htmldef.sh
 
+# Navigation links (. .. / /share)
+echo "\
+
+$NAVIGATION
+
+" >> "$INDEX"
+
 # Print `ls` command
 echo "\
 $(bold "$(green '$')") \
@@ -17,25 +24,17 @@ $(yellow "$(bold "exa") -Flah") \
 $(bold "$(blue "$SHORT")") \
 " >> "$INDEX"
 
-echo "$(style "line-height:1.1")
+echo "$(style "line-height:1.1") \
 " >> "$INDEX"
 
 # `ls` contents
 exa -lahF --color=always "$DIR" |
 ansi_cvt >> "$INDEX"
-sed -i '/.html/d' "$INDEX" # Filter out `index.html` + `file.txt.html` lines
+sed -Ei '/vanille.*.html/d' "$INDEX" # Filter out `index.html` + `file.txt.html` lines
 # Move <underline> span inside so that it has the right color
 sed -Ei 's,<span class="underline"><([^>]+)>,<\1><span class="underline">,g' "$INDEX"
 # 'fi' ligature makes 'Name' too much to the left
 sed -Ei "s,($(re_span "Name")), \\1," "$INDEX"
-
-# Navigation links (.. / /share)
-echo "\
-
-
-$NAVIGATION
-
-" >> "$INDEX"
 
 getlink() {
     local link
