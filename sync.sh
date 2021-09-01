@@ -36,6 +36,7 @@ while IFS= read line; do
         echo -n "$dir"
         echo "$line" | sed "s,: ,: $HOME/,"
         FILES+=( "$dir$( echo "$line" | cut -d: -f1 )" )
+        echo -e "\tmkdir -p \$\$(dirname \$@)"
         echo -e "\tcp \$< \$@"
         echo
     fi

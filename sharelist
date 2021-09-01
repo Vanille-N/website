@@ -15,3 +15,12 @@ www/
                 theme.conf: .config/kitty/theme.conf
             starship.toml: .config/starship.toml
             zathurarc: .config/zathura/zathurarc
+        templates/
+            tex/
+                incl/
+                    header.tex: Algo/LaTeX/cfg/incl/header.tex
+                Makefile: Algo/LaTeX/cfg/Makefile
+                run/
+                    base.mk: Algo/LaTeX/cfg/run/base.mk
+                    looptex: Algo/LaTeX/cfg/run/looptex
+                    tex.mk: Algo/LaTeX/cfg/run/tex.mk
