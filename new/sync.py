@@ -6,7 +6,9 @@ class Path:
 
 
 def translate_ast(ast):
-    return translate_list([], Path(), Path('home', conf.us, ) ast)
+    print(ast)
+    pass
+    #return translate_list([], Path(), Path('home', conf.us, ) ast)
 
 def translate_list(acc, prefix, lst):
     print(lst)

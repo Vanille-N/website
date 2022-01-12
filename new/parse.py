@@ -107,7 +107,6 @@ class StreamReader:
             res = fn(*[c.payload for c in self.buf])
             res = Loc(self.buf[0].start, self.buf[-1].end, res)
             self.buf = []
-            #print(f">>> {res}")
             return res
         else:
             return None
@@ -133,6 +132,7 @@ class StreamReader:
             return None
         finally:
             self.proceed()
+            print(f"res={res}")
             return res
 
     def save(self):
@@ -261,7 +261,10 @@ class Ast(StreamReader):
                 self.drop()
             else:
                 break
-        return List(lst)
+        if lst == []:
+            return None
+        else:
+            return Loc(lst[0].start, lst[-1].end, List(lst))
 
     def read_path(self):
         while self.matches(Symbols.SLASH.eql) \
@@ -271,7 +274,7 @@ class Ast(StreamReader):
                     self.take()
         path = self.flush()
         if path is not None:
-            return Path(path)
+            return Loc(path.start, path.end, Path(path))
         else:
             return None
 
@@ -284,7 +287,7 @@ class Ast(StreamReader):
             source = self.read_path()
         else:
             source = None
-        return File(path, source)
+        return Loc(path.start, source.end if source else path.end, File(path, source))
 
     def read_item(self):
         file = self.read_file()
@@ -303,7 +306,7 @@ class Ast(StreamReader):
                 inner = self.read_item()
         else:
             inner = None
-        return Item(file, inner)
+        return Loc(file.start, inner.end if inner else file.end, Item(file, inner))
 
 class Path:
     def __init__(self, path):
