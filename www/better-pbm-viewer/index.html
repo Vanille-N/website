@@ -1,0 +1,1348 @@
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>PBM Viewer</title>
+        <link rel="icon" type="image/x-icon" href="favicon.ico">
+    </head>
+    <style>
+        /* some nicer colors */
+        body {
+            background: #282828;
+            color: #cccccc;
+        }
+        html:not(.inverted) a {
+            color: #00a2e7;
+        }
+        html:not(.inverted) a:visited {
+            color: #ca1a70;
+        }
+
+        canvas {
+            /* Disable antialiasing */
+            image-rendering: optimizeSpeed;             /* Older versions of FF          */
+            image-rendering: -moz-crisp-edges;          /* FF 6.0+                       */
+            image-rendering: -webkit-optimize-contrast; /* Safari                        */
+            image-rendering: -o-crisp-edges;            /* OS X & Windows Opera (12.02+) */
+            image-rendering: pixelated;                 /* Awesome future-browsers       */
+            -ms-interpolation-mode: nearest-neighbor;   /* IE                            */
+
+            /* Center */
+            margin: auto;
+            display: block;
+        }
+        h1,h2,h3 {
+            text-align: center;
+        }
+
+        /* A trick to get left-aligned text in centered paragraphs */
+        .text-center {
+            text-align: center;
+        }
+        .display-inline {
+            display: inline-block;
+        }
+        .text-left {
+            text-align: left;
+        }
+        p,ul {
+            text-align: left;
+        }
+        /* Padding around buttons */
+        .padBtn {
+            margin-left: 20px;
+            margin-right: 20px;
+        }
+        /* Tabular */
+        table, th, td {
+            display: inline-table;
+            /*border-collapse: collapse;*/
+            border:1px solid;
+        }
+        /* Selector: align right without padding it vertically */
+        .selector {
+            float: right;
+            display: inline;
+            padding-bottom: 0;
+            padding-top: 0;
+            margin: 0;
+        }
+        /* log colors */
+        .logError {
+            color: red;
+            margin: 0;
+            padding: 0;
+        }
+        .logWarn {
+            color: darkOrange;
+            margin: 0;
+            padding: 0;
+        }
+        .logInfo {
+            color: skyBlue;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+    <body>
+        <h1>PBM Viewer & Editor</h1>
+        <div class="text-center">
+            <div class="display-inline">
+                <p>
+                    Edited from Kyle Paulsen's <a href="https://www.kylepaulsen.com/stuff/NetpbmViewer/">NetPBM Viewer</a>
+                </p>
+                <p>
+                    To learn more about the NetPBM format <a href="http://en.wikipedia.org/wiki/Netpbm_format" target="_blank">see here</a>.
+                </p>
+                <br>
+
+                <h2 id="data-title">Data</h2>
+                <p>
+                    Open a .pbm, .pgm or .ppm file:
+                    <input type="file" id="file">
+                </p>
+                <p> 
+                    Or choose from
+                    <ul>
+                        <li> Examples:
+                            <select style="width:350px;" class="selector" id="examples">
+                                <option selected="">---</option>
+                            </select>
+                        </li>
+                        <li>
+                            Saved:
+                            <select style="width: 350px" class="selector" id="savedSelector">
+                                <option selected="">---</option>
+                            </select>
+                        </li>
+                    </ul>
+                </p>
+            </div>
+        </div>
+        <div class="text-center">
+            <div class="display-inline">
+                <p>
+                    Then edit the image:
+                    <br>
+                    <center>
+                        <textarea id="dataEntry" rows="14" cols="80"></textarea>
+                        <br>
+                        <div style="float:left">
+                            <input id="saveName" value="unnamed" style="width:350px">
+                            <button id="save" class="padBtn">Save</button>
+                        </div>
+                    </center>
+                </p>
+                <br>
+            </div>
+        </div>
+        <div class="text-center">
+            <div class="display-inline">
+                <h2 id="canvas-title">Canvas</h2>
+                <button class="padBtn" id="btnRender">Render (x1)</button>
+                <br>
+                <table style="margin:10px;">
+                    <tr>
+                        <td>
+                            <div class="logError" id="errorsCount">
+                            </div>
+                        <!-- <font class="padBtn" id="errorsCount" color="red"></font> -->
+                        </td>
+                        <td>
+                            <div class="logWarn" id="warningsCount">
+                            </div>
+                        <!-- <font class="padBtn" id="warningsCount" color="darkOrange"></font> -->
+                        </td>
+                        <td>
+                            <div class="logInfo" id="infosCount">
+                            </div>
+                        <!-- <font class="padBtn" id="infosCount" color="skyBlue"></font> -->
+                        </td>
+                    </tr>
+                </table>
+                <a href="#log-title">&#8618;</a>
+                <br>
+                <button class="padBtn" id="btnNormalSize">Normal Size</button>
+                <button class="padBtn" id="btnSmaller">Smaller</button>
+                <button class="padBtn" id="btnHalfSize">Half Screen</button>
+                <button class="padBtn" id="btnBigger">Bigger</button>
+                <button class="padBtn" id="btnScreenSize">Full Screen</button>
+                <br><br>
+                <canvas id="canvas"></canvas>
+                <br><br>
+            </div>
+        </div>
+        <div class="text-center">
+            <div class="display-inline">
+                <div id="transformZone">
+                    <h3>Transform</h3>
+                    <ul>
+                        <li>
+                            Format:
+                            <select style="width:50px;margin-left:50px" class="selector" id="transformFormat">
+                                <!-- options are loaded dynamically -->
+                            </select>
+                        </li>
+                        <li>
+                            Width:
+                            <input style="width:50px;margin-left:50px"
+                                class="selector" id="transformWidth"><br>
+                        </li>
+                        <li>
+                            Height:
+                            <input style="width:50px;margin-left:50px"
+                                class="selector" id="transformHeight"><br>
+                        </li>
+                        <li>
+                            Max:
+                            <input style="width:50px;margin-left:50px"
+                                class="selector" id="transformMax">
+                        </li>
+                        <li>
+                            Filters
+                            <ul>
+                                <!-- options are loaded dynamically -->
+                                <li>
+                                    Red
+                                    <select style="margin-left:50px"
+                                        class="selector" id="transformRedFilter">
+                                    </select>
+                                </li>
+                                <li>
+                                    Green
+                                    <select style="margin-left:50px"
+                                        class="selector" id="transformGreenFilter">
+                                    </select>
+                                </li>
+                                <li>
+                                    Blue
+                                    <select style="margin-left:50px"
+                                        class="selector" id="transformBlueFilter">
+                                    </select>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <center>
+                        <button id="transformRun">Run</button>
+                    </center>
+                </div>
+                <br><br>
+            </div>
+        </div>
+        <div class="text-center">
+            <div class="display-inline">
+                <h2 id="log-title">Log</h2>
+                    <div class="logError">
+                        <p id="errors"></p>
+                    </div>
+                    <div class="logWarn">
+                        <p id="warnings"><p>
+                    </div>
+                    <div class="logInfo">
+                        <p id="infos"></p>
+                    </div>
+            </div>
+        </div>
+        <!-- a bunch of <br> to emulate infinite scroll -->
+        <br><br><br><br><br><br><br><br><br><br><br><br>
+        <br><br><br><br><br><br><br><br><br><br><br><br>
+        <br><br><br><br><br><br><br><br><br><br><br><br>
+        <br><br><br><br><br><br><br><br><br><br><br><br>
+
+        <script>
+            const get = document.getElementById.bind(document);
+
+            const scoped = (fn) => {
+                return fn();
+            };
+
+            const dynamicMode = scoped(() => {
+                // dynamic content based on url parameter
+                function getParameterByName(name, url) {
+                    if (!url) url = window.location.href;
+                    name = name.replace(/[\[\]]/g, "\\$&");
+                    const regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)");
+                    const results = regex.exec(url);
+                    if (!results) return null;
+                    if (!results[2]) return '';
+                    return decodeURIComponent(results[2].replace(/\+/g, " "));
+                }
+                var dynamicContent = getParameterByName('123');
+                if (dynamicContent === "codez") {
+                    return "codez";
+                } else if (dynamicContent === "tuto") {
+                    return "tuto";
+                } else {
+                    return "full";
+                }
+            });
+
+            function ord(c) {
+                return c.charCodeAt(0);
+            }
+            function chr(o) {
+                return String.fromCharCode(o);
+            }
+
+            function selectedText(sel) {
+                return sel.options[sel.selectedIndex].text;
+            }
+
+            function remove(elem) {
+                elem.parentNode.removeChild(elem);
+            }
+
+            // In charge of parsing the input into
+            // {
+            //     type: 1..6,
+            //     width: 0..,
+            //     height: 1..,
+            //     maxVal: 1..,
+            //     values: [0..],
+            // }
+            function PbmParser(dataEntry, err) {
+                function iterBytes(buffer) {
+                    const arr = new Uint8Array(buffer);
+                    var idx = 0;
+                    var line = 1;
+                    var col = 1;
+
+                    // Span<T> := {
+                    //     data: T,
+                    //     line: 0..,
+                    //     col: 0..,
+                    // }
+
+                    // yields the next Span<byte?> without incrementing
+                    function peek() {
+                        if (idx >= arr.length) {
+                            return {
+                                data: undefined,
+                                line: line,
+                                col: col,
+                            };
+                        }
+                        const chr = arr[idx];
+                        const res = {
+                            data: chr,
+                            line: line,
+                            col: col,
+                        };
+                        return res;
+                    }
+
+                    // same as peek, but also bumps the head to the next byte
+                    function next() {
+                        const res = peek();
+                        if (res.data === undefined) return res;
+                        idx++;
+                        if (res.data === ord("\n")) {
+                            line++;
+                            col = 1;
+                        } else {
+                            col++;
+                        }
+                        return res;
+                    }
+
+                    return {
+                        peek: peek,
+                        next: next,
+                    };
+                }
+
+                // gives a Span<byte?> but also prints an error message in the undefined case
+                function nextByte(iter) {
+                    const res = iter.next();
+                    if (res.data === undefined) {
+                        err.fatal(`At line ${res.line}, column ${res.col}: expected a byte, found nothing`);
+                    }
+                    return res;
+                }
+
+                // gives a Span<char?> and prints an error message in the undefined case
+                function nextChar(iter) {
+                    const res = iter.next();
+                    if (res.data === undefined) {
+                        err.fatal(`At line ${res.line}, column ${res.col}: expected a character, found nothing`);
+                        return res;
+                    }
+                    return {
+                        data: chr(res.data),
+                        line: res.line,
+                        col: res.col,
+                    };
+                }
+
+                // ' ', '\t', '\n'
+                function isWhitespace(c) {
+                    return c === ord(" ") || c === ord("\t") || c === ord("\n");
+                }
+
+                // '0'..'9'
+                function isNumeric(c) {
+                    return ord("0") <= c && c <= ord("9");
+                }
+
+                // skips over isWhitespace _and_ line comments '#' (any*) '\n'
+                function skipWhitespace(iter) {
+                    while (true) {
+                        if (isWhitespace(iter.peek().data)) {
+                            iter.next();
+                        } else if (iter.peek().data === ord("#")) {
+                            while (iter.peek().data !== ord("\n")) {
+                                iter.next();
+                            }
+                        } else {
+                            return;
+                        }
+                    }
+                }
+
+                // yields a Span<0..> based on the next whitespace-separated value
+                // interpretable as an integer.
+                // (ignores non-numeric characters inside)
+                function nextInt(iter) {
+                    str = "";
+                    skipWhitespace(iter);
+                    fst = iter.peek();
+                    while (!isWhitespace(iter.peek().data)) {
+                        if (iter.peek().data === undefined || iter.peek().data === ord("#")) {
+                            break;
+                        } else if (isNumeric(iter.peek().data)) {
+                            str += chr(iter.next().data);
+                        } else {
+                            err.fatal(`expected a digit, found '${chr(iter.peek().data)}'`, iter.peek().line, iter.peek().col);
+                            iter.next();
+                        }
+                    }
+                    if (str == "") {
+                        // EOF
+                        return {
+                            data: undefined,
+                            line: iter.peek().line,
+                            col: iter.peek().col,
+                        };
+                    }
+                    return {
+                        data: parseInt(str, 10),
+                        line: fst.line,
+                        col: fst.col,
+                    };
+                }
+
+                // similar to nextInt, but stops at a single digit
+                function nextNumeric(iter) {
+                    skipWhitespace(iter);
+                    var c = iter.next();
+                    if (c.data === undefined) {
+                        return c;
+                    } else if (!isNumeric(c.data)) {
+                        err.fatal(`expected a digit, found ${c.data}'`, c.line, c.col);
+                        c.data = 0;
+                        return c;
+                    } else {
+                        c.data = parseInt(chr(c.data));
+                        return c;
+                    }
+                }
+
+                // if type is 1, returns nextNumeric until undefined
+                // if type is 2|3, returns nextInt until undefined
+                // if type is 4|5|6, unimplemented
+                function getValues(type, iter, maxVal) {
+                    if (type >= 4) {
+                        err.fatal(`type=${type} not implemented yet`);
+                        return undefined;
+                    }
+                    var values = [];
+                    while (true) {
+                        var next = (type === 1) ? nextNumeric(iter) : nextInt(iter) ;
+                        if (next.data === undefined) {
+                            return values;
+                        } else {
+                            if (next.data > maxVal) {
+                                err.warn(`value ${next.data} is greater than maximum value ${maxVal}`, next.line, next.col);
+                                next.data = maxVal;
+                            }
+                            values.push(next.data);
+                        }
+                    }
+                }
+
+                function intoPixels(type, values, width, height) {
+                    var pixels = [];
+                    for (var line = 0; line < height; line++) {
+                        pixels.push([]);
+                        for (var col = 0; col < width; col++) {
+                            const idx = line * width + col;
+                            if (type === 3 || type === 6) {
+                                const r = values[3 * idx + 0] || 0;
+                                const g = values[3 * idx + 1] || 0;
+                                const b = values[3 * idx + 2] || 0;
+                                pixels[line].push({ r: r, g: g, b: b });
+                            } else {
+                                const v = values[idx] || 0;
+                                pixels[line].push({ r: v, g: v, b: v });
+                            }
+                        }
+                    }
+                    return pixels;
+                }
+
+
+                // read header data and body
+                function parse() {
+                    var iter = iterBytes(dataEntry.asBuf());
+
+                    // "P"
+                    const p = iter.next(); {
+                        skipWhitespace(iter);
+                        if (p.data === undefined) {
+                            err.fatal(`expected 'P', found nothing`, p.line, p.col);
+                            return undefined;
+                        } else if (p.data !== ord("P") && p.data !== ord("p")) {
+                            err.fatal(`expected 'P', found '${chr(p.data)}'`, p.line, p.col);
+                            return undefined;
+                        }
+                    }
+
+                    // Type
+                    const type = nextInt(iter); {
+                        if (type.data === undefined) {
+                            err.fatal(`expected file type, found nothing`, type.line, type.col);
+                            return undefined;
+                        }
+                        if (type.data < 1 || type.data > 6) {
+                            err.fatal(`expected value between 1 and 6, got ${type.data}`, type.line, type.col);
+                            return undefined
+                        }
+                    }
+
+                    // Width
+                    const width = nextInt(iter); {
+                        if (width.data === undefined) {
+                            err.fatal(`expected width, found nothing`, width.line, width.col);
+                            return undefined;
+                        }
+                        if (width.data === 0) {
+                            err.warn(`width is 0`, width.line, width.col);
+                        }
+                    }
+
+                    // Height
+                    const height = nextInt(iter); {
+                        if (height.data === undefined) {
+                            err.fatal(`expected height, found nothing`, height.line, height.col);
+                            return undefined;
+                        }
+                        if (height.data === 0) {
+                            err.warn(`height is 0`, height.line, height.col);
+                        }
+                    }
+
+                    // Max
+                    const maxVal = scoped(() => {
+                        var maxVal;
+                        if (type.data === 1 || type.data === 4) {
+                            maxVal = {
+                                data: 1,
+                                line: undefined,
+                                col: undefined,
+                            };
+                        } else {
+                            maxVal = nextInt(iter);
+                        }
+                        if (maxVal.data === 0) {
+                            err.warn(`0 is discouraged as a maximum value`, maxVal.line, maxVal.col);
+                            maxVal.data = 1;
+                        } else if (maxVal.data === undefined) {
+                            err.fatal(`expected max value, found nothing`, maxVal.line, maxVal.col);
+                            return undefined;
+                        }
+                        return maxVal;
+                    });
+                    if (maxVal === undefined) return undefined;
+
+                    // actual values
+                    const values = getValues(type.data, iter, maxVal.data); {
+                        if (values === undefined) {
+                            return undefined;
+                        }
+                    }
+
+                    // Check that dimensions match
+                    {
+                        const multiplier = (type.data === 3 || type.data === 6) ? 3 : 1 ;
+                        const expected = width.data * height.data;
+                        if (expected * multiplier !== values.length) {
+                            err.warn(
+                                `should have ${width.data} x ${height.data} x ${multiplier} ` +
+                                `= ${expected} x ${multiplier} = ${expected*multiplier} values, ` +
+                                `but got ${values.length} instead`
+                            );
+                        }
+                    }
+
+                    return {
+                        type: type.data,
+                        height: height.data,
+                        width: width.data,
+                        maxVal: maxVal.data,
+                        pixels: intoPixels(type.data, values, width.data, height.data),
+                    }
+                }
+
+                return {
+                    parse: parse,
+                }
+            }
+
+            // Handle refreshing the canvas when the underlying buffer changes,
+            // and control scaling.
+            function PbmRenderer(err, canvas, parser, buttons) {
+                var data = {
+                    height: 0,
+                    width: 0,
+                    pixels: [],
+                };
+
+
+                var transformer = undefined;
+                function setTransformer(tr) {
+                    transformer = tr;
+                }
+
+                // hard refresh (re-parses the data)
+                function reload() {
+                    const newData = parser.parse();
+                    console.log("found", newData);
+                    if (newData !== undefined) {
+                        if (transformer !== undefined) transformer.loadOptions(newData);
+                        data.height = newData.height;
+                        data.width = newData.width;
+                        data.pixels = [];
+                        for (var line = 0; line < data.height; line++) {
+                            data.pixels.push([]);
+                            for (var col = 0; col < data.width; col++) {
+                                var px = newData.pixels[line][col];
+                                if (newData.type === 1 || newData.type === 4) {
+                                    px.r = 1 - px.r;
+                                    px.g = 1 - px.g;
+                                    px.b = 1 - px.b;
+                                }
+                                data.pixels[line].push({
+                                    r: px.r * 255 / newData.maxVal,
+                                    g: px.g * 255 / newData.maxVal,
+                                    b: px.b * 255 / newData.maxVal,
+                                });
+                            }
+                        }
+                    } else {
+                        console.log("No data loaded");
+                    }
+                }
+
+                // soft refresh (only transfers data from internal buffer to canvas)
+                function refresh() {
+                    console.log("refresh", data);
+                    canvas.width = Math.max(data.width, 1);
+                    canvas.height = Math.max(data.height, 1);
+                    var ctx = canvas.getContext("2d");
+                    console.log("canvas", canvas);
+                    var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    var pixelData = imageData.data;
+                    var nbPixels = data.width * data.height;
+                    // transfer the actual data
+                    for (var line = 0; line < data.height; line++) {
+                        for (var col = 0; col < data.width; col++) {
+                            const idx = line * data.width + col;
+                            var pix = data.pixels[line][col];
+                            pixelData[4 * idx + 0] = pix.r;
+                            pixelData[4 * idx + 1] = pix.g;
+                            pixelData[4 * idx + 2] = pix.b;
+                            pixelData[4 * idx + 3] = 255;
+                        }
+                    }
+                    ctx.putImageData(imageData, 0, 0);
+                }
+
+                var scale = 1;
+
+                // absolute scale factor in 1..
+                function setScale(size) {
+                    if (size <= 0) size = 1;
+                    scale = size;
+                    err.info(`rescaling to x${scale}`);
+                    buttons.render.innerText = "Render (x" + scale + ")";
+                    const width = Math.max(data.width, 1)
+                    canvas.style.width = width * scale;
+                }
+
+                // decide scale to match screen width
+                function autoScale(horiz, vert) {
+                    if (data === undefined) return;
+                    const target_width = Math.ceil((window.innerWidth - 25) * horiz);
+                    const pixel_width = Math.max(data.width, 1);
+                    const wscale = Math.round(target_width / pixel_width);
+                    const target_height = Math.ceil((window.innerHeight - 25) * vert);
+                    const pixel_height = Math.max(data.height, 1);
+                    const hscale = Math.round(target_height / pixel_height);
+                    err.info(`max height scale: (window:${target_height}) / (image:${pixel_height}) = ${hscale}`);
+                    err.info(`max width scale: (window:${target_width}) / (image:${pixel_width}) = ${wscale}`);
+                    setScale(Math.min(wscale, hscale));
+                }
+
+                function bigger(scale) {
+                    if (scale < 10) {
+                        return scale + 1;
+                    } else {
+                        return Math.round(scale * 5 / 4);
+                    }
+                }
+                function smaller(scale) {
+                    if (scale <= 2) {
+                        return 1;
+                    } else if (scale <= 10) {
+                        return scale - 1;
+                    } else {
+                        return Math.floor(scale * 4 / 5);
+                    }
+                }
+
+                // buttons
+                function extRefresh() {
+                    err.clear();
+                    refresh();
+                }
+                function extSetScale(scale) {
+                    err.clear();
+                    reload();
+                    setScale(scale);
+                    refresh();
+                }
+                function extScaleUp() {
+                    extSetScale(bigger(scale));
+                }
+                function extScaleDown() {
+                    extSetScale(smaller(scale));
+                }
+                function extRender() {
+                    err.clear();
+                    reload();
+                    setScale(scale); // no-op if image was not changed
+                    refresh();
+                }
+                function extNormalSize() {
+                    extSetScale(1);
+                }
+                function extFullSize() {
+                    err.clear();
+                    reload();
+                    autoScale(1, 1);
+                    refresh();
+                }
+                function extHalfSize() {
+                    err.clear();
+                    reload();
+                    autoScale(1, 0.5);
+                    refresh();
+                }
+
+
+                buttons.bigger.addEventListener("click", extScaleUp);
+                buttons.smaller.addEventListener("click", extScaleDown);
+                buttons.render.addEventListener("click", extRender);
+                buttons.normalsize.addEventListener("click", extNormalSize);
+                buttons.halfsize.addEventListener("click", extHalfSize);
+                buttons.screensize.addEventListener("click", extFullSize);
+
+                // interface provided so that external elements can force refresh
+                return {
+                    render: extRender,
+                    setScale: extSetScale,
+                    scaleUp: extScaleUp,
+                    scaleDown: extScaleDown,
+                    fullScreenSize: extFullSize,
+                    halfScreenSize: extHalfSize,
+                    setTransformer: setTransformer,
+                };
+            }
+
+            // display error messages
+            function ErrorBox(box) {
+                var quiet = false;
+                function setQuiet(b) { quiet = b; }
+
+                function fmt(prefix, msg, line, col) {
+                    if (quiet) return;
+                    var text = msg + "\n";
+                    if (line !== undefined) {
+                        text = ": " + text;
+                        if (col !== undefined) {
+                            text = `, column ${col}` + text;
+                        }
+                        text = `At line ${line}` + text;
+                    }
+                    text = prefix + ": " + text;
+                    return text;
+                }
+                function logger(descr) {
+                    var count = 0;
+                    function log(msg, line, col) {
+                        if (quiet) return;
+                        const text = fmt(descr.name, msg, line, col);
+                        //descr.console(text);
+                        descr.list.innerText += text;
+                        count++;
+                        descr.count.innerText = `${count} ${descr.name}s`;
+                    }
+                    function clear() {
+                        count = 0;
+                        descr.list.innerText = "";
+                        descr.count.innerText = `${count} ${descr.name}s`;
+                    }
+                    return {
+                        log: log,
+                        clear: clear,
+                    };
+                }
+                const errLog = logger({
+                    name: "error",
+                    list: box.err,
+                    count: box.errNb,
+                    console: console.error,
+                });
+                const warnLog = logger({
+                    name: "warning",
+                    list: box.warn,
+                    count: box.warnNb,
+                    console: console.warn,
+                });
+                const infoLog = logger({
+                    name: "info",
+                    list: box.info,
+                    count: box.infoNb,
+                    console: console.log,
+                });
+
+                return {
+                    fatal: errLog.log,
+                    warn: warnLog.log,
+                    info: infoLog.log,
+                    clear: () => {
+                        errLog.clear();
+                        warnLog.clear();
+                        infoLog.clear();
+                    },
+                    setQuiet: setQuiet,
+                }
+            }
+
+            // text field
+            function DataEntry(field) {
+                // string to buffer
+                function str2ab(str) {
+                    var buf = new ArrayBuffer(str.length);
+                    var bufView = new Uint8Array(buf);
+                    for (var i = 0; i < str.length; i++) {
+                        bufView[i] = str.charCodeAt(i);
+                    }
+                    return buf;
+                }
+
+                // inner buffer
+                function asBuf() {
+                    return str2ab(field.value);
+                }
+
+                // change text from external source
+                function load(str) {
+                    field.value = str;
+                }
+
+                function get() {
+                    return field.value;
+                }
+
+                return {
+                    asBuf: asBuf,
+                    load: load,
+                    get: get,
+                }
+            }
+
+            // load data from external sources
+            function FileLoader(renderer, field, buttons, extTriggers) {
+                function toDescriptor(name, text) {
+                    return {
+                        name: name,
+                        lines: text.split("\n"),
+                    };
+                }
+
+                function loadDescriptor(descr) {
+                    buttons.saved.name.value = descr.name;
+                    field.load(descr.lines.join("\n"));
+                    renderer.halfScreenSize();
+                }
+
+                function loadMethod_file(file) {
+                    return {
+                        obj: file,
+                        reset: () => { file.value = ""; },
+                        read: (call) => {
+                            const first = file.files[0];
+                            const name = first.name;
+                            var fileReader = new FileReader();
+                            console.log("loading file...");
+                            fileReader.onloadend = function(event) {
+                                call(toDescriptor(name, event.target.result));
+                            };
+                            fileReader.readAsText(first);
+                        },
+                    };
+                }
+
+                function loadMethod_select(selector, contents) {
+                    return {
+                        obj: selector,
+                        reset: () => { selector.selectedIndex = 0; },
+                        read: (call) => {
+                            if (selector.selectedIndex === 0) {
+                                call({
+                                    name: "unnamed",
+                                    lines: [],
+                                });
+                            } else {
+                                call(contents[selector.selectedIndex - 1]);
+                            }
+                        },
+                    };
+                }
+
+                var saved = [];
+                const fileLoader = loadMethod_file(buttons.file);
+                const exampleLoader = loadMethod_select(buttons.selector, buttons.examples);
+                const saveLoader = loadMethod_select(buttons.saved.selector, saved);
+                function prepareLoaders(list) {
+                    for (let i = 0; i < list.length; i++) {
+                        const method = list[i];
+                        method.obj.addEventListener("click", () => {
+                            for (let j = 0; j < list.length; j++) {
+                                console.log(i, j);
+                                list[j].reset();
+                            }
+                        });
+                        method.obj.addEventListener("change", () => {
+                            method.read(loadDescriptor);
+                        });
+                    }
+                }
+                prepareLoaders([fileLoader, exampleLoader, saveLoader]);
+
+                for (var i = 0; i < buttons.examples.length; i++) {
+                    // append example to dropdown menu
+                    const added = new Option(buttons.examples[i].name, i);
+                    buttons.selector.append(added);
+                }
+
+                function saveNew() {
+                    const name = buttons.saved.name.value;
+                    const descr = toDescriptor(name, field.get());
+                    // if it already exists, overwrite it
+                    for (var i = 0; i < saved.length; i++) {
+                        if (descr.name == saved[i].name) {
+                            saved[i] = descr;
+                            return;
+                        }
+                    }
+                    saved.push(descr);
+                    const added = new Option(name, saved.length - 1);
+                    buttons.saved.selector.append(added);
+                }
+                buttons.saved.button.addEventListener("click", saveNew);
+
+                buttons.file.addEventListener("click", function() {
+                    buttons.file.value = "";
+                });
+            }
+
+            function PbmTransformer(err, data, parser, buttons) {
+                const filts = ["Normal", "Zero", "Max", "Invert", "Random"];
+                for (sel in buttons.filters) {
+                    for (f of filts) {
+                        buttons.filters[sel].append(new Option(f, f));
+                    }
+                }
+                // TODO: change 3 into 6 once write is implemented
+                for (let f = 1; f <= 3; f++) {
+                    buttons.type.append(new Option(`P${f}`, f));
+                }
+
+                // display options of current image
+                function loadOptions(img) {
+                    buttons.type.selectedIndex = img.type - 1;
+                    buttons.width.value = img.width;
+                    buttons.height.value = img.height;
+                    buttons.maxVal.value = img.maxVal;
+                    buttons.filters.r.selectedIndex = 0;
+                    buttons.filters.g.selectedIndex = 0;
+                    buttons.filters.b.selectedIndex = 0;
+                }
+
+                function readOptions() {
+                    const type = buttons.type.selectedIndex + 1;
+                    var width = parseInt(buttons.width.value, 10);
+                    if (width < 0) width = 0;
+                    var height = parseInt(buttons.height.value, 10);
+                    if (height < 0) height = 0;
+                    var maxVal = parseInt(buttons.maxVal.value, 10);
+                    if (maxVal <= 0) maxVal = 1;
+                    return {
+                        type: type,
+                        width: width,
+                        height: height,
+                        maxVal: maxVal,
+                    };
+                }
+
+                var renderer = undefined;
+                function setRenderer(r) {
+                    renderer = r;
+                }
+
+                const writePixel = {
+                    1: (pix, _) => {
+                        return Math.round((pix.r + pix.g + pix.b) / 3) + ' ';
+                    },
+                    2: (pix, max) => {
+                        return Math.round((pix.r + pix.g + pix.b) / 3) + ' ';
+                    },
+                    3: (pix, max) => {
+                        return `${Math.round(pix.r)} ${Math.round(pix.g)} ${Math.round(pix.b)}  `
+                    },
+                    4: (pix, _) => {
+                        console.log("Unimplemented");
+                    },
+                    5: (pix, max) => {
+                        console.log("Unimplemented");
+                    },
+                    6: (pix, max) => {
+                        console.log("Unimplemented");
+                    },
+                };
+
+
+                function write(img, type) {
+                    var t = "";
+                    t += `P${type}\n`;
+                    t += `${img.width} ${img.height}\n`;
+                    if (type !== 1 && type !== 4) {
+                        t += `${img.maxVal}\n`;
+                    } else {
+                        img.maxVal = 1;
+                    }
+                    for (var line = 0; line < img.height; line++) {
+                        var line_length = 0;
+                        var skip = false;
+                        for (var col = 0; col < img.width; col++) {
+                            const px = writePixel[type](img.pixels[line][col], img.maxVal);
+                            line_length += px.length;
+                            t += px;
+                            if (line_length > 76) {
+                                line_length = 0;
+                                t += "\n";
+                                skip = true;
+                            }
+                        }
+                        t += "\n";
+                        if (skip) t += "\n";
+                    }
+                    return t;
+                }
+
+                function resize(img, height, width) {
+                    const black = { r: 0, g: 0, b: 0 };
+                    function getPx(i, j) {
+                        if (img.pixels[i] === undefined) return black;
+                        if (img.pixels[i][j] === undefined) return black;
+                        return img.pixels[i][j];
+                    }
+                    var newpx = [];
+                    for (var line = 0; line < height; line++) {
+                        newpx.push([]);
+                        for (var col = 0; col < width; col++) {
+                            const result = getPx(line, col);
+                            newpx[line].push(result);
+                        }
+                    }
+                    return {
+                        height: height,
+                        width: width,
+                        pixels: newpx,
+                        maxVal: img.maxVal,
+                    };
+                }
+
+                const filter = {
+                    "Normal": (_, curr) => { return curr; },
+                    "Zero": (_m, _c) => { return 0; },
+                    "Max": (max, curr) => { return max; },
+                    "Invert": (max, curr) => { return max - curr; },
+                    "Random": (max, _) => {
+                        return Math.floor(Math.random() * (max + 1));
+                    },
+                };
+
+                function applyFilter(selector, max, curr) {
+                    return filter[selector.options[selector.selectedIndex].text](max, curr);
+                }
+
+                function reshade(img, max, filters) {
+                    for (var line = 0; line < img.height; line++) {
+                        for (var col = 0; col < img.width; col++) {
+                            var pix = img.pixels[line][col];
+                            pix.r = pix.r * max / img.maxVal;
+                            pix.g = pix.g * max / img.maxVal;
+                            pix.b = pix.b * max / img.maxVal;
+                            pix.r = applyFilter(buttons.filters.r, max, pix.r)
+                            pix.g = applyFilter(buttons.filters.g, max, pix.g)
+                            pix.b = applyFilter(buttons.filters.b, max, pix.b)
+                        }
+                    }
+                    img.maxVal = max;
+                    return img;
+                }
+
+                function convert(img) {
+                    const options = readOptions();
+                    const resized = resize(img, options.height, options.width);
+                    const reshaded = reshade(resized, options.maxVal, options.filters);
+                    const text = write(reshaded, options.type);
+                    return text;
+                }
+
+                buttons.run.addEventListener("click", () => {
+                    err.clear();
+                    const old = parser.parse();
+                    if (old === undefined) return;
+                    const tr = convert(old);
+                    data.load(tr);
+                    renderer.render();
+                });
+
+                return {
+                    loadOptions: loadOptions,
+                    readOptions: readOptions,
+                    setRenderer: setRenderer,
+                };
+            }
+
+            const errors = ErrorBox({
+                err: get("errors"),
+                errNb: get("errorsCount"),
+                warn: get("warnings"),
+                warnNb: get("warningsCount"),
+                info: get("infos"),
+                infoNb: get("infosCount"),
+            });
+            const fileInput = get("file"); // "load file" button
+
+            const dataEntry = DataEntry(get("dataEntry")); // text zone
+            const pbmParser = PbmParser(dataEntry, errors);
+            const pbmTransformer = PbmTransformer(errors, dataEntry, pbmParser, {
+                run: get("transformRun"),
+                type: get("transformFormat"),
+                width: get("transformWidth"),
+                height: get("transformHeight"),
+                maxVal: get("transformMax"),
+                filters: {
+                    r: get("transformRedFilter"),
+                    g: get("transformGreenFilter"),
+                    b: get("transformBlueFilter"),
+                },
+            });
+
+            const canvasButtons = {
+                render: get("btnRender"),
+                bigger: get("btnBigger"),
+                smaller: get("btnSmaller"),
+                normalsize: get("btnNormalSize"),
+                halfsize: get("btnHalfSize"),
+                screensize: get("btnScreenSize"),
+            };
+            const pbmRenderer = PbmRenderer(errors, get("canvas"), pbmParser, canvasButtons);
+            pbmRenderer.setTransformer(pbmTransformer);
+            pbmTransformer.setRenderer(pbmRenderer);
+            pbmRenderer.halfScreenSize();
+            pbmRenderer.render();
+
+            const blank = {
+                name: "---",
+                lines: [],
+            };
+
+            const codez1 = {
+                name: "123Codez-III_3.2_recherche_NB.pbm",
+                lines: [
+                    "P1",
+                    "16 16",
+                    "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
+                    "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
+                    "0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0",
+                    "0 0 0 0 0 0 0 1 1 1 1 1 1 1 0 0",
+                    "0 0 0 0 0 0 0 1 1 1 1 1 0 1 1 0",
+                    "0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 0",
+                    "0 0 0 1 1 1 1 1 0 1 1 1 1 0 1 0",
+                    "0 0 1 1 0 0 0 0 0 0 0 0 0 1 1 0",
+                    "0 0 1 0 0 0 0 0 0 0 0 0 0 1 1 0",
+                    "0 0 1 0 0 0 0 0 0 0 0 0 1 1 1 0",
+                    "0 0 1 0 0 0 0 0 0 0 0 0 1 0 1 0",
+                    "0 0 1 1 0 0 0 0 0 0 0 1 1 0 0 0",
+                    "0 0 0 1 1 0 0 0 1 1 1 1 1 0 0 0",
+                    "0 0 0 0 1 1 1 1 1 1 1 0 0 0 0 0",
+                    "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
+                    "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
+                    "",
+                ],
+            };
+
+            const codez2 = {
+                name: "123Codez-III_3.3_recherche_gris.pgm",
+                lines: [
+                    "P2",
+                    "15 15",
+                    "7",
+                    "7 7 7 7 7 0 0 0 0 0 7 7 7 7 7",
+                    "7 7 7 0 0 5 5 5 5 5 0 0 7 7 7",
+                    "7 7 0 5 5 5 5 5 5 5 5 5 0 7 7",
+                    "7 0 5 5 5 5 5 5 5 5 5 5 5 0 7",
+                    "7 0 0 0 0 0 0 0 0 0 0 0 0 0 7",
+                    "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
+                    "0 5 0 6 6 0 0 0 0 6 6 0 0 5 0",
+                    "0 5 0 6 0 0 0 5 0 6 0 0 0 5 0",
+                    "0 5 5 0 0 0 5 5 5 0 0 0 5 5 0",
+                    "0 5 5 5 5 5 5 5 5 5 5 5 5 5 0",
+                    "7 0 5 5 5 5 5 5 5 5 3 5 5 0 7",
+                    "7 0 5 5 5 5 3 3 3 3 5 5 5 0 7",
+                    "7 7 0 5 5 5 5 5 5 5 5 5 0 7 7",
+                    "7 7 7 0 0 5 5 5 5 5 0 0 7 7 7",
+                    "7 7 7 7 7 0 0 0 0 0 7 7 7 7 7",
+                    "",
+                ],
+            };
+
+            const codez3 = {
+                name: "123Codez-III_3.3_recherche_couleur.ppm",
+                lines: [
+                    "P3",
+                    "1 1",
+                    "7",
+                    "7 0 0",
+                    "",
+                ],
+            };
+
+            const tuto1 = {
+                name: "Tutoriel_Losange_noir.pbm",
+                lines: [
+                    "P1",
+                    "# Ne modifiez ni la première ligne 'P1'",
+                    "# ni l'extension du fichier",
+                    "7 7",
+                    "0 0 0 1 0 0 0",
+                    "0 0 1 0 1 0 0",
+                    "0 1 0 0 0 1 0",
+                    "1 0 0 0 0 0 1",
+                    "0 1 0 0 0 1 0",
+                    "0 0 1 0 1 0 0",
+                    "0 0 0 1 0 0 0",
+                    "",
+                ],
+            };
+
+            const tuto2 = {
+                name: "Tutoriel_Smiley_gris.pgm",
+                lines: [
+                    "P2",
+                    "15 15",
+                    "7",
+                    "7 7 7 7 7 0 0 0 0 0 7 7 7 7 7",
+                    "7 7 7 0 0 5 5 5 5 5 0 0 7 7 7",
+                    "7 7 0 5 5 5 5 5 5 5 5 5 0 7 7",
+                    "7 0 5 5 5 5 5 5 5 5 5 5 5 0 7",
+                    "7 0 0 0 0 0 0 0 0 0 0 0 0 0 7",
+                    "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
+                    "0 5 0 6 6 0 0 0 0 6 6 0 0 5 0",
+                    "0 5 0 6 0 0 0 5 0 6 0 0 0 5 0",
+                    "0 5 5 0 0 0 5 5 5 0 0 0 5 5 0",
+                    "0 5 5 5 5 5 5 5 5 5 5 5 5 5 0",
+                    "7 0 5 5 5 5 5 5 5 5 3 5 5 0 7",
+                    "7 0 5 5 5 5 3 3 3 3 5 5 5 0 7",
+                    "7 7 0 5 5 5 5 5 5 5 5 5 0 7 7",
+                    "7 7 7 0 0 5 5 5 5 5 0 0 7 7 7",
+                    "7 7 7 7 7 0 0 0 0 0 7 7 7 7 7",
+                    "",
+                ],
+            };
+
+            const tuto3 = {
+                name: "Tutoriel_Pixel_rouge.ppm",
+                lines: [
+                    "P3",
+                    "1 1",
+                    "7",
+                    "7 0 0",
+                    "",
+                ],
+            };
+
+            const tuto4 = {
+                name: "Smiley_jaune.ppm",
+                lines: [
+                    "P3",
+                    "8 8",
+                    "1",
+                    "#     #     #     #     #     #     #     #",
+                    "1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1",
+                    "1 1 1 1 1 1 0 0 0 1 1 0 1 1 0 0 0 0 1 1 1 1 1 1",
+                    "1 1 1 0 0 0 1 1 0 1 1 0 1 1 0 1 1 0 0 0 0 1 1 1",
+                    "0 0 0 1 1 0 0 0 1 1 1 0 1 1 0 0 0 1 1 1 0 0 0 0",
+                    "0 0 0 1 1 0 1 1 0 1 1 0 1 1 0 1 1 0 1 1 0 0 0 0",
+                    "1 1 1 0 0 0 1 1 0 1 0 0 1 0 0 1 1 0 0 0 0 1 1 1",
+                    "1 1 1 1 1 1 0 0 0 1 1 0 1 1 0 0 0 0 1 1 1 1 1 1",
+                    "1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1",
+                    "",
+                ],
+            };
+
+            const examples = scoped(() => {
+                if (dynamicMode === "full") {
+                    return [codez1, codez2, codez3, blank, tuto1, tuto2, tuto3, tuto4];
+                } else if (dynamicMode === "tuto") {
+                    return [tuto1, tuto2, tuto3, tuto4];
+                } else {
+                    return [codez1, codez2, codez3];
+                }
+            });
+
+            if (dynamicMode !== "full") {
+                remove(get("transformZone"));
+            }
+
+            const loadButtons = {
+                examples: examples,
+                saved: {
+                    selector: get("savedSelector"),
+                    name: get("saveName"),
+                    button: get("save"),
+                },
+                selector: get("examples"),
+                file: get("file"),
+            }
+            const fileLoader = FileLoader(pbmRenderer, dataEntry, loadButtons);
+        </script>
+    </body>
+</html>
+
