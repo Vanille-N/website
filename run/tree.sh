@@ -8,7 +8,7 @@ INDEX="$DIR/index-tree.html"
 ROOT="$( echo "$SHORT" | sed -E 's,[a-zA-Z0-9]+,..,g ; s,^,../,' )"
 : > "$INDEX"
 
-. htmldef.sh
+. run/htmldef.sh
 
 
 getlink() {
@@ -32,7 +32,7 @@ echo "\
 $(bold "$(green '$')") $(yellow "$(bold "tree") -CaL 3") $(bold "$(blue "$SHORT")")
 " >> "$INDEX"
 
-style "line-height:1" >> "$INDEX"
+style "line-height:1.3" >> "$INDEX"
 
 # Write `tree` contents
 cd www &>/dev/null
@@ -51,7 +51,7 @@ for f in $(
         continue
     fi
     sed -Ei \
-        "0,/─.*$(basename "$f")/s,─ ($(re_span "$(basename "$f")")),─ $(href "$(getlink "$DIR" "$f")" "$(span_class "reset" "\1")")," \
+        "/$(basename $(dirname "$f"))/,/─ $(basename "$f")$/s,─ ($(re_span "$(basename "$f")"))$,─ $(href "$(getlink "$DIR" "$f")" "$(span_class "reset" "\1")")," \
         "$INDEX"
 done
 

@@ -3,12 +3,12 @@
 # Build structured tree of html refs
 
 DIR="$1"
-SHORT="${DIR/www/}"
+SHORT="${DIR/*www/}"
 INDEX="$DIR/index-ls.html"
 ROOT="$( echo "$SHORT" | sed -E 's,[a-zA-Z0-9]+,..,g ; s,^,../,' )"
 : > "$INDEX"
 
-. htmldef.sh
+. run/htmldef.sh
 
 # Navigation links (. .. / /share)
 echo "\
@@ -24,7 +24,7 @@ $(yellow "$(bold "exa") -Flah") \
 $(bold "$(blue "$SHORT")") \
 " >> "$INDEX"
 
-echo "$(style "line-height:1.1") \
+echo "$(style "line-height:1.2") \
 " >> "$INDEX"
 
 # `ls` contents

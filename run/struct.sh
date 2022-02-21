@@ -10,7 +10,7 @@ INDEX_TREE="$DIR/index-tree.html"
 ROOT="$( echo "$SHORT" | sed -E 's,[a-zA-Z0-9]+,..,g ; s,^,../,' )"
 : > "$INDEX"
 
-. htmldef.sh
+. run/htmldef.sh
 
 echo "$HEADER" >> "$INDEX"
 cat "$INDEX_LS" <(echo -e "\n\n\n") "$INDEX_TREE" >> "$INDEX"

@@ -3,12 +3,12 @@
 # Colorful display of text files
 
 FILE="$1"
-SHORT="${FILE/www/}"
+SHORT="${FILE/*www/}"
 HTML="$FILE.html"
 ROOT="$( dirname "$SHORT" | sed -E 's,[a-zA-Z0-9]+,..,g ; s,^,../,' )"
 : > "$HTML"
 
-. htmldef.sh
+. run/htmldef.sh
 echo "$HEADER
 $NAVIGATION
 
