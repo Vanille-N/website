@@ -1,0 +1,36 @@
+<style>
+    html { background-color: #202020; }
+    body {
+        margin: 40px auto;
+        max-width: 1200px;
+        line-height: 1.5;
+        font-size: 18px;
+        font-weight: 350;
+        color: #fbecb2;
+        background: #282828;
+        padding: 0 10px
+    }
+    h1,h2,h3 {
+        line-height: 1.2
+    }
+    h1 {
+        color: #e6e6ff;
+        font-weight: 800;
+    }
+    h2 {
+        color: #b3b3ff;
+        font-weight: 700;
+    }
+    h3 {
+        color: #4d4dff;
+        font-weight: 600;
+    }
+    html:not(.inverted) a {
+        color: #ccffff;
+        font-weight: 300;
+    }
+    html:not(.inverted) a:visited {
+        color: #ffccff;
+        font-weight: 300;
+    }
+</style>
