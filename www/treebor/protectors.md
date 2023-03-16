@@ -7,6 +7,7 @@ output: html_document
 lang: en
 ---
 
+\[ [Prev](shared.html) | [Up](index.html) | [Next](interiormut.html) \]
 
 ---
 

@@ -7,5 +7,6 @@ output: html_document
 lang: en
 ---
 
+\[ [Prev](protectors.html) | [Up](index.html) | ----------- \]
 
 ---

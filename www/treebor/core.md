@@ -1,5 +1,5 @@
 ---
-title: "Tree Borrows -- Basic Model"
+title: "Tree Borrows -- Core Model"
 subtitle: A new aliasing model for Rust
 author: Neven Villani
 date: Mar. 2023
@@ -7,13 +7,18 @@ output: html_document
 lang: en
 ---
 
+\[ ------------ | [Up](index.html) | [Next](shared.html) \]
+
 In this first part we establish the base model of Tree Borrows (TB), which for
-now handles only code that has no function calls and no types with interior
-mutability, since those are two aspects that are difficult to handle.
-This introduction to the model is structured so that adding functions
-and interior mutability will not _modify_ any parts of the model already
-introduced, so the following explanations can be treated as the description
-of a _partial_ model, rather than a _simplified_ one.
+now handles only code that has exclusively mutable references, with
+no function calls and no types with interior mutability.
+Later parts will add shared references, function calls, raw pointers, and
+interior mutability.
+
+This introduction to the model is structured so that adding the missing features
+will not _modify_ any parts of the model already introduced, so the following
+explanations can be treated as the description of a _partial_ model, rather than
+a _simplified_ one.
 
 ---
 
@@ -61,6 +66,18 @@ occurs thanks to runtime conditional guards.
 > ```
 <!-- ` -->
 
+### Per-location tracking
+
+Apart from some shared internal state at the allocation level, Tree Borrows
+operates at the _location_ level. This means that individual bytes of a single
+piece of data can be borrowed independently. This also holds for different
+indexes of an array or different fields of a `struct`{.rust}: as long as the
+borrows are on disjoint parts of memory (and even if it is impossible to
+guarantee at compile-time that those parts are disjoint, but they happen to be
+at runtime) the behavior according to Tree Borrows will generally be trivial.
+
+Most of our examples will use `u8` where the two notions coincide anyway.
+
 ### Unsafe
 
 Tree Borrows also differs from the Borrow Checker in that it does not handle
@@ -88,6 +105,7 @@ the Borrow Tracker into losing track of the compile-time aliasing conflicts.
 >     *y += 1;
 > }
 > ```
+<!-- ` -->
 
 > ```diff
 > - TB: UB (`x` and `y` alias)
@@ -101,6 +119,7 @@ the Borrow Tracker into losing track of the compile-time aliasing conflicts.
 >     *y += 1;
 > } }
 > ```
+<!-- ` -->
 
 using `std::ptr::addr_of_mut`{.rust}.
 The same trick works with `let x = &mut *(u as *mut u8)`{.rust}.
@@ -128,16 +147,16 @@ currently alive.
 > ```
 > ```rust
 > fn example(u: &mut u8) {
->     phantom_write!(u); // assert that `u` has started its lifetime
+>     phantom_write!(u); // assert that `u` is writeable
 >
 >     let x = &mut *u;
->     phantom_write!(x); // assert that `x` has started its lifetime
+>     phantom_write!(x); // assert that `x` is writeable
 >     ...
 >     *x = 42;
 >     ...
->     phantom_write!(x); // assert that `x` is still alive
+>     phantom_write!(x); // assert that `x` is still writeable
 >
->     phantom_write!(u); // assert that `u` is still alive
+>     phantom_write!(u); // assert that `u` is still writeable
 > }
 > ```
 <!-- ` -->
@@ -155,14 +174,14 @@ we kill other mutable references.
 > fn refmut_disjoint(u: &mut u8) {
 >     phantom_write!(u);
 >
->     let x = &mut *u;   // x is alive
+>     let x = &mut *u;   // x is alive at least
 >     phantom_write!(x); // from here...
 >     *x = 42;           //
 >     phantom_write!(x); // ...until here.
 >
->     // ----- `x` and `y` lifetimes properly disjoint -----
+>     // ----- lifetimes of `x` and `y` properly disjoint -----
 >
->     let y = &mut *u;                     // y is alive
+>     let y = &mut *u;                     // y is alive at least
 >     phantom_write!(y);                   // from here...
 >     *y = 36;                             //
 >     phantom_write!(y);                   // ...until here.
@@ -179,10 +198,10 @@ we kill other mutable references.
 > fn refmut_intersecting(u: &mut u8) {
 >     phantom_write!(u);
 >
->     let x = &mut *u;   // x is alive
+>     let x = &mut *u;   // x is alive at least
 >     phantom_write!(x); // from here...
 >                        //
->     let y = &mut *u;   //                // y is alive
+>     let y = &mut *u;   //                // y is alive at least
 >     phantom_write!(y); //                // from here...
 >                        //                //
 >     *x = 42;           //                //                 <-- oh no, they intersect !
@@ -207,11 +226,11 @@ long as we respect the nesting.
 > fn refmut_nested(u: &mut u8) {
 >     phantom_write!(u);
 >
->     let x = &mut *u;   // x is alive
+>     let x = &mut *u;   // x is alive at least
 >     phantom_write!(x); // from here...
->                        //                                         Yes they intersect, but
->     let y = &mut *x;   //           // y is alive                 1. `y` is borrowed from `x`, not `u`
->     phantom_write!(y); //           // from here...               2. their usage is properly nested
+>                        //                                         // Yes they intersect, but
+>     let y = &mut *x;   //           // y is alive at least        // 1. `y` is borrowed from `x`, not `u`
+>     phantom_write!(y); //           // from here...               // 2. their usage is properly nested
 >     *y = 36;           //           //
 >     phantom_write!(y); //           // ...until here.
 >                        //
@@ -230,12 +249,12 @@ long as we respect the nesting.
 > fn refmut_nested(u: &mut u8) {
 >     phantom_write!(u);
 >
->     let x = &mut *u;   // x is alive
+>     let x = &mut *u;   // x is alive at least
 >     phantom_write!(x); // from here...
 >                        //
->     let y = &mut *x;   //                // y is alive           Even though `y` is derived from `x`,
->     phantom_write!(y); //                // from here...         this code attempts to use them in a
->                        //                //                      non-nested manner.
+>     let y = &mut *x;   //                // y is alive at least     // Even though `y` is derived from `x`,
+>     phantom_write!(y); //                // from here...            // this code attempts to use them in a
+>                        //                //                         // non-nested manner.
 >     *x = 42;           //                //
 >     phantom_write!(x); // ...until here. //
 >                                          //
@@ -348,7 +367,8 @@ the entire rules of Tree Borrows can be expressed in terms of
 >                        // --- u: Active
 >                        //     |--- x: Disabled
 >                        //     |--- y: Active
->                        // (`x` is unchanged by the child write through `y`)
+>                        // (`u` is unchanged by the child write through `y`)
+>                        // (`x` is disabled by the foreign write through `y`)
 >
 >     *x = 42;
 >     phantom_write!(x);
