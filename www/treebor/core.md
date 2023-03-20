@@ -384,3 +384,8 @@ the entire rules of Tree Borrows can be expressed in terms of
 <!-- ` -->
 
 ---
+
+\[ ------------ | [Up](index.html) | [Next](shared.html) \]
+
+---
+

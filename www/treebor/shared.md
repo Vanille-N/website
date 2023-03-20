@@ -26,7 +26,9 @@ We can use the following code to assert that a reference is currently readable:
 > ```
 <!-- ` -->
 
-In addition, since we want shared and mutable references to be marked
+## Implicit accesses on reborrows
+
+Since we want shared and mutable references to be marked
 [dereferenceable](https://llvm.org/docs/LangRef.html) in LLVM, we count reborrow
 as reads. This guarantees that it is impossible to reborrow from a `Disabled` pointer,
 and thus that `dereferenceable` is valid.
@@ -50,6 +52,50 @@ and thus that `dereferenceable` is valid.
 >                         // It counts as an attempted read, and `Disabled` forbids
 >                         // reads.
 >                         // This is UB.
+> }
+> ```
+<!-- ` -->
+
+Creating a raw pointer however does not perform this check, and the operation
+`let xraw = x as *mut u8`{.rust} produces no read access. In addition, Tree Borrows
+considers accesses through raw pointers to be equivalent to accesses through their
+parent reference. This is a solution to
+[Issue #227: raw pointers inherit permissions](https://github.com/rust-lang/unsafe-code-guidelines/issues/227)
+and makes code like the following example allowed.
+
+> ```diff
+> + TB: NO UB (raw pointers derived from the same reference can coexist)
+> ```
+> ```rust
+> fn several_raw(u: &mut u8) {
+>     phantom_write!(u);
+>     let r0 = &mut *u;
+>     phantom_write!(r0);
+>                            // --- u: Active
+>                            //     |--- r0: Active
+>
+>     let r1 = r0 as *mut u8;
+>     let r2 = r0 as *mut u8;
+>     let r3 = r0 as *mut u8;
+>                            // Raw pointers are considered equivalent to their parent reference.
+>                            // --- u: Active
+>                            //     |--- r0,r1,r2,r3: Active
+>
+>     *r1 += 1;
+>     *r3 += 1;
+>     *r0 += 1;
+>     *r2 += 1;
+>     *r1 += 1;
+>                            // Any sequence of operations is allowed between raw pointers derived from
+>                            // the same reference, since TB sees all of these as if they were accesses
+>                            // through `r0` directly.
+>
+>     *u += 1;
+>                            // Raw pointers die when their parent reference dies.
+>                            // --- u: Active
+>                            //     |--- r0,r1,r2,r3: Disabled
+>
+>     phantom_write!(u);
 > }
 > ```
 <!-- ` -->
@@ -87,6 +133,7 @@ One can assert that a shared reference is alive by attempting to read through it
 >     phantom_write!(u);
 > }
 > ```
+<!-- ` -->
 
 #### Example: write access kills shared references
 
@@ -168,7 +215,7 @@ accessing the data.
 >                         // (`u: Active` is unafected by the child write)
 >     *x = 42;
 >     phantom_write!(x);  // The mutable lifetime of `x` ends here, but it will still be available read-only
-> 
+>
 >     let y = &*u;
 >     phantom_read!(y);
 >     phantom_read!(x);
@@ -248,7 +295,13 @@ We give this permission the name `Reserved`, with the rules
 - `Reserved` otherwise behaves exactly like a `Frozen`: it allows child reads,
   is unaffected by foreign reads, and becomes `Disabled` on a foreign write.
 
-and this gives us the complete lifetime of a mutable reference:
+This matches the intent of
+[Issue #133: asserting uniqueness too early?](https://github.com/rust-lang/unsafe-code-guidelines/issues/133):
+upon creation a mutable reference does not immediately assert uniqueness, it only asserts
+that there are no other write acceses. The fact that there are no other read accesses is asserted
+only on the first write.
+
+We now have an overview of the complete lifetime of a mutable reference:
 
 > ```diff
 > + TB: NOT UB ("normal" life cycle of a mutable reference)
@@ -328,10 +381,11 @@ for `Reserved`.
 > ```
 <!-- ` -->
 
-Safe code that is accepted by TB thanks to `Reserved` includes code that makes use of
-[two-phase borrows](https://rustc-dev-guide.rust-lang.org/borrow_check/two_phase_borrows.html).
 
 #### Example: easy two-phase borrow with `Reserved`
+
+Safe code that is accepted by TB thanks to `Reserved` includes code that makes use of
+[two-phase borrows](https://rustc-dev-guide.rust-lang.org/borrow_check/two_phase_borrows.html).
 
 > ```diff
 > + TB: NOT UB (standard two-phase borrow example)
@@ -373,6 +427,86 @@ The above code desugars to approximately
 > ```
 <!-- ` -->
 
+#### Example: `copy_nonoverlapping`
+
+> ```diff
+> + TB: NOT UB (Reserved interacts nicely with reborrow-and-offset)
+> + Common pattern, would be PREFERABLY NOT UB.
+> ```
+> ```rust
+> let data = &mut [0u8, 1];
+> unsafe {
+>     let raw_shr = data.as_ptr(); // implicitly reborrows an `&` reference
+>     let raw_mut = data.as_mut_ptr().add(1); // implicitly reborrows an `&mut` reference;
+>     // This order of reborrows is accepted because mutable reborrows not written
+>     // to count only as reads. The other way around would also be accepted thanks
+>     // to `Reserved` (obtained from `as_mut_ptr`) tolerating foreign reads
+>     // (occurs when calling `as_ptr`).
+>                                                          // At this point we have
+>                                                          // --- data: Active|Active
+>                                                          //     |--- raw_shr: Frozen|Frozen
+>                                                          //     |--- raw_mut: Reserved|Reserved
+>     core::ptr::copy_nonoverlapping(raw_shr, raw_mut, 1);
+>                                                          // The write affects only the second location,
+>                                                          // no UB occurs and the borrows are now
+>                                                          // --- data: Active|Active
+>                                                          //     |--- raw_shr: Frozen|Disabled
+>                                                          //     |--- raw_mut: Reserved|Active
+> }
+> ```
+<!-- ` -->
+
+## Permitted optimizations
+
+The model so far allows at least the following optimizations:
+
+#### Reordering any two reads
+
+In defining the behavior of `Reserved` and `Frozen` we have ensured that
+a read access never invalidates (causes to be UB) another read, therefore
+the model allows any reordering of any adjacent read operations.
+
+This includes the possibility of reordering reborrows with each other and
+with reads, since (1) reborrows do not count as write accesses and (2) both
+initial permissions (`Reserved` and `Frozen`) created after a reborrow tolerate
+foreign reads. The `copy_nonoverlapping` example just above is one such instance.
+
+#### Grouping together related writes
+
+Although it is not always possible to reorder writes accesses with code that performs
+reads, as the following example shows
+
+> ```rs
+> let x = &mut *u; // `x: Reserved`
+> let yval = *y;   // Regardless of whether `x` and `y` alias, `x` is still `Reserved`
+> *x += 1;         // `x: Active`
+>                  // NO UB even if `x` and `y` alias
+>                  // Therefore we can't _assume_ that `x` and `y` don't alias,
+>                  // the read and the write cannot be reordered unless we _know_
+>                  // through other means that they are disjoint.
+> ```
+<!-- ` -->
+
+we can still group together related writes if there are no child pointers.
+
+> ```rs
+> // Unoptimized
+> let x = &mut *u;  // `x: Reserved`, also `x` does not have child pointers
+> *x += 1;          // `x: Active`
+> let yval = *y;    // If `y` and `x` alias then `x: Disabled` otherwise `x: Active`
+> *x += 1;          // If `y` and `x` alias then UB Otherwise `x: Active`
+> 
+> // We can assume that `x` and `y` do not alias and group together the two increments
+> 
+> // Optimized
+> let x = &mut *u;
+> *x += 2;
+> let yval = *y;
+> ```
+<!-- ` -->
 
 ---
 
+\[ [Prev](core.html) | [Up](index.html) | [Next](protectors.html) \]
+
+---

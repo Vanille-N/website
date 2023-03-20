@@ -9,5 +9,189 @@ lang: en
 
 \[ [Prev](shared.html) | [Up](index.html) | [Next](interiormut.html) \]
 
+## The `noalias` constraints
+
+Reference (both mutable and shared) arguments to functions get the LLVM attribute
+[noalias](https://llvm.org/docs/LangRef.html#noalias), which is described as
+
+> noalias
+
+> This indicates that memory locations accessed via pointer values based on the argument
+are not also accessed, during the execution of the function, via pointer values not based on the argument.
+This guarantee only holds for memory locations that are modified, by any means, during the execution of the function.
+
+Or in the language of Tree Borrows:
+
+- a pointer based on the argument is a child pointer,
+- a pointer not based on the argument is a foreign pointer,
+- `noalias` requires that locations that are written to are not accessed through both
+foreign and child pointers,
+- once the function has returned, this constraint is lifted.
+
+To enforce this we add a notion of _protectors_: on function entry each reference
+argument gets added a protector. This protector is removed on function exit.
+As long as a protector is in place, the reference must adhere to additional rules.
+
+## Required additions
+
+### References should be dereferenceable for the entire function
+
+References (both mutable and shared) must be at least readable for the entire
+execution of the function, which is required by the `dereferenceable` attribute.
+In Tree Borrows terms this means that it must be UB for any protected pointer
+to become `Disabled`, since `Disabled` means that the pointer is not even
+readable anymore.
+
+This aligns with the `noalias` requirements in that it prevents foreign
+writes (foreign writes are what cause pointers to become `Disabled`) to locations
+that have been read from.
+
+### Child writes are incompatible with foreign reads
+
+Detecting this takes two forms:
+
+- if the child write occurs first then a subsequent foreign read will cause
+  an `Active` pointer to become `Frozen`. Such a transition must thus be made
+  UB if it occurs to a currently protected pointer.
+- if the foreign read occurs first then it means that the protected pointer
+  is still `Reserved` at that point. When a protected `Reserved` encounters
+  a foreign read, it must not allow future child writes. We model this by
+  making it become `Frozen`. This is a conservative approach, as `noalias`
+  only requires that it not be written to during the execution of the function,
+  and turning it `Frozen` makes the stronger guarantee that it will _never_
+  be written to.
+
+### Summary
+
+- any protected pointer that becomes `Disabled` is UB (this includes all three
+  of `Reserved`, `Active`, and `Frozen` reacting to a foreign write);
+- if a protected `Active` pointer becomes `Frozen` this is also UB (this occurs
+  on a foreign read);
+- protected `Reserved` pointers are not unchanged by foreign reads: they become
+  `Frozen`.
+
+
+## New possible optimizations
+
+With the addition of protectors it is still possible to reorder accesses across
+unknown code to move them towards a stronger access (a read towards a read,
+a read towards a write, or a write towards a write), and in addition there
+are now new optimizations that are possible, but only in the presence of a
+protected pointer.
+
+### Delayed accesses
+
+Since protected pointers can be assumed to be valid until the end of the function,
+it is possible to delay an access to occur after arbitrary code, as long as
+said arbitrary code does not own any child pointers.
+
+> ```rs
+> extern fn opaque();
+> 
+> // Unoptimized
+> fn convoluted_read(u: &u8) -> u8 {
+>     // u: Frozen
+>     let uval = *u;
+>     opaque();
+>     // If any write occured during `opaque` then `u` became `Disabled`
+>     // which is `UB` because `u` is protected. We can thus assume that `opaque`
+>     // does not write to the location of `u`.
+>     uval
+> }
+> 
+> // Optimized
+> fn convoluted_read_opt(u: &u8) -> u8 {
+>     opaque();
+>     *u // One fewer local variable thanks to being able to assume that `*u` is unchanged
+> }
+> ```
+<!-- ` -->
+
+> ```rs
+> extern fn opaque();
+> 
+> // Unoptimized
+> fn convoluted_write(u: &mut u8) -> u8 {
+>     // u: Reserved
+>     *u = 42;
+>     opaque();
+>     // If any read occured during `opaque` then `u` became `Frozen`
+>     // which is `UB` because `u` is protected. We can thus assume that `opaque`
+>     // does not read from the location of `u`.
+>     *u
+> }
+> 
+> // Optimized
+> fn convoluted_write_opt(u: &u8) -> u8 {
+>     opaque();
+>     *u = 42;
+>     42
+> }
+> ```
+<!-- ` -->
+
+
+### Anticipated reads
+
+Since references can be assumed to be dereferenceable on function entry,
+we can also move read accesses up, even if they possibly never actually happen.
+
+> ```rust
+> // Unoptimized
+> fn iter_until(arg: &u8) {
+>     while condition() {
+>         // We can assume that
+>         // 1. `condition` and `step` do not modify `*arg`
+>         // 2. `arg` is dereferenceable even if `condition` does not terminate
+>         // 3. `arg` is dereferenceable even if the loop runs zero times
+>         step(*arg);
+>     }
+> }
+> 
+> // Optimized
+> fn iter_until_opt(arg: &u8) -> u8 {
+>     let varg = *arg;
+>     while condition() {
+>         step(varg); // Removed the dereference
+>     }
+> }
+> ```
+<!-- ` -->
+
+### [Not always possible] Anticipated writes
+
+However if the function is not guaranteed to write (either because some code might not terminate
+or because the write is conditional), then Tree Borrows does not allow anticipated writes.
+
+An example from [this thread](https://rust-lang.zulipchat.com/#narrow/stream/136281-t-opsem/topic/can.20.26mut.20just.20always.20be.20two-phase/near/307569740) is not supported by Tree Borrows:
+
+> ```rust
+> pub fn foo(x: &mut u8, n: u8) {
+>     for i in 0..n {
+>         *x = n;
+>     }
+> }
+> ```
+<!-- ` -->
+
+This code _cannot_ be optimized to
+
+> ```rust
+> pub fn foo_opt_invalid(x: &mut u8, n: u8) {
+>     let val = *x;
+>     *x = n-1;
+>     if unlikely(n == 0) {
+>         *x = val;
+>     }
+> }
+> ```
+<!-- ` -->
+
+because writing to the location then later reverting the write still counts as
+a write access and could introduce new UB to the program.
+
 ---
 
+\[ [Prev](shared.html) | [Up](index.html) | [Next](interiormut.html) \]
+
+---

@@ -27,5 +27,10 @@ this document is more accessible and more example-oriented.
     (function calls and the `noalias` attribute)
 - Part 4: [Dealing with Cells](interiormut.html)
     (interior mutability and raw pointers)
+- Part 5: [Range](range.html)
+    (`extern type` and pointer offsets)
+
+
+<!-- FIXME: insert references -->
 
 ---
