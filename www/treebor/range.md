@@ -1,5 +1,5 @@
 ---
-title: "Tree Borrows -- Range"
+title: "Tree Borrows -- Ranges"
 subtitle: A new aliasing model for Rust
 author: Neven Villani
 date: Mar. 2023
@@ -58,6 +58,8 @@ it has never been accessed through a child pointer. We write these
 `Reserved?`, `Frozen?` and `Disabled?`. `Active?` is impossible because it requires
 a child access to exist. `Frozen?` reacts the same way as `Frozen` for foreign
 accesses, and it becomes `Frozen` on a child access.
+
+Here are examples of how this applies to concrete examples
 
 > ```diff
 > + TB: NOT UB (Delayed initialization)

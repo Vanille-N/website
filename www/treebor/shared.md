@@ -343,7 +343,7 @@ We now have an overview of the complete lifetime of a mutable reference:
 >                             //
 >     phantom_read!(x);       //   ...until here.
 >     phantom_read!(u);
-> 
+>
 >                             // On the first foreign write:
 >     phantom_write!(u);      //   From here...
 >                             //
