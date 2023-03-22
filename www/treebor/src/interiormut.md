@@ -12,46 +12,41 @@ lang: en
 ## Why interior mutable types need special attention
 
 There are several ways in which interior mutable types break some of the assumptions
-made so far
+made so far.
 
-#### Mutation is possible through an `&` reference
+#### Example: mutation is possible through an `&` reference
 
-> ```diff
-> + This is safe code that compiles, it MUST NOT BE UB.
-> ```
-> ```rust
-> fn set(u: &Cell<u8>) {
->     u.set(42); // This performs a write access, but the parent is a `&` which should be `Frozen`
-> }
-> ```
-<!-- ` -->
+```rust
+//+ This is safe code that compiles, it MUST NOT BE UB.
+fn set(u: &Cell<u8>) {
+    u.set(42); // This performs a write access, but the parent is a `&` which should be `Frozen`
+}
+```
 
-#### Mutation is allowed during a two-phase borrow
+#### Example: mutation is allowed during a two-phase borrow
 
 The complete version of this code is available as a
 [miri test case](https://github.com/rust-lang/miri/blob/master/tests/pass/tree-borrows/2phase-interiormut.rs)
 
-> ```diff
-> + This is safe code that compiles, it MUST NOT BE UB.
-> ```
-> ```rust
-> fn mutation_during_two_phase(u: &mut Cell<u8>) {
->     let x = &u;
->     u.something({ // Start a two-phase borrow of `u`
->         // Several foreign accesses (both reads and writes) to the location
->         // being reborrowed. The two-phase borrow of `u` must not be invalidated at any point.
->         u.set(3);
->         x.set(4);
->         u.get() + x.get()
->     });
-> }
-> ```
-<!-- ` -->
-
+```rust
+//+ This is safe code that compiles, it MUST NOT BE UB.
+fn mutation_during_two_phase(u: &mut Cell<u8>) {
+    let x = &u;
+    u.something({ // Start a two-phase borrow of `u`
+        // Several foreign accesses (both reads and writes) to the location
+        // being reborrowed. The two-phase borrow of `u` must not be invalidated at any point.
+        u.set(3);
+        x.set(4);
+        u.get() + x.get()
+    });
+}
+```
 
 ## Additions to the model
 
-The above two examples would be UB if interior mutable references were treated regularly.
+The above two examples would be UB if interior mutable references were treated regularly,
+because an `&` reference of a type with interior mutability allows things that a `Frozen` does
+not.
 In Tree Borrows we choose the following
 
 - shared reborrows of interior mutable types are treated like raw pointers, that is
@@ -85,7 +80,7 @@ With this the model is complete, and we summarize it with the following automato
     - perform the effects of a read access through `y`
     - add a new child of `y` in the tree
     - give it the permissions `Reserved`
-    - keep track of whether it has interior mutability or not
+    - keep track of whether it has interior mutability or not as `ty_is_freeze`
 - if `z` is a non-interior-mutable shared reference
     - perform the effects of a read access through `y`
     - add a new child of `y` in the tree

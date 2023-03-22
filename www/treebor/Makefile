@@ -1,13 +1,35 @@
-MDFILES = $(wildcard *.md)
+MDFILES = $(wildcard src/*.md)
+HLTHEME = conf/hl.theme
+CSS = conf/style.css
+SYN = conf/rust.xml
+CONFIG = $(HLTHEME) $(CSS) $(SYN) Makefile
 
-all: $(MDFILES:.md=.html)
+all: $(MDFILES:src/%.md=%.html)
 
-%.html: %.md style.css Makefile
+%.html: src/%.md $(CONFIG)
 	pandoc \
-		--highlight-style breezedark \
+		--syntax-definition $(SYN) \
+		--highlight-style $(HLTHEME) \
 		--embed-resources --standalone \
 		-f markdown -t html \
 		$< -o $@ \
-		-H style.css
+		-H $(CSS)
 
-.PHONY: clean
+push:
+	make all
+	cd ../../ && make
+
+edit:
+	rg '[a-z]+.html' src/index.md --only-matching | \
+		sed 's,html,md,' | \
+		sed 's,^,src/,' | \
+		xargs -o vim src/index.md
+
+show-fix:
+	rg 'FIXME' *.md
+
+fix:
+	rg 'FIXME' --files-with-matches *.md | \
+		xargs -o vim '+/FIXME'
+
+.PHONY: clean push edit fix

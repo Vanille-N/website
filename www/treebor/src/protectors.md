@@ -9,9 +9,12 @@ lang: en
 
 \[ [Prev](shared.html) | [Up](index.html) | [Next](interiormut.html) \]
 
-## The `noalias` constraints
+## Stronger aliasing constraints for function arguments
 
-Reference (both mutable and shared) arguments to functions get the LLVM attribute
+Within functions the compiler generally knows less about the context and must
+make more assumptions for useful optimizations to be possible. In particular
+we wish to be able to assume that references live until the end of the function,
+as well as give reference arguments to functions the LLVM attribute
 [noalias](https://llvm.org/docs/LangRef.html#noalias), which is described as
 
 > noalias
@@ -30,21 +33,24 @@ foreign and child pointers,
 
 To enforce this we add a notion of _protectors_: on function entry each reference
 argument gets added a protector. This protector is removed on function exit.
-As long as a protector is in place, the reference must adhere to additional rules.
+As long as a protector is in place, the reference must adhere to additional rules,
+namely it must satisfy the requirements of `noalias` and it must be valid until
+the end of the function.
 
 ## Required additions
 
 ### References should be dereferenceable for the entire function
 
 References (both mutable and shared) must be at least readable for the entire
-execution of the function, which is required by the `dereferenceable` attribute.
+execution of the function.
 In Tree Borrows terms this means that it must be UB for any protected pointer
 to become `Disabled`, since `Disabled` means that the pointer is not even
 readable anymore.
 
 This aligns with the `noalias` requirements in that it prevents foreign
 writes (foreign writes are what cause pointers to become `Disabled`) to locations
-that have been read from.
+that have been read from, and it additionally allows using the `dereferenceable`
+attribute on reference function arguments.
 
 ### Child writes are incompatible with foreign reads
 
@@ -70,6 +76,11 @@ Detecting this takes two forms:
 - protected `Reserved` pointers are not unchanged by foreign reads: they become
   `Frozen`.
 
+Note: this mostly align with the concept of protectors from Stacked Borrows,
+except that in SB loss of permissions is indicated by being popped from the stack,
+whereas in TB it takes the form of becoming `Disabled`. Thus what triggers
+protectors in SB is popping a protected item, in TB it is performing an invalid
+transition.
 
 ## New possible optimizations
 
@@ -85,50 +96,48 @@ Since protected pointers can be assumed to be valid until the end of the functio
 it is possible to delay an access to occur after arbitrary code, as long as
 said arbitrary code does not own any child pointers.
 
-> ```rs
-> extern fn opaque();
-> 
-> // Unoptimized
-> fn convoluted_read(u: &u8) -> u8 {
->     // u: Frozen
->     let uval = *u;
->     opaque();
->     // If any write occured during `opaque` then `u` became `Disabled`
->     // which is `UB` because `u` is protected. We can thus assume that `opaque`
->     // does not write to the location of `u`.
->     uval
-> }
-> 
-> // Optimized
-> fn convoluted_read_opt(u: &u8) -> u8 {
->     opaque();
->     *u // One fewer local variable thanks to being able to assume that `*u` is unchanged
-> }
-> ```
-<!-- ` -->
+```rs
+extern fn opaque();
 
-> ```rs
-> extern fn opaque();
-> 
-> // Unoptimized
-> fn convoluted_write(u: &mut u8) -> u8 {
->     // u: Reserved
->     *u = 42;
->     opaque();
->     // If any read occured during `opaque` then `u` became `Frozen`
->     // which is `UB` because `u` is protected. We can thus assume that `opaque`
->     // does not read from the location of `u`.
->     *u
-> }
-> 
-> // Optimized
-> fn convoluted_write_opt(u: &u8) -> u8 {
->     opaque();
->     *u = 42;
->     42
-> }
-> ```
-<!-- ` -->
+//? Unoptimized
+fn convoluted_read(u: &u8) -> u8 {
+    // u: Frozen
+    let uval = *u;
+    opaque();
+    // If any write occured during `opaque` then `u` became `Disabled`
+    // which is `UB` because `u` is protected. We can thus assume that `opaque`
+    // does not write to the location of `u`.
+    uval
+}
+
+//? Optimized
+fn convoluted_read_opt(u: &u8) -> u8 {
+    opaque();
+    *u // One fewer local variable thanks to being able to assume that `*u` is unchanged
+}
+```
+
+```rs
+extern fn opaque();
+
+//? Unoptimized
+fn convoluted_write(u: &mut u8) -> u8 {
+    // u: Reserved
+    *u = 42;
+    opaque();
+    // If any read occured during `opaque` then `u` became `Frozen`
+    // which is `UB` because `u` is protected. We can thus assume that `opaque`
+    // does not read from the location of `u`.
+    *u
+}
+
+//? Optimized
+fn convoluted_write_opt(u: &u8) -> u8 {
+    opaque();
+    *u = 42;
+    42
+}
+```
 
 
 ### Anticipated reads
@@ -136,56 +145,56 @@ said arbitrary code does not own any child pointers.
 Since references can be assumed to be dereferenceable on function entry,
 we can also move read accesses up, even if they possibly never actually happen.
 
-> ```rust
-> // Unoptimized
-> fn iter_until(arg: &u8) {
->     while condition() {
->         // We can assume that
->         // 1. `condition` and `step` do not modify `*arg`
->         // 2. `arg` is dereferenceable even if `condition` does not terminate
->         // 3. `arg` is dereferenceable even if the loop runs zero times
->         step(*arg);
->     }
-> }
-> 
-> // Optimized
-> fn iter_until_opt(arg: &u8) -> u8 {
->     let varg = *arg;
->     while condition() {
->         step(varg); // Removed the dereference
->     }
-> }
-> ```
-<!-- ` -->
+```rust
+//? Unoptimized
+fn iter_until(arg: &u8) {
+    while condition() {
+        // We can assume that
+        // 1. `condition` and `step` do not modify `*arg`
+        // 2. `arg` is dereferenceable even if `condition` does not terminate
+        // 3. `arg` is dereferenceable even if the loop runs zero times
+        step(*arg);
+    }
+}
+
+//? Optimized
+fn iter_until_opt(arg: &u8) -> u8 {
+    let varg = *arg;
+    while condition() {
+        step(varg); // Removed the dereference
+    }
+}
+```
 
 ### [Not always possible] Anticipated writes
 
 However if the function is not guaranteed to write (either because some code might not terminate
 or because the write is conditional), then Tree Borrows does not allow anticipated writes.
 
-An example from [this thread](https://rust-lang.zulipchat.com/#narrow/stream/136281-t-opsem/topic/can.20.26mut.20just.20always.20be.20two-phase/near/307569740) is not supported by Tree Borrows:
+An example from [this thread](https://rust-lang.zulipchat.com/#narrow/stream/136281-t-opsem/topic/can.20.26mut.20just.20always.20be.20two-phase/near/307569740)
+is not supported by Tree Borrows:
 
-> ```rust
-> pub fn foo(x: &mut u8, n: u8) {
->     for i in 0..n {
->         *x = n;
->     }
-> }
-> ```
-<!-- ` -->
+```rust
+//? Unoptimized
+pub fn foo(x: &mut u8, n: u8) {
+    for i in 0..n {
+        *x = n;
+    }
+}
+```
 
 This code _cannot_ be optimized to
 
-> ```rust
-> pub fn foo_opt_invalid(x: &mut u8, n: u8) {
->     let val = *x;
->     *x = n-1;
->     if unlikely(n == 0) {
->         *x = val;
->     }
-> }
-> ```
-<!-- ` -->
+```rust
+//- Incorrectly optimized
+pub fn foo_opt_invalid(x: &mut u8, n: u8) {
+    let val = *x;
+    *x = n - 1;
+    if unlikely(n == 0) {
+        *x = val;
+    }
+}
+```
 
 because writing to the location then later reverting the write still counts as
 a write access and could introduce new UB to the program.
