@@ -14,11 +14,6 @@ now handles only code that has exclusively mutable references.
 Later parts will add shared references, function calls, raw pointers, and
 interior mutability.
 
-This introduction to the model is structured so that adding the missing features
-will not _modify_ any parts of the model already introduced, so the following
-explanations can be treated as the description of a _partial_ model, rather than
-a _simplified_ one.
-
 ---
 
 ## Preliminaries
@@ -75,16 +70,22 @@ exactly each permissions should be updated for each kind of access and relative
 position in the borrow tree. The precise behavior of Tree Borrows is thus parameterized
 by the list of all permissions and how they should be updated.
 
-Note: in the implementation,
+> <span class="implnote">
+**[Note: Implementation]** in the [Miri implementation](https://github.com/rust-lang/miri),
 [tree.rs](https://github.com/rust-lang/miri/blob/master/src/borrow_tracker/tree_borrows/tree.rs)
 defines the core structure of Tree Borrows which consists of tree traversals, while
 [perms.rs](https://github.com/rust-lang/miri/blob/master/src/borrow_tracker/tree_borrows/perms.rs)
 defines the more _ad hoc_ parts of the model, i.e. the list and behavior of permissions,
-which are not `pub`{.rust}.
+which are not `pub`{.rust}. Thus even at the implementation level there is a clear separation
+between the high-level structure (propagation of foreign vs child accesses) and the details
+(state machine of permissions).
+</span>
 
-Note: compared to Stacked Borrows we gain heredity information (lossless parent-child
+> <span class="sbnote">
+**[Note: Stacked Borrows]** compared to Stacked Borrows we gain heredity information (lossless parent-child
 relationship) but lose chronological information (between two pointers both derived
 from a same parent, Tree Borrows does not keep track of which one was created first).
+</span>
 
 ### Access-based borrow tracking
 
@@ -180,8 +181,11 @@ The same trick works with `let x = &mut *(u as *mut u8)`{.rust}.
 
 ## The core model
 
+> <span class="sbnote">
+**[Note: Stacked Borrows]**
 Write accesses to mutable references follow a stack discipline, which Stacked Borrows
-already handles without any issues. Here we reframe similar rules for the tree setting.
+already handles without any issues. Here we reframe and justify similar rules for the tree setting.
+</span>
 
 The essential assumptions that we wish to make concerning mutable references are
 the following
@@ -259,7 +263,7 @@ fn refmut_nested(u: &mut u8) {
 }
 ```
 
-### Implementation
+### Modeling
 
 The following model enforces proper nesting of child lifetimes and disjointness of
 sibling lifetimes:
@@ -327,6 +331,14 @@ fn refmut_intersecting(u: &mut u8) {
     *y = 36;
 }
 ```
+
+> <span class="sbnote">
+**[Note: Stacked Borrows]**
+In Stacked Borrows terms, an `Active` is a `Unique` that is still in the stack,
+and a `Disabled` is an item that was popped. So far since the tree is limited to a single `Active`
+path, trimming all the `Disabled` branches results in a stack-like tree that directly
+matches the stack that Stacked Borrows would have at the same point of the execution.
+</span>
 
 ---
 

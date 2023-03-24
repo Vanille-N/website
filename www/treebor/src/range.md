@@ -19,7 +19,7 @@ memory do not cause aliasing UB.
 
 Since the range on which an access is performed is known, the remaining difficulty
 is to determine the range on which a reborrow should be performed and which locations
-the pointer should receive permissions on.
+the pointer should receive permissions on. These difficulties were noted in
 
 - [Issue #276: handling `extern type`](https://github.com/rust-lang/unsafe-code-guidelines/issues/276)
 - [Issue #134: range of raw pointers is too strict](https://github.com/rust-lang/unsafe-code-guidelines/issues/134)
@@ -58,13 +58,17 @@ Tree Borrows' solution is to not reborrow for the locations outside the range,
 but to maintain enough information so that whenever the location is accessed
 through a pointer for which it is out of range it can be initialized with a delay
 and receive the permissions it would have had if it had been reborrowed from the start.
-If such a location becomes `Disabled` it will not trigger a possible protector because
-it has never been accessed through a child pointer. We write these
-`Reserved?`, `Frozen?` and `Disabled?`. `Active?` is impossible because it requires
-a child access to exist. `Frozen?` reacts the same way as `Frozen` for foreign
-accesses, and it becomes `Frozen` on a child access.
 
-Here are examples of how this applies concretely
+> <span class="implnote">
+**[Note: Implementation]** This delayed initialization outside of the known reborrowed
+range is indicated by the `initialized` boolean field of each memory location for each pointer
+</span>
+
+If such a location becomes `Disabled` it will not trigger a possible protector because
+it has never been accessed through a child pointer. We write these not yet initialized
+locations with `?`: they have the same transitions as the initialized versions,
+and they become initialized on the first child access.
+Here are examples of how this applies.
 
 #### Example: write to offset pointer
 
@@ -105,6 +109,12 @@ fn inc_both(u: &mut u8, v: &mut u8) {
               //    |--- v: Disabled?|Active [protected]
 }
 ```
+
+> <span class="sbnote">
+**[Note: Stacked Borrows]** Stacked Borrows has no such mechanism, and the
+"`&array[0] as *const _` + `ptr.add(_)`" pattern has been the cause of UB according to SB
+in common crates including `rand` and `hashbrown`.
+</span>
 
 ---
 

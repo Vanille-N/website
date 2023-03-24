@@ -33,4 +33,11 @@
         color: #ffccff;
         font-weight: 300;
     }
+
+    .implnote {
+        color: lightgreen;
+    }
+    .sbnote {
+        color: lightblue;
+    }
 </style>

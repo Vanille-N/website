@@ -15,11 +15,23 @@ When the aliasing assumptions are considered to have been violated, the code is 
 
 ---
 
-The current version of Tree Borrows is implemented in the
-[Miri](https://github.com/rust-lang/miri/tree/master/src/borrow_tracker/tree_borrows)
+The current version of Tree Borrows is
+[implemented](https://github.com/rust-lang/miri/tree/master/src/borrow_tracker/tree_borrows)
+in the
+[Miri](https://github.com/rust-lang/miri/)
 interpreter.
 Compared to [the detailed description](https://github.com/Vanille-N/tree-borrows/blob/master/half/main.pdf),
 this document is more example-oriented.
+
+> <span class="implnote"> **[Note: Implementation]**
+These blocks contain insights about the implementation.
+They are not necessary for understanding the model.
+</span>
+
+> <span class="sbnote"> **[Note: Stacked Borrows]**
+These are comparisons between Stacked Borrows and Tree Borrows.
+If the reader is not familiar with Stacked Borrows they are secondary.
+</span>
 
 # Table of contents
 

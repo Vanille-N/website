@@ -19,7 +19,7 @@ made so far.
 ```rust
 //+ This is safe code that compiles, it MUST NOT BE UB.
 fn set(u: &Cell<u8>) {
-    u.set(42); // This performs a write access, but the parent is a `&` which should be `Frozen`
+    u.set(42); // This performs a write access, but the parent is a `&` which should be `Frozen` ?
 }
 ```
 
@@ -41,6 +41,11 @@ fn mutation_during_two_phase(u: &mut Cell<u8>) {
     });
 }
 ```
+
+> <span class="sbnote">
+**[Note: Stacked Borrows]** Stacked Borrows incorrectly allows writes to non-interior-mutable
+two-phase borrows, but both Stacked and Tree Borrows must allow writes to interior-mutable two-phase borrows.
+</span>
 
 ## Additions to the model
 
@@ -66,6 +71,13 @@ from how normal references behave:
 - when under a protector, interior mutable `Reserved` no longer allow foreign reads;
 - interior mutable `Reserved` still become `Active` upon a child write, so that
   `&mut Cell<_>` is properly unique.
+
+> <span class="sbnote">
+**[Note: Stacked Borrows]**
+By allowing both foreign reads and foreign writes, an interior-mutable unprotected `Reserved`
+behaves very similarly to a raw pointer, which coincidentally matches Stacked Borrows' modeling
+of two-phase borrows with a raw pointer.
+</span>
 
 
 # Complete summary

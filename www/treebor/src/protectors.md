@@ -17,11 +17,11 @@ we wish to be able to assume that references live until the end of the function,
 as well as give reference arguments to functions the LLVM attribute
 [noalias](https://llvm.org/docs/LangRef.html#noalias), which is described as
 
-> noalias
-
-> This indicates that memory locations accessed via pointer values based on the argument
+> <span style="color:white"> noalias <br>
+This indicates that memory locations accessed via pointer values based on the argument
 are not also accessed, during the execution of the function, via pointer values not based on the argument.
 This guarantee only holds for memory locations that are modified, by any means, during the execution of the function.
+</span>
 
 Or in the language of Tree Borrows:
 
@@ -76,11 +76,13 @@ Detecting this takes two forms:
 - protected `Reserved` pointers are not unchanged by foreign reads: they become
   `Frozen`.
 
-Note: this mostly align with the concept of protectors from Stacked Borrows,
+> <span class="sbnote">
+**[Note: Stacked Borrows]** This mostly align with the concept of protectors from Stacked Borrows,
 except that in SB loss of permissions is indicated by being popped from the stack,
 whereas in TB it takes the form of becoming `Disabled`. Thus what triggers
 protectors in SB is popping a protected item, in TB it is performing an invalid
 transition.
+</span>
 
 ## New possible optimizations
 
@@ -181,14 +183,12 @@ pub fn foo(x: &mut u8, n: u8) {
         *x = n;
     }
 }
-```
 
-This code _cannot_ be optimized to
-
-```rust
 //- Incorrectly optimized
 pub fn foo_opt_invalid(x: &mut u8, n: u8) {
     let val = *x;
+    // This optimization assumes that `x` is writeable, which was not necessarily
+    // the case in the unoptimized version when `n == 0`.
     *x = n - 1;
     if unlikely(n == 0) {
         *x = val;
@@ -196,8 +196,16 @@ pub fn foo_opt_invalid(x: &mut u8, n: u8) {
 }
 ```
 
-because writing to the location then later reverting the write still counts as
+More generally writing to the location then later reverting the write still counts as
 a write access and could introduce new UB to the program.
+
+> <span class="sbnote">
+**[Note: Stacked Borrows]**
+This is a loss of potential optimization compared to Stacked Borrows which does allow
+spurrious writes but it is necessary if we want the previous `copy_nonoverlapping` example
+to be allowed.
+</span>
+
 
 ---
 

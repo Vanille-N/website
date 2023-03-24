@@ -45,6 +45,14 @@ version requires the unconditional validity of `x`.
 Tree Borrow's approach to this is to perform a fake read access upon a reborrow,
 thus asserting that every newly created reference can be read from.
 
+> <span class="sbnote">
+**[Note: Stacked Borrows]**
+Both Tree Borrows and Stacked Borrows perform this fake read access on a shared reborrow.
+However on a mutable reborrow, Stacked Borrows performs an additional fake write access,
+which Tree Borrows does not. This costs some optimizations (some reorderings involving writes)
+but makes mutable references interact more consistently with shared references.
+</span>
+
 This also allows the use of the
 [dereferenceable](https://llvm.org/docs/LangRef.html) attribute in LLVM, which
 enables additional optimizations.
@@ -104,9 +112,13 @@ fn several_raw(u: &mut u8) {
 }
 ```
 
-Note: this approach to raw pointers means that Tree Borrows is not subjected to
-the Stacked Borrows limitation described in
-[Issue #227: raw pointers inherit permissions](https://github.com/rust-lang/unsafe-code-guidelines/issues/227).
+> <span class="sbnote">
+**[Note: Stacked Borrows]**
+Tree Borrows' approach to raw pointers (having them share exactly the same permission
+as their direct parent at all times) avoids Stacked Borrows'
+[Issue #227](https://github.com/rust-lang/unsafe-code-guidelines/issues/227).
+of ambiguity in inherited permissions.
+</span>
 
 ## References can live together when `Frozen`
 
@@ -174,7 +186,6 @@ In summary
 - `Frozen` is unaffected by foreign reads,
 - `Frozen` becomes `Disabled` on a foreign write.
 
-
 ## Don't `Disable` immediately, keep `Frozen` instead
 
 Until now we have avoided the question of what to do when an `Active` encounters
@@ -184,7 +195,7 @@ that child reads are allowed, but what happens on a foreign read ?
 The Borrow Tracker suggests that the mutable reference should be killed completely,
 but we argue that it should merely become `Frozen`. In other words a mutable
 reference is downgraded to a shared reference when other shared references start
-accessing the data.
+accessing the data immutably.
 
 ```rust
 //+ TB: NOT UB (mutable reference is still accessible as read-only)
@@ -245,6 +256,13 @@ This shows us that we must have
 - `Active` allows child reads,
 - `Active` becomes `Frozen` on a foreign read.
 
+> <span class="sbnote">
+**[Note: Stacked Borrows]**
+In Stacked Borrows mutable references are _not_ downgraded to shared references, they are
+instead completely invalidated on a read access. This is undesirable since it invalidates
+a standard optimization, but it is also required in Stacked Borrows otherwise other bigger problems
+appear.
+</span>
 
 ## `Reserve` until needed
 
@@ -313,6 +331,13 @@ fn push_len_desugared(v: &mut Vec<usize>) {
 }
 ```
 
+> <span class="sbnote">
+**[Note: Stacked Borrows]**
+Stacked Borrows has no direct equivalent of `Reserved`: in SB two-phase borrows
+are raw pointers (much more permissive than `Reserved`) and standard mutable borrows
+are `Unique` (much more strict than `Reserved`).
+</span>
+
 #### Example: stdlib test that passes thanks to `Reserved`
 
 ```rust
@@ -358,10 +383,12 @@ In this example we call `data.as_ptr()`{.rust} followed by `data.as_mut_ptr()`{.
 The opposite ordering (computing `raw_mut` then `raw_shr`) results in exactly the same tree
 since both `Reserved` and `Frozen` tolerate the read-only reborrow of `as{_mut,}_ptr`.
 
-Note: Stacked Borrows does not allow both orderings: computing `raw_mut` second asserts
+> <span class="sbnote">
+**[Note: Stacked Borrows]** Stacked Borrows does not allow both orderings: computing `raw_mut` second asserts
 uniqueness and invalidates `raw_shr`.
-More generally Stacked Borrows performs a fake write access upon creation of an `&mut`,
+More generally Stacked Borrows immediately asserts uniqueness upon creation of an `&mut`,
 which has been reported to be [too strict](https://github.com/rust-lang/unsafe-code-guidelines/issues/133).
+</span>
 
 <!-- FIXME: sometimes needs less brutal context switching and reasoning skips -->
 <!-- FIXME: issues should not be assumed to be known and should be made explicitly comparisons with SB -->
@@ -374,20 +401,26 @@ The model so far allows at least the following optimizations:
 
 #### Grouping together related writes
 
-Although it is not always possible to reorder writes accesses with code that performs
+Unfortunately it is not always possible to reorder writes accesses with code that performs
 reads, as the following example shows
 
 ```rs
 let x = &mut *u; // `x: Reserved`
 let yval = *y;   // Regardless of whether `x` and `y` alias, `x` is still `Reserved`
 *x += 1;         // `x: Active`
-                 // NO UB even if `x` and `y` alias
+                 // NO UB according to TB even if `x` and `y` alias.
                  // Therefore we can't _assume_ that `x` and `y` don't alias,
                  // the read and the write cannot be reordered unless we _know_
                  // through other means that they are disjoint.
 ```
 
-we can still group together related writes if there are no child pointers.
+> <span class="sbnote">
+**[Note: Stacked Borrows]** Stacked Borrows allows the above optimization, at
+the cost of a less homogeneous handling of mutable references (allowed for standard
+reborrows but disallowed for two-phase borrows).
+</span>
+
+However in Tree Borrows we can still group together related writes if there are no child pointers.
 
 ```rs
 // Unoptimized
@@ -410,10 +443,12 @@ Reordering two read operations is a standard optimization and it obviously
 does not change the behavior of the program, but we must take care that it
 does not introduce additional UB.
 
-Note: Stacked Borrows suffers from this, where a read-only access to a reference
-invalidates existing mutable references even for reading. While the original
+> <span class="sbnote">
+**[Note: Stacked Borrows]** Stacked Borrows suffers from this issue, where a read-only
+access to a reference invalidates existing mutable references even for reading. While the original
 purpose is to enable more optimizations, this results in existing optimizations
 actually being forbidden because the optimized code exhibits UB.
+</span>
 
 For Tree Borrows, in defining the effects of read accesses we have ensured that
 a read access never invalidates (causes to be UB) another read: permissions
@@ -421,7 +456,7 @@ that allow reading (`Reserved`, `Active`, and `Frozen`) and are subjected
 to a foreign read result in permissions that still allow reading (`Reserved` and `Frozen`).
 Therefore the model allows any reordering of any adjacent read operations.
 
-This includes the possibility of reordering reborrows with each other and
+This also includes the possibility of reordering reborrows with each other and
 with reads, since (1) reborrows do not count as write accesses and (2) both
 initial permissions (`Reserved` and `Frozen`) created after a reborrow tolerate
 foreign reads. The `copy_nonoverlapping` example above is one such instance.

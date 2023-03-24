@@ -26,10 +26,10 @@ edit:
 		xargs -o vim src/index.md
 
 show-fix:
-	rg 'FIXME' *.md
+	rg 'FIXME' src/
 
 fix:
-	rg 'FIXME' --files-with-matches *.md | \
+	rg 'FIXME' --files-with-matches src/ | \
 		xargs -o vim '+/FIXME'
 
 .PHONY: clean push edit fix
