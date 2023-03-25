@@ -84,7 +84,7 @@ of two-phase borrows with a raw pointer.
 
 With this the model is complete, and we summarize it with the following automaton:
 
-![](automaton.svg)
+![](figs/automaton.svg)
 
 **When creating a new pointer `z` from an existing `y`**
 
