@@ -65,7 +65,7 @@ clean:
 	find www/pics \
 		-name '*.tar' \
 		-exec rm {} +
-	rm -f subdirs.mk share-update.mk
+	rm -f subdirs.mk share-update.mk sync.mk pics.mk
 
 force:
 	make clean
