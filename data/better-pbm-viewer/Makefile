@@ -1,3 +1,6 @@
+# Manager for better-pbm-viewer
+# Pretty trivial
+
 ICO = favicon.ico
 INDEX = index.html
 

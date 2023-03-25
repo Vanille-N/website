@@ -42,20 +42,28 @@ class Move:
 def traverse(structure, lpath="/", rpath="/"):
     verify(rpath)
     match structure:
+        # List of structures: recurse into each
         case [*its]:
             for it in its:
                 traverse(it, lpath, rpath)
+        # Both adds the same suffix to both paths
         case Both(app, sub):
             traverse(sub, lpath+"/"+app, rpath+"/"+app)
+        # Out only modifies the target path
         case Out(app, sub):
             traverse(sub, lpath+"/"+app, rpath)
+        # In only modifies the source path
         case In(app, sub):
             traverse(sub, lpath, rpath+"/"+app)
+        # Split modifies both paths differently
         case Split(lapp, rapp, sub):
             traverse(sub, lpath+"/"+lapp, rpath+"/"+rapp)
+        # Invokes a make command in a remote folder
+        # to ensure that the source is up to date
         case Make(target):
             changedir(rpath)
             execute_make(target)
+        # Copies the source to the target
         case Move(target, source):
             createdir(lpath)
             execute_move(lpath+"/"+target, rpath+"/"+source)
