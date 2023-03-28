@@ -138,7 +138,7 @@ fn convoluted_write(u: &mut u8) -> u8 {
 }
 
 //? Optimized
-fn convoluted_write_opt(u: &u8) -> u8 {
+fn convoluted_write_opt(u: &mut u8) -> u8 {
     opaque();
     *u = 42;
     42
