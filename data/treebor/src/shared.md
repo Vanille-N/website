@@ -156,7 +156,7 @@ a shared reference is only alive as long as no foreign writes occur.
 fn share_until_write(u: &mut u8) {
     let x = &*u;
     let y = &*x;
-    let z = &*y;
+    let z = &*u;
                         // As many `Frozen` as needed can coexist.
                         // They can be only read, but the order does not matter.
                         // --- u: Active
