@@ -65,11 +65,11 @@ fn reborrow_disabled(u: &mut u8) {
     *x = 42;
 
     let y = &mut *u;
-    *x = 36;
+    *y = 36;
                         // --- u: Active
                         //     |--- x: Disabled
                         //     |--- y: Active
-    let y = &*x;
+    let z = &*x;
                         // This is an attempted reborrow from `x: Disabled`.
                         // It counts as an attempted read, and `Disabled` forbids
                         // reads.
