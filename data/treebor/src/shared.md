@@ -85,7 +85,7 @@ parent reference.
 //+ TB: NO UB (raw pointers derived from the same reference can coexist)
 fn several_raw(u: &mut u8) {
     let r0 = &mut *u;
-    *r = 42;
+    *r0 = 42;
                            // --- u: Active
                            //     |--- r0: Active
 
