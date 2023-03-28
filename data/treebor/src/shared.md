@@ -422,7 +422,7 @@ reborrows but disallowed for two-phase borrows).
 However in Tree Borrows we can still group together related writes if there are no child pointers.
 
 ```rs
-// Unoptimized
+//? Unoptimized
 let x = &mut *u;  // `x: Reserved`, also `x` does not have child pointers
 *x += 1;          // `x: Active`
 let yval = *y;    // If `y` and `x` alias then `x: Disabled` otherwise `x: Active`
@@ -430,7 +430,7 @@ let yval = *y;    // If `y` and `x` alias then `x: Disabled` otherwise `x: Activ
 
 // We can assume that `x` and `y` do not alias and group together the two increments
 
-// Optimized
+//? Optimized
 let x = &mut *u;
 *x += 2;
 let yval = *y;
