@@ -507,7 +507,7 @@
         <itemData name="Definition"   defStyleNum="dsNormal" spellChecking="0"/>
         <itemData name="Comment"      defStyleNum="dsComment"/>
         <itemData name="Scope"        defStyleNum="dsPreprocessor" spellChecking="0"/>
-        <itemData name="Number"       defStyleNum="dsDecVal" spellChecking="0"/>
+        <itemData name="Number"       defStyleNum="dsConstant" spellChecking="0"/>
         <itemData name="String"       defStyleNum="dsString"/>
         <itemData name="CharEscape"   defStyleNum="dsSpecialChar" spellChecking="0"/>
         <itemData name="Character"    defStyleNum="dsChar" spellChecking="0"/>

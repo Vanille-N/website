@@ -185,7 +185,7 @@ fn example_fixed(u: &mut u8) { unsafe {
 } }
 ```
 
-using `std::ptr::addr_of_mut`{.rust}.
+using `std::ptr::addr_of_mut!`{.rust}.
 The same trick works with `let x = &mut *(u as *mut u8)`{.rust}.
 
 > <span class="tldr">

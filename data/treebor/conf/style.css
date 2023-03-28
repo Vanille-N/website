@@ -1,12 +1,12 @@
 <style>
-    html { background-color: #202020; }
+    html { background-color: #1d2021; }
     body {
         margin: 40px auto;
         max-width: 1200px;
         line-height: 1.5;
         font-size: 18px;
         font-weight: 350;
-        color: #fbecb2;
+        color: #fbf1c7;
         background: #282828;
         padding: 0 10px
     }
@@ -14,36 +14,36 @@
         line-height: 1.2
     }
     h1 {
-        color: #e6e6ff;
+        color: #a8ab16;
         font-weight: 800;
     }
     h2 {
-        color: #b3b3ff;
+        color: #b8bb26;
         font-weight: 700;
     }
     h3 {
-        color: #4d4dff;
+        color: #c8cb36;
         font-weight: 600;
     }
     html:not(.inverted) a {
-        color: #ccffff;
+        color: #8ec07c;
         font-weight: 300;
     }
     html:not(.inverted) a:visited {
-        color: #ffccff;
+        color: #d3869b;
         font-weight: 300;
     }
 
     .implnote {
-        color: lightgreen;
+        color: #afcf92;
     }
     .sbnote {
-        color: lightblue;
+        color: #9bb4a1;
     }
     .tldr {
-        color: orange;
+        color: #fad473;
     }
     .intuition {
-        color: orchid;
+        color: #d3869b;
     }
 </style>
