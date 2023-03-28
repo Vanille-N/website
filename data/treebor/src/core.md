@@ -22,16 +22,16 @@ interior mutability.
 
 Tree Borrows defines an _aliasing model_ for pointers and references, which sets
 the limits on the aliasing assumptions that can be made. These assumptions include
-guarantees such as "reading twice from the same `&` reference returns the same value",
+guarantees such as "reading twice from the same `&`{.rust} reference returns the same value",
 or "an `&mut` reference has exclusive access to the data it mutates".
 
-These assumptions in turn allow some optimizations (e.g. if `&` references are
+These assumptions in turn allow some optimizations (e.g. if `&`{.rust} references are
 immutable then the compiler can delete redundant reads), but they can be violated
 by `unsafe`{.rust} code. This leads to many optimizations that are valid in safe
-codebases but not in the presence of `unsafe`.
+codebases but not in the presence of `unsafe`{.rust}.
 
 Tree Borrows restores some of these assumptions by enforcing more restrictions
-on runtime usage of `unsafe` operations, which leads to the assumptions defined
+on runtime usage of `unsafe`{.rust} operations, which leads to the assumptions defined
 by Tree Borrows (and the associated optimizations) to hold for both safe and `unsafe`{.rust}
 code.
 

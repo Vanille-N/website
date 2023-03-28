@@ -7,7 +7,7 @@ It describes the purpose and mechanism of the Tree Borrows aliasing semantics.
 
 As shown in the Makefile, this page is built by `pandoc`.
 
-```sh
+```bash
 # The code blocks use a modified Rust language definition that recognizes special
 # comment markers such as `//-` `//+` `//?`. This allows clearer examples.
 SYN = conf/rust.xml
