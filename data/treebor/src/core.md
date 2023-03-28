@@ -20,13 +20,20 @@ interior mutability.
 
 ### Purpose
 
-Tree Borrows defines an aliasing model for pointers and references, which sets
+Tree Borrows defines an _aliasing model_ for pointers and references, which sets
 the limits on the aliasing assumptions that can be made. These assumptions include
 guarantees such as "reading twice from the same `&` reference returns the same value",
 or "an `&mut` reference has exclusive access to the data it mutates".
+
 These assumptions in turn allow some optimizations (e.g. if `&` references are
-immutable then the compiler can delete redundant reads).
-Crucially these assumptions hold for both safe and unsafe code.
+immutable then the compiler can delete redundant reads), but they can be violated
+by `unsafe`{.rust} code. This leads to many optimizations that are valid in safe
+codebases but not in the presence of `unsafe`.
+
+Tree Borrows restores some of these assumptions by enforcing more restrictions
+on runtime usage of `unsafe` operations, which leads to the assumptions defined
+by Tree Borrows (and the associated optimizations) to hold for both safe and `unsafe`{.rust}
+code.
 
 ### Structure
 
@@ -57,11 +64,11 @@ of non-child pointers, and accesses through them might occur in parallel.
 This distinction is important for Tree Borrows, which handles differently
 accesses through child or non-child pointers.
 
-- An access through a child pointer is called a _child access_. Child accesses
+- An access through a child pointer is called a **child access**. Child accesses
 require some permissions, and cause UB if and only if the permissions of the
 pointer are insufficient.
 
-- An access through a non-child pointer is called a _foreign access_.
+- An access through a non-child pointer is called a **foreign access**.
 Foreign accesses cause the pointer to lose permissions, and can cause UB if
 the pointer in question is not allowed to lose permissions.
 
@@ -85,12 +92,14 @@ between the high-level structure (propagation of foreign vs child accesses) and 
 **[Note: Stacked Borrows]** compared to Stacked Borrows we gain heredity information (lossless parent-child
 relationship) but lose chronological information (between two pointers both derived
 from a same parent, Tree Borrows does not keep track of which one was created first).
+In fact, this loss of chronological information enables optimizations that Stacked Borrows does
+not, since it allows reordering reborrows.
 </span>
 
 ### Access-based borrow tracking
 
-Tree Borrows is characterized by the fact that it executes at runtime and is
-access-based, as opposed to compile-time and scope-based.
+Tree Borrows is characterized by the fact that it executes at **runtime** and is
+**access-based**, as opposed to compile-time and scope-based.
 The code is executed, and the model tracks updates to the state of borrows after
 each _access_. Code that is never executed cannot produce UB.
 
@@ -136,7 +145,8 @@ which permits separare references to different indexes of an array or to
 different fields of a `struct`{.rust}: as long as the borrows are on disjoint parts
 of memory (and even if it is impossible to guarantee at compile-time that those
 parts are disjoint, but they happen to be at runtime) the behavior according to
-Tree Borrows will generally be trivial.
+Tree Borrows will generally be trivial in the sense that there is no aliasing
+on each location.
 
 ### Unsafe
 
@@ -178,6 +188,12 @@ fn example_fixed(u: &mut u8) { unsafe {
 using `std::ptr::addr_of_mut`{.rust}.
 The same trick works with `let x = &mut *(u as *mut u8)`{.rust}.
 
+> <span class="tldr">
+**[Summary]**
+Each pointer on each byte of memory has a _permission_. This permission
+dictates what accesses are allowed through this pointer and child pointers,
+and evolves depending on the accesses performed by non-child pointers.
+</span>
 
 ## The core model
 
@@ -221,7 +237,7 @@ two sources, which Tree Borrows detects using the `Active` and `Disabled` permis
 - an `Active` pointer is a live mutable reference
 - a `Disabled` pointer is a dead reference
 
-### Active and Disabled: tracking exclusive mutable access
+### `Active` and `Disabled`: tracking exclusive mutable access
 
 Guaranteeing that mutable references have exclusive access means that the
 lifetimes of mutable references must be disjoint. This is easy to check: when
@@ -263,14 +279,15 @@ fn refmut_nested(u: &mut u8) {
 }
 ```
 
-### Modeling
-
-The following model enforces proper nesting of child lifetimes and disjointness of
-sibling lifetimes:
-
-- all write accesses must be done through an `Active` pointer,
+> <span class="tldr">
+**[Summary]**
+Proper nesting of child lifetimes and disjointness of sibling lifetimes
+are enforced by the `Active` and `Disabled` permissions:
+<br>- `Active` is a live mutable reference, `Disabled` is a dead mutable reference;
+<br>- all write accesses must be done through an `Active` pointer,
 attempting to write through `Disabled` is UB;
-- a foreign write turns any existing `Active` permissions into `Disabled`.
+<br>- a foreign write turns any existing `Active` permissions into `Disabled`.
+</span>
 
 #### Example: how TB detects an improperly nested reborrow
 

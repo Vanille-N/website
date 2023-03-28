@@ -52,7 +52,9 @@ But on the other hand we would also like to be able to, among other things
   beyond the range it was reborrowed on;
 - have some guarantees for `extern type`s, the size of which is unknown.
 
-So Tree Borrows must have some tolerance with regards to using a pointer
+All of these involve using a pointer out of the bounds of its reborrow
+(but still within the bounds of its allocation), so in order to allow these
+Tree Borrows must have some tolerance with regards to using a pointer
 outside of the range it was reborrowed for.
 Tree Borrows' solution is to not reborrow for the locations outside the range,
 but to maintain enough information so that whenever the location is accessed
@@ -76,13 +78,13 @@ Here are examples of how this applies.
 //+ TB: NOT UB (Delayed initialization)
 //+ Common pattern, it would be PREFERABLY NOT UB.
 let val = [1u8, 2];
-                                     // --- val: Active|Active
+                                     // --- val: [Active, Active]
 let ptr = &val[0] as *const u8;
-                                     // --- val: Active|Active
-                                     //     |--- ptr: Frozen|Frozen?
+                                     // --- val: [Active, Active]
+                                     //     |--- ptr: [Frozen, Frozen?]
 let _val = unsafe { *ptr.add(1) };
-                                     // --- val: Active|Active
-                                     //     |--- ptr: Frozen|Frozen
+                                     // --- val: [Active, Active]
+                                     //     |--- ptr: [Frozen, Frozen]
 ```
 
 #### Example: write to disjoint fields
@@ -96,17 +98,17 @@ fn main() {
 }
 
 fn inc_both(u: &mut u8, v: &mut u8) {
-              // ---t: Active|Active
-              //    |--- u: Reserved|Reserved? [protected]
-              //    |--- v: Reserved?|Reserved [protected]
+              // ---t: [Active, Active]
+              //    |--- u: [Reserved, Reserved?] (protected)
+              //    |--- v: [Reserved?, Reserved] (protected)
     *u += 1;
-              // ---t: Active|Active
-              //    |--- u: Active|Reserved? [protected]
-              //    |--- v: Disabled?|Reserved [protected]
+              // ---t: [Active, Active]
+              //    |--- u: [Active, Reserved?] (protected)
+              //    |--- v: [Disabled?, Reserved] (protected)
     *v += 1;
-              // ---t: Active|Active
-              //    |--- u: Active|Disabled? [protected]
-              //    |--- v: Disabled?|Active [protected]
+              // ---t: [Active, Active]
+              //    |--- u: [Active, Disabled?] (protected)
+              //    |--- v: [Disabled?, Active] (protected)
 }
 ```
 
@@ -114,6 +116,13 @@ fn inc_both(u: &mut u8, v: &mut u8) {
 **[Note: Stacked Borrows]** Stacked Borrows has no such mechanism, and the
 "`&array[0] as *const _` + `ptr.add(_)`" pattern has been the cause of UB according to SB
 in common crates including `rand` and `hashbrown`.
+</span>
+
+> <span class="tldr">
+**[Summary]**
+Tree Borrows includes some delayed initialization of permissions outside of the range
+of a pointer. This permits using raw pointers outside of their initial range while
+still providing aliasing guarantees on all bytes.
 </span>
 
 ---

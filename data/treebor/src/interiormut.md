@@ -79,12 +79,24 @@ behaves very similarly to a raw pointer, which coincidentally matches Stacked Bo
 of two-phase borrows with a raw pointer.
 </span>
 
+> <span class="tldr">
+**[Summary]**
+Interior mutability inherently breaks some assumptions of immutability and uniqueness.
+Several shared reborrows of the same pointer can coexist and mutate the data.
+The guarantees of protectors supercede the modifications made to interior mutable
+two-phase borrows.
+</span>
+
 
 # Complete summary
 
-With this the model is complete, and we summarize it with the following automaton:
+With protectors and interior mutability the model is now complete,
+and we summarize it with the following automaton:
 
-![](figs/automaton.svg)
+![**State automaton of pointer permissions.**
+During its lifetime each pointer is subjected to a number of child/foreign
+read/write accesses, and each of them can update the permission associated
+with the pointer on some bytes of memory.](figs/automaton.svg)
 
 **When creating a new pointer `z` from an existing `y`**
 

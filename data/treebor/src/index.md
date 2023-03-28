@@ -10,8 +10,10 @@ lang: en
 Tree Borrows is a proposed alternative to
 [Stacked Borrows](https://www.ralfj.de/blog/2019/05/21/stacked-borrows-2.1.html)
 that fulfills the same role: to analyse the execution of Rust code at runtime
-(so actually MIR rather than Rust) and declare the precise requirements of the aliasing constraints.
-When the aliasing assumptions are considered to have been violated, the code is declared UB.
+and define the precise requirements of the aliasing constraints.
+When these aliasing constraints are violated, the code is declared
+Undefined Behavior (UB). This enable optimizations that would otherwise be
+unsound in the presence of `unsafe`{.rust} code.
 
 ---
 
@@ -20,18 +22,8 @@ The current version of Tree Borrows is
 in the
 [Miri](https://github.com/rust-lang/miri/)
 interpreter.
-Compared to [the detailed description](https://github.com/Vanille-N/tree-borrows/blob/master/half/main.pdf),
+Compared to [another description](https://github.com/Vanille-N/tree-borrows/blob/master/half/main.pdf),
 this document is more example-oriented.
-
-> <span class="implnote"> **[Note: Implementation]**
-These blocks contain insights about the implementation.
-They are not necessary for understanding the model.
-</span>
-
-> <span class="sbnote"> **[Note: Stacked Borrows]**
-These are comparisons between Stacked Borrows and Tree Borrows.
-If the reader is not familiar with Stacked Borrows they are secondary.
-</span>
 
 # Table of contents
 
@@ -47,6 +39,8 @@ If the reader is not familiar with Stacked Borrows they are secondary.
     (`extern type` and pointer offsets)
 
 
-See also some [References](refs.html)
+See also some [References](refs.html).
+Suggest modifications to this document by opening a
+[pull request](https://github.com/Vanille-N/website/tree/master/data/treebor/src).
 
 ---

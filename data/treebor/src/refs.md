@@ -12,10 +12,11 @@ lang: en
 - [This](https://perso.crans.org/vanille/treebor)
 - [Description](https://github.com/Vanille-N/tree-borrows)
 - [Implementation](https://github.com/rust-lang/miri/tree/master/src/borrow_tracker/tree_borrows)
-- [Early thoughts about `Reserved`](https://rust-lang.zulipchat.com/#narrow/stream/136281-t-lang.2Fwg-unsafe-code-guidelines/topic/can.20.26mut.20just.20always.20be.20two-phase)
+- [Early thoughts about `Reserved`](https://rust-lang.zulipchat.com/#narrow/stream/136281-t-opsem/topic/can.20.26mut.20just.20always.20be.20two-phase/near/281330834)
 
 Note: although [this project](https://internals.rust-lang.org/t/improve-upon-stacked-borrows-by-introducing-a-tree/16576)
-shares the same name, it is otherwise completely unrelated.
+shares the same name and purpose, it is otherwise unrelated and has a completely different approach
+to how the tree structure and permissions are interpreted and updated.
 
 ## Stacked Borrows
 

@@ -116,7 +116,7 @@ fn several_raw(u: &mut u8) {
 **[Note: Stacked Borrows]**
 Tree Borrows' approach to raw pointers (having them share exactly the same permission
 as their direct parent at all times) avoids Stacked Borrows'
-[Issue #227](https://github.com/rust-lang/unsafe-code-guidelines/issues/227).
+[Issue #227](https://github.com/rust-lang/unsafe-code-guidelines/issues/227)
 of ambiguity in inherited permissions.
 </span>
 
@@ -180,11 +180,6 @@ fn share_until_write(u: &mut u8) {
 }
 ```
 
-In summary
-
-- `Frozen` allows child reads and forbids (UB) child writes,
-- `Frozen` is unaffected by foreign reads,
-- `Frozen` becomes `Disabled` on a foreign write.
 
 ## Don't `Disable` immediately, keep `Frozen` instead
 
@@ -251,17 +246,23 @@ fn swappable_reads(u: &mut u8) {
 }
 ```
 
-This shows us that we must have
-
-- `Active` allows child reads,
-- `Active` becomes `Frozen` on a foreign read.
-
 > <span class="sbnote">
 **[Note: Stacked Borrows]**
 In Stacked Borrows mutable references are _not_ downgraded to shared references, they are
 instead completely invalidated on a read access. This is undesirable since it invalidates
 a standard optimization, but it is also required in Stacked Borrows otherwise other bigger problems
 appear.
+</span>
+
+> <span class="tldr">
+**[Summary]**
+`Frozen` is a permission that represents immutable or no-longer-mutable
+references. It is the permission that shared references are initialized to, and it
+enables sharing read-only data.
+<br>- `Frozen` allows child reads and forbids (UB) child writes,
+<br>- `Frozen` is unaffected by foreign reads,
+<br>- `Frozen` becomes `Disabled` on a foreign write.
+<br>- `Active` becomes `Frozen` on a foreign read.
 </span>
 
 ## `Reserve` until needed
@@ -276,25 +277,26 @@ and for not performing a fake write upon creation:
   mutate the data, so making the mere creation of an `&mut` a write access causes some
   read-only code to contain UB.
 
-We model this by introducing a new state called `Reserved`, which behaves very similarly
-to `Frozen`:
+We model this by introducing a new state called `Reserved`, which allows
+child and foreign reads until the reference is written to.
 
-- `Reserved` becomes `Active` on the first child write,
-- `Reserved` otherwise behaves exactly like a `Frozen`: it allows child reads,
+> <span class="tldr">
+**[Summary]**
+`Reserved` is the permission of a not-yet-mutable or two-phase-borrowed pointer.
+<br>- `Reserved` becomes `Active` on the first child write,
+<br>- `Reserved` otherwise behaves exactly like a `Frozen`: it allows child reads,
   is unaffected by foreign reads, and becomes `Disabled` on a foreign write.
+</span>
 
-
-We now have an overview of the complete lifetime of a mutable reference:
-
-It turns out that this `Reserved` permission makes a lot of code allowed, including
+This `Reserved` permission makes a lot of code allowed, including
 some very common patterns of `unsafe` code, and even some safe code that we would have
 needed to allow anyway and would have been much more difficult to handle were it not
 for `Reserved`.
 
 #### Example: easy two-phase borrow with `Reserved`
 
-Safe code that is accepted by TB thanks to `Reserved` includes code that makes use of
-[two-phase borrows](https://rustc-dev-guide.rust-lang.org/borrow_check/two_phase_borrows.html).
+[Two-phase borrows](https://rustc-dev-guide.rust-lang.org/borrow_check/two_phase_borrows.html)
+are the main use of `Reserved`.
 
 ```rust
 //+ TB: NOT UB (standard two-phase borrow example)
@@ -359,7 +361,7 @@ fn mut_raw_then_mut_shr() {
 ```rust
 //+ TB: NOT UB (Reserved interacts nicely with reborrow-and-offset)
 //+ Common pattern, would be PREFERABLY NOT UB.
-let data = &mut [0u8, 1];
+let data = &mut [0u8, 1u8];
 unsafe {
     let raw_shr = data.as_ptr(); // implicitly reborrows an `&` reference, producing `Frozen`
     let raw_mut = data.as_mut_ptr().add(1); // implicitly reborrows an `&mut` reference, producing `Reserved`
@@ -391,15 +393,12 @@ which has been reported to be [too strict](https://github.com/rust-lang/unsafe-c
 </span>
 
 <!-- FIXME: sometimes needs less brutal context switching and reasoning skips -->
-<!-- FIXME: issues should not be assumed to be known and should be made explicitly comparisons with SB -->
-<!-- FIXME: in general, make skippable boxes for people who want to compare with SB -->
-<!-- FIXME: two-phase borrows more prominent as a motivation -->
 
 ## Permitted optimizations
 
 The model so far allows at least the following optimizations:
 
-#### Grouping together related writes
+### Grouping together related writes
 
 Unfortunately it is not always possible to reorder writes accesses with code that performs
 reads, as the following example shows
@@ -437,7 +436,7 @@ let x = &mut *u;
 let yval = *y;
 ```
 
-#### Reordering any two reads
+### Reordering any two reads
 
 Reordering two read operations is a standard optimization and it obviously
 does not change the behavior of the program, but we must take care that it

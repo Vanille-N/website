@@ -67,21 +67,25 @@ Detecting this takes two forms:
   and turning it `Frozen` makes the stronger guarantee that it will _never_
   be written to.
 
-### Summary
-
-- any protected pointer that becomes `Disabled` is UB (this includes all three
-  of `Reserved`, `Active`, and `Frozen` reacting to a foreign write);
-- if a protected `Active` pointer becomes `Frozen` this is also UB (this occurs
-  on a foreign read);
-- protected `Reserved` pointers are not unchanged by foreign reads: they become
-  `Frozen`.
-
 > <span class="sbnote">
 **[Note: Stacked Borrows]** This mostly align with the concept of protectors from Stacked Borrows,
 except that in SB loss of permissions is indicated by being popped from the stack,
 whereas in TB it takes the form of becoming `Disabled`. Thus what triggers
 protectors in SB is popping a protected item, in TB it is performing an invalid
 transition.
+</span>
+
+> <span class="tldr">
+**[Summary]**
+A pointer passed as reference argument to a function is protected until the
+end of the function call. Protected pointers behave slightly differently to
+add more guarantees:
+<br>- any protected pointer that becomes `Disabled` is UB (this includes all three
+  of `Reserved`, `Active`, and `Frozen` reacting to a foreign write);
+<br>- if a protected `Active` pointer becomes `Frozen` this is also UB (this occurs
+  on a foreign read);
+<br>- protected `Reserved` pointers are not unchanged by foreign reads: they become
+  `Frozen`.
 </span>
 
 ## New possible optimizations
