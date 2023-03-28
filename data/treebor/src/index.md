@@ -12,7 +12,7 @@ Tree Borrows is a proposed alternative to
 that fulfills the same role: to analyse the execution of Rust code at runtime
 and define the precise requirements of the aliasing constraints.
 When these aliasing constraints are violated, the code is declared
-Undefined Behavior (UB). This enable optimizations that would otherwise be
+Undefined Behavior (UB). This enables optimizations that would otherwise be
 unsound in the presence of `unsafe`{.rust} code.
 
 ---

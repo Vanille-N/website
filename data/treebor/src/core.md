@@ -54,7 +54,7 @@ kinds of pointers must behave differently.
 2. **Updating permissions based on ancestry.**
 The name of Tree Borrows comes from the tree structure that naturally appears
 when we consider reborrows as creations of child pointers.
-Indeed a tree structure is perfect for modeling the facts that if a pointer is
+Indeed a tree structure is perfect for modeling the fact that if a pointer is
 invalidated then all pointers reborrowed from it must also be invalidated.
 
 In general we have full control over child pointers: we can determine
@@ -73,7 +73,7 @@ Foreign accesses cause the pointer to lose permissions, and can cause UB if
 the pointer in question is not allowed to lose permissions.
 
 Each piece of code that we wish to accept or reject will determine how
-exactly each permissions should be updated for each kind of access and relative
+exactly each permission should be updated for each kind of access and relative
 position in the borrow tree. The precise behavior of Tree Borrows is thus parameterized
 by the list of all permissions and how they should be updated.
 

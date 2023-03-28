@@ -68,7 +68,7 @@ Detecting this takes two forms:
   be written to.
 
 > <span class="sbnote">
-**[Note: Stacked Borrows]** This mostly align with the concept of protectors from Stacked Borrows,
+**[Note: Stacked Borrows]** This mostly aligns with the concept of protectors from Stacked Borrows,
 except that in SB loss of permissions is indicated by being popped from the stack,
 whereas in TB it takes the form of becoming `Disabled`. Thus what triggers
 protectors in SB is popping a protected item, in TB it is performing an invalid

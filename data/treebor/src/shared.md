@@ -85,7 +85,7 @@ parent reference.
 //+ TB: NO UB (raw pointers derived from the same reference can coexist)
 fn several_raw(u: &mut u8) {
     let r0 = &mut *u;
-    *r = 42;
+    *r0 = 42;
                            // --- u: Active
                            //     |--- r0: Active
 
@@ -187,7 +187,7 @@ Until now we have avoided the question of what to do when an `Active` encounters
 a read. Since mutable references also permit read-only access it should be obvious
 that child reads are allowed, but what happens on a foreign read ?
 
-The Borrow Tracker suggests that the mutable reference should be killed completely,
+The Borrow Checker suggests that the mutable reference should be killed completely,
 but we argue that it should merely become `Frozen`. In other words a mutable
 reference is downgraded to a shared reference when other shared references start
 accessing the data immutably.
