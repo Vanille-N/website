@@ -10,7 +10,7 @@ data                         The main folder where everything happens
   |--- better-pbm-viewer     A Bitmap and Pixmap image generator/editor/viewer
   |--- pics                  Small photo gallery
   |--- share                 Various documents for school/research/configuration
-  |--- treboor               Sources for the Tree Borrows in-depth explanation
+  |--- treebor               Sources for the Tree Borrows in-depth explanation
 ```
 
 ## Dependencies
