@@ -206,7 +206,7 @@ a write access and could introduce new UB to the program.
 > <span class="sbnote">
 **[Note: Stacked Borrows]**
 This is a loss of potential optimization compared to Stacked Borrows which does allow
-spurrious writes but it is necessary if we want the previous `copy_nonoverlapping` example
+spurious writes but it is necessary if we want the previous `copy_nonoverlapping` example
 to be allowed.
 </span>
 

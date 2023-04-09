@@ -200,7 +200,7 @@ fn shared_from_mut(u: &mut u8) {
                         // First mutable borrow
                         // --- u: Active
                         //     |--- x: Active
-                        // (`u: Active` is unafected by the child write)
+                        // (`u: Active` is unaffected by the child write)
     *x = 42;
 
     // The mutable lifetime of `x` ends here, but it will still be available read-only
