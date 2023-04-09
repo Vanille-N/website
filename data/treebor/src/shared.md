@@ -425,7 +425,7 @@ However in Tree Borrows we can still group together related writes if there are 
 //? Unoptimized
 let x = &mut *u;  // `x: Reserved`, also `x` does not have child pointers
 *x += 1;          // `x: Active`
-let yval = *y;    // If `y` and `x` alias then `x: Disabled` otherwise `x: Active`
+let yval = *y;    // If `y` and `x` alias then `x: Frozen` otherwise `x: Active`
 *x += 1;          // If `y` and `x` alias then UB Otherwise `x: Active`
 
 // We can assume that `x` and `y` do not alias and group together the two increments
