@@ -141,7 +141,7 @@ a single pointer might have permissions that allow mutable accesses on some
 locations, but only read accesses on other locations.
 
 This allows for different bytes of a single piece of data to be borrowed independently,
-which permits separare references to different indexes of an array or to
+which permits separate references to different indexes of an array or to
 different fields of a `struct`{.rust}: as long as the borrows are on disjoint parts
 of memory (and even if it is impossible to guarantee at compile-time that those
 parts are disjoint, but they happen to be at runtime) the behavior according to
