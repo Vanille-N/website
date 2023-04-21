@@ -193,7 +193,7 @@ pub fn foo_opt_invalid(x: &mut u8, n: u8) {
     let val = *x;
     // This optimization assumes that `x` is writeable, which was not necessarily
     // the case in the unoptimized version when `n == 0`.
-    *x = n - 1;
+    *x = n;
     if unlikely(n == 0) {
         *x = val;
     }
