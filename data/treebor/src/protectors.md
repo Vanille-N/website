@@ -184,7 +184,7 @@ is not supported by Tree Borrows:
 //? Unoptimized
 pub fn foo(x: &mut u8, n: u8) {
     for i in 0..n {
-        *x = n;
+        *x = i;
     }
 }
 
