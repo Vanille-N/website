@@ -184,7 +184,7 @@ is not supported by Tree Borrows:
 //? Unoptimized
 pub fn foo(x: &mut u8, n: u8) {
     for i in 0..n {
-        *x = n;
+        *x = i;
     }
 }
 
@@ -193,7 +193,7 @@ pub fn foo_opt_invalid(x: &mut u8, n: u8) {
     let val = *x;
     // This optimization assumes that `x` is writeable, which was not necessarily
     // the case in the unoptimized version when `n == 0`.
-    *x = n;
+    *x = n - 1;
     if unlikely(n == 0) {
         *x = val;
     }
