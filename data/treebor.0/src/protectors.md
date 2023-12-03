@@ -57,17 +57,15 @@ attribute on reference function arguments.
 Detecting this takes two forms:
 
 - if the child write occurs first then a subsequent foreign read will cause
-  an `Active` pointer to experience a foreign read. To make this UB we declare
-  that a protected `Active`'s behavior to foreign reads changes to become
-  immediately `Disabled`, which will trigger the protector.
+  an `Active` pointer to become `Frozen`. Such a transition must thus be made
+  UB if it occurs to a currently protected pointer.
 - if the foreign read occurs first then it means that the protected pointer
   is still `Reserved` at that point. When a protected `Reserved` encounters
-  a foreign read, it must not allow future child writes until at least the
-  end of this function call. We model this by adding a boolean flag
-  `conflicted` to `Reserved` that is initially `true`, becomes `false` if
-  the tag is protected while a foreign read occurs, and triggers UB if it is
-  `false` while the tag is still protected if we try to perform a foreign
-  write.
+  a foreign read, it must not allow future child writes. We model this by
+  making it become `Frozen`. This is a conservative approach, as `noalias`
+  only requires that it not be written to during the execution of the function,
+  and turning it `Frozen` makes the stronger guarantee that it will _never_
+  be written to.
 
 > <span class="sbnote">
 **[Note: Stacked Borrows]** This mostly aligns with the concept of protectors from Stacked Borrows,
@@ -83,21 +81,12 @@ A pointer passed as reference argument to a function is protected until the
 end of the function call. Protected pointers behave slightly differently to
 add more guarantees:
 <br>- any protected pointer that becomes `Disabled` is UB (this includes all three
-  of `Reserved`, `Active`, and `Frozen` reacting to a foreign write as well
-  as `Active` to a foreign read);
-<br>- protected `Reserved` pointers are not unchanged by foreign reads: an internal
-  `conflicted` flag is set that will temporarily forbid activation.
+  of `Reserved`, `Active`, and `Frozen` reacting to a foreign write);
+<br>- if a protected `Active` pointer becomes `Frozen` this is also UB (this occurs
+  on a foreign read);
+<br>- protected `Reserved` pointers are not unchanged by foreign reads: they become
+  `Frozen`.
 </span>
-
-### Protected tags emit an implicit read on function exit
-
-The protector guarantees that at the end of the function call the pointer is still
-readable. By inserting an implicit read on function exit we make the protector announce
-its presence which will make other protected tags existing at the same time experience
-a foreign read that will prevent their activation.
-
-We do not apply this implicit read to children of the tag that just lost its protector,
-this is only for foreign tags.
 
 ## New possible optimizations
 

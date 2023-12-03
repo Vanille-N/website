@@ -8,12 +8,12 @@ lang: en
 ---
 
 > <span class="alert">
-This document replaces the pre-2023-10-20 version that did not yet include the updates
-from the [two latest PRs in Miri](https://github.com/rust-lang/miri)
-For completeness you can still find the unedited version [here](https://perso.crans.org/vanille/treebor.0).
-If you don't know Tree Borrows yet, you're in the right place.
-If you are familiar with Tree Borrows and want to know only what changed and why,
-you may consult [the diff](diff.0.html).
+This document has been updated on 2023-10-20 in favor of the [newer version](https://perso.crans.org/vanille/treebor)
+that includes the [two recent PRs to Miri](https://github.com/rust-lang/miri/pull/3067).
+You may still read here the original version, but a better idea would be to consult
+[the updated writeup](https://perso.crans.org/vanille/treebor) if you don't know Tree Borrows yet,
+and [the exact diff between the two versions](https://perso.crans.org/vanille/treebor/diff.0.html) if you are
+familiar with Tree Borrows and want to know only what changed and why.
 </span>
 
 Tree Borrows is a proposed alternative to

@@ -72,9 +72,6 @@ locations with `?`: they have the same transitions as the initialized versions,
 and they become initialized on the first child access.
 Here are examples of how this applies.
 
-An uninitialized location does not produce the implicit read on function exit that we
-introduced with protectors.
-
 #### Example: write to offset pointer
 
 ```rust

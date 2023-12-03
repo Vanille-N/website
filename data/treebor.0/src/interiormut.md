@@ -91,7 +91,12 @@ two-phase borrows.
 # Complete summary
 
 With protectors and interior mutability the model is now complete,
-and we summarize it here:
+and we summarize it with the following automaton:
+
+![**State automaton of pointer permissions.**
+During its lifetime each pointer is subjected to a number of child/foreign
+read/write accesses, and each of them can update the permission associated
+with the pointer on some bytes of memory.](figs/automaton.svg)
 
 **When creating a new pointer `z` from an existing `y`**
 
@@ -100,21 +105,11 @@ and we summarize it here:
     - add a new child of `y` in the tree
     - give it the permissions `Reserved`
     - keep track of whether it has interior mutability or not as `ty_is_freeze`
-    - initialize `conflicted` as `false`
 - if `z` is a non-interior-mutable shared reference
     - perform the effects of a read access through `y`
     - add a new child of `y` in the tree
     - give it the permissions `Frozen`
 - otherwise give `z` the same tag as `y`, they are indistinguishable from now on
-
-**When entering a function**
-
-- add a protector to all reference arguments
-
-**When exiting a function**
-
-- perform an implicit read access to all locations of the protected
-  pointers that were previously accessed
 
 **When reading through a pointer `y`**
 
@@ -123,13 +118,13 @@ and we summarize it here:
     - otherwise (if `x` is `Disabled`) this is UB
 - for all non-ancestors `z` of `y` (excluding `y`), this is a foreign read
     - turn `Active` into `Frozen`; this is UB if `z` is protected
-    - if `z` is protected and `Reserved`, set its `conflicted` flag to `true`
+    - if `z` is protected, turn `Reserved` into `Frozen`
 
 **When writing through a pointer `y`**
 
 - for all ancestors `x` of `y` (including `y`), this is a child write
     - turn `Reserved` into `Active`
-    - it is UB to encounter `Disabled` or `Frozen` or a protected `Reserved { conflicted: true }`
+    - it is UB to encounter `Disabled` or `Frozen`
 - for all non-ancestors `z` of `y` (excluding `y`), this is a foreign write
     - if `z` is protected this is always UB; otherwise
     - if `z` is `Reserved` and has interior mutability it is unchanged; otherwise
