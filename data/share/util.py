@@ -107,8 +107,12 @@ def createdir(path):
 def execute_move(target, source):
     """Copy a file"""
     verify(source)
-    source_t = os.path.getmtime(source)
-    target_t = os.path.getmtime(target)
-    if source_t > target_t:
+    try: source_t = os.path.getmtime(source)
+    except: print("Could not find file {}".format(source)); return
+
+    try: target_t = os.path.getmtime(target)
+    except: target_t = None
+
+    if target_t == None or source_t > target_t:
         print(f"Copying {source} to {target}")
         shutil.copy(source, target)

@@ -1,6 +1,8 @@
 # Manager for pics
 # Modules are the direct children of perso.crans.org/vanille/pics/
-MODULES = finland
+
+# FIXME: disabled under NixOS rebuild.
+MODULES = #finland
 
 all: $(MODULES:%=.target/%) |.target
 

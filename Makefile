@@ -16,7 +16,7 @@ data/.target: data
 # Sync with zamok.crans.org
 # Dependency: `remote`
 push: local
-	remote push zamok www/ www
+	/home/nash/bin/remote push zamok www/ www
 
 # Clean
 clean:
