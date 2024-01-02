@@ -2,7 +2,7 @@
 title: "Tree Borrows -- Dealing with Cells"
 subtitle: A new aliasing model for Rust
 author: Neven Villani
-date: Mar. 2023
+date: Jan. 2024
 output: html_document
 lang: en
 ---
@@ -113,8 +113,9 @@ and we summarize it here:
 
 **When exiting a function**
 
-- perform an implicit read access to all locations of the protected
-  pointers that were previously accessed
+- perform an implicit read access to all locations of the protected pointers
+  that were previously accessed, unless the protector is from a `Box` argument
+  and the location was deallocated
 
 **When reading through a pointer `y`**
 
