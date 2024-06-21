@@ -239,7 +239,7 @@ fn swappable_reads(u: &mut u8) {
     let _v = *u;      //  <--- (2)
                       //
                       // Answer: `x: Active` would be subjected to (2) a foreign read.
-                      // If this made `x` become `Disabled`, then the following (1) child write would be UB.
+                      // If this made `x` become `Disabled`, then the following (1) child read would be UB.
                       // For reads to always be possible to reorder, it must hold that a read through a
                       // pointer never makes another pointer `Disabled`. Since the other pointer must not stay
                       // `Active`, `Frozen` is the solution.
