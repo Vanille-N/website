@@ -75,8 +75,8 @@ Detecting this takes two forms:
   still `Reserved` at that point. When a protected `Reserved` encounters a
   foreign read, it must not allow future child writes until at least the end of
   this function call. We model this by adding a boolean flag `conflicted` to
-  `Reserved` that is initially `true`, becomes `false` if the tag is protected
-  while a foreign read occurs, and triggers UB if it is `false` while the tag is
+  `Reserved` that is initially `false`, becomes `true` if the tag is protected
+  while a foreign read occurs, and triggers UB if it is `true` while the tag is
   still protected if we try to perform a foreign write.
 
 > <span class="sbnote">
