@@ -13,7 +13,9 @@ lang: en
 - [Description](https://github.com/Vanille-N/tree-borrows)
 - [Implementation](https://github.com/rust-lang/miri/tree/master/src/borrow_tracker/tree_borrows)
 - [Early thoughts about `Reserved`](https://rust-lang.zulipchat.com/#narrow/stream/136281-t-opsem/topic/can.20.26mut.20just.20always.20be.20two-phase/near/281330834)
-- [Talk at RFMIG](https://www.youtube.com/watch?v=zQ76zLXesxA) and the corresponding [slides](https://github.com/Vanille-N/tree-beamer)
+- [Talk at RFMIG](https://www.youtube.com/watch?v=zQ76zLXesxA) and the corresponding [slides](https://github.com/Vanille-N/tree-beamer/tree/rfmig)
+- [Talk at the Rust Verification Workshop (ETAPS 2024)](https://github.com/Vanille-N/tree-beamer/tree/etaps)
+- [Preprint](aux/preprint.pdf)
 
 Note: although [this project](https://internals.rust-lang.org/t/improve-upon-stacked-borrows-by-introducing-a-tree/16576)
 shares the same name and purpose, it is otherwise unrelated and has a completely different approach

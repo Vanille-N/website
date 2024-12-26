@@ -7,6 +7,23 @@ output: html_document
 lang: en
 ---
 
+Tree Borrows is a proposed alternative to
+[Stacked Borrows](https://www.ralfj.de/blog/2019/05/21/stacked-borrows-2.1.html)
+that fulfills the same role: to analyse the execution of Rust code at runtime
+and define the precise requirements of the aliasing constraints.
+When these aliasing constraints are violated, the code is declared
+Undefined Behavior (UB). This enables optimizations that would otherwise be
+unsound in the presence of `unsafe`{.rust} code.
+
+> <span class="sbnote">
+**[Note: Stacked Borrows]**
+When the document makes a comparison between Stacked Borrows and Tree Borrows,
+it will be formatted like this. If you know nothing about Stacked Borrows,
+skipping these explanations should not impede your understanding.
+</span>
+
+---
+
 > <span class="alert">
 This document replaces the pre-2023-10-20 version that did not yet include the updates
 from the [two latest PRs in Miri](https://github.com/rust-lang/miri)
@@ -18,16 +35,11 @@ you may consult [the diff](diff.0.html).
 
 > <span class="info">
 (Nov. 2024) Tree Borrows has been submitted for publication!
-You may read a preprint [here](aux/preprint.pdf).
+You may read a preprint [here](aux/preprint.pdf). <br>
+An alternative mirror can be found on [J. Hostert's website](https://jhostert.de/news/ann_03_tree_borrows_submitted/),
+who joined the project to work on several aspects, from proving some of Tree Borrows' claims in Coq
+and fixing bugs in the core model, to improving performance in Miri.
 </span>
-
-Tree Borrows is a proposed alternative to
-[Stacked Borrows](https://www.ralfj.de/blog/2019/05/21/stacked-borrows-2.1.html)
-that fulfills the same role: to analyse the execution of Rust code at runtime
-and define the precise requirements of the aliasing constraints.
-When these aliasing constraints are violated, the code is declared
-Undefined Behavior (UB). This enables optimizations that would otherwise be
-unsound in the presence of `unsafe`{.rust} code.
 
 ---
 
