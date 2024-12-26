@@ -25,20 +25,34 @@ skipping these explanations should not impede your understanding.
 ---
 
 > <span class="alert">
-This document replaces the pre-2023-10-20 version that did not yet include the updates
-from the [two latest PRs in Miri](https://github.com/rust-lang/miri)
-For completeness you can still find the unedited version [here](https://perso.crans.org/vanille/treebor.0).
-If you don't know Tree Borrows yet, you're in the right place.
-If you are familiar with Tree Borrows and want to know only what changed and why,
-you may consult [the diff](diff.0.html).
+(Oct. 2023) During the ongoing project of formalizing Tree Borrows,
+we have discovered insufficiencies regarding spurious reads under concurrency.
+This leads to the introduction of the `conflicted` flag and implicit reads on function exit
+for protected locations. <br>
+If you're new to Tree Borrows you can continue reading as normal.
+If you know the basics of Tree Borrows and want to know specifically what changed,
+you can consult [the diff](diff.0.html).
 </span>
+
+> <span class="alert">
+(Jul. 2024) As formalization progresses, Johannes Hostert (who joined the project)
+found other bugs, also related to `Reserved` and spurious reads.
+These are fixed by making `Active` protected locations get an implicit write
+(instead of read) on function exit. <br>
+If you're new to Tree Borrows you can continue reading as normal.
+If you know the basics of Tree Borrows and want to know specifically what changed,
+you can consult [the diff](diff.1.html).
+</span>
+
 
 > <span class="info">
 (Nov. 2024) Tree Borrows has been submitted for publication!
 You may read a preprint [here](aux/preprint.pdf). <br>
 An alternative mirror can be found on [J. Hostert's website](https://jhostert.de/news/ann_03_tree_borrows_submitted/),
 who joined the project to work on several aspects, from proving some of Tree Borrows' claims in Coq
-and fixing bugs in the core model, to improving performance in Miri.
+and fixing bugs in the core model, to improving performance in Miri. <br>
+In related news, the formalization of Tree Borrows in Coq is complete,
+significantly increasing our confidence in the claims we have made.
 </span>
 
 ---
