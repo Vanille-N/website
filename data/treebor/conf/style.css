@@ -47,6 +47,9 @@
         color: #d3869b;
     }
     .alert {
-	color: #de3012;
+        color: #de3012;
+    }
+    .info {
+        color: #afcf92;
     }
 </style>

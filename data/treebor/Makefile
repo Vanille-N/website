@@ -15,10 +15,14 @@ FIGS = $(wildcard figs/*)
 CONFIG = $(HLTHEME) $(CSS) $(SYN) Makefile $(FIGS)
 
 # Build html from md
-all: $(MDFILES:src/%.md=.target/%.html)
+all: $(MDFILES:src/%.md=.target/%.html) .target/aux
 
 .target:
 	mkdir -p $@
+
+.target/aux: aux/*
+	rm -rf .target/aux
+	cp -r aux .target/aux
 
 .target/%.html: src/%.md $(CONFIG) |.target
 	pandoc \

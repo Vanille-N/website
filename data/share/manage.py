@@ -35,6 +35,7 @@ structure = \
                         In("beamer", [
                             Move("rfmig.pdf", "rfmig.pdf"),
                             Move("lmf.pdf", "lmf.pdf"),
+                            Move("etaps.pdf", "etaps.pdf"),
                         ])
                     ])
                 ]),
@@ -54,7 +55,13 @@ structure = \
                 #    Make("all"),
                 #    Move("beamer.pdf", "main.pdf"),
                 #]),
+                Split("netmod", "Mpri/classes/mpri/netmod", [
+                    Move("hajek.pdf", "exam/beamer/build/main.pdf"),
+                ]),
                 # Crans work
+                Split("crans", "Crans/bilan-technique", [
+                    Move("bilan-tech-2024.pdf", "build/main.pdf"),
+                ])
                 #Split("crans", "Crans/bilantech-23", [
                 #    Make("all"),
                 #    Move("bilantech-23.pdf", "bilan.pdf"),

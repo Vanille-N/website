@@ -16,6 +16,11 @@ If you are familiar with Tree Borrows and want to know only what changed and why
 you may consult [the diff](diff.0.html).
 </span>
 
+> <span class="info">
+(Nov. 2024) Tree Borrows has been submitted for publication!
+You may read a preprint [here](aux/preprint.pdf).
+</span>
+
 Tree Borrows is a proposed alternative to
 [Stacked Borrows](https://www.ralfj.de/blog/2019/05/21/stacked-borrows-2.1.html)
 that fulfills the same role: to analyse the execution of Rust code at runtime
