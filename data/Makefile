@@ -2,7 +2,7 @@
 
 # Modules are the different services
 # They eventually appear as direct children of perso.crans.org/vanille/
-MODULES = share better-pbm-viewer treebor treebor.0 pics
+MODULES = share better-pbm-viewer treebor treebor.0 pics ijo-pona
 STANDALONE = index.html style.css
 
 all: $(MODULES:%=.target/%) $(STANDALONE:%=.target/%) |.target
