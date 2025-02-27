@@ -11,6 +11,7 @@ data                         The main folder where everything happens
   |--- pics                  Small photo gallery
   |--- share                 Various documents for school/research/configuration
   |--- treebor               Sources for the Tree Borrows in-depth explanation
+  |--- ijo-pona              mi pali e ijo kepeken toki pona la ona li lon ni
 ```
 
 ## Dependencies
