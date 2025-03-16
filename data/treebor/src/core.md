@@ -125,11 +125,11 @@ fn unreachable_faulty(u: &mut u8) {
 ```rust
 //+ TB: NOT UB (in all possible executions, if `u` and `v` are disjoint then `x` and `y` are disjoint)
 //- Does not compile. error[E0499]: cannot borrow `*v` as mutable more than once at a time
-fn maybe_aliasing(u: &mut u8, v: &mut u8, b: bool) 
-    let x = if b { &mut *u } else { &mut *v }
-    let y = if b { &mut *v } else { &mut *u }
-    *x += 1
-    *y += 1
+fn maybe_aliasing(u: &mut u8, v: &mut u8, b: bool) {
+    let x = if b { &mut *u } else { &mut *v };
+    let y = if b { &mut *v } else { &mut *u };
+    *x += 1;
+    *y += 1;
 }
 ```
 
