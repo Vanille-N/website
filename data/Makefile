@@ -1,29 +1,24 @@
-# Manager for data
+# Manager for the treebor blog
 
-# Modules are the different services
-# They eventually appear as direct children of perso.crans.org/vanille/
-MODULES = share better-pbm-viewer treebor treebor.0 pics ijo-pona
-STANDALONE = index.html style.css
+# Markdown sources
+MDFILES = $(wildcard _src/*.md)
 
-all: $(MODULES:%=.target/%) $(STANDALONE:%=.target/%) |.target
+# Custom themes (syntax highlighting, html style, rust syntax definition)
+CSS = style.css
 
-# Build a module by invoking its make
-$(MODULES:%=%/.target): %/.target: %
-	cd $< && make
+# Figures (embedded but still dependencies)
+FIGS = $(wildcard figs/*)
 
-# Once a module is built, link module/.target with .target/module
-$(MODULES:%=.target/%): .target/%: %/.target |.target
-	ln -srf "$<" "$@"
+# Globally relevant files (rebuild everything on every change)
+CONFIG = $(HLTHEME) $(CSS) Makefile $(FIGS)
 
-.target:
-	mkdir -p $@
+# Build html from md
+all: $(MDFILES:_src/%.md=%.html)
 
-# Directly copy the standalone files
-$(STANDALONE:%=.target/%): .target/%: % |.target
-	cp $< $@
+%.html: _src/%.md $(CONFIG)
+	pandoc \
+		--embed-resources --standalone \
+		-f markdown -t html \
+		$< -o $@ \
+		-H $(CSS)
 
-# Clean
-clean:
-	fd --unrestricted '.target' | xargs rm -rf
-
-.PHONY: clean $(MODULES:%=%/.target)

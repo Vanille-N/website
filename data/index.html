@@ -1,150 +1,232 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Neven Villani (Vanille)</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>index</title>
+  <style>
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+background-color: #1a1a1a;
+border: none;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style>
+html { background-color: #1d2021; }
+body {
+margin: 40px auto;
+max-width: 1200px;
+line-height: 1.5;
+font-size: 18px;
+font-weight: 350;
+color: #fbf1c7;
+background: #282828;
+padding: 0 10px
+}
+h1,h2,h3 {
+line-height: 1.2
+}
+h1 {
+color: #a8ab16;
+font-weight: 800;
+}
+h2 {
+color: #b8bb26;
+font-weight: 700;
+}
+h3 {
+color: #c8cb36;
+font-weight: 600;
+}
+html:not(.inverted) a {
+color: #8ec07c;
+font-weight: 300;
+}
+html:not(.inverted) a:visited {
+color: #d3869b;
+font-weight: 300;
+}
+.alert {
+color: #de3012;
+}
+.info {
+color: #afcf92;
+}
+.box {
+box-sizing: content-box;
+padding: 2px;
+border: 1px solid #afcf92;
+}
+</style>
 </head>
-
 <body>
-    <header>
-        <h1>Neven Villani (Vanille)</h1>
-        <aside>Student in Computer Science at ENS Paris-Saclay</aside>
-        <aside>Github: <a href="https://github.com/Vanille-N">Vanille-N</a></aside>
-        <aside>Mail: <code>neven (dot) villani (at) crans (dot) org</code></a></aside>
-    </header>
-
-    <h2>Documents</h2>
-    <p>
-        See <a href="share/index.html"><code>/share</code></a></h2>
-    </p>
-
-    <h2>Projects</h2>
-    <p>
-        <li> <a href="https://github.com/Vanille-N/ray_tracer">Pytrace (Rust)</a>,
-            able to render videos and high-quality images, also available as a Python library
-        </li>
-        <li> <a href="https://github.com/Vanille-N/cocass">COCass (OCaml)</a>, native compiler for a small C
-            without floating-point arithmetic, but with added exception handling
-        </li>
-        <li> <a href="https://github.com/Vanille-N/forklang">Forklang (C)</a>, a small non-deterministic language
-            to validate parallelized protocols
-        </li>
-        <li> <a href="https://github.com/Vanille-N/billig">Billig (Rust)</a> is a DSL to record expenses,
-            ergonomic enough for my current daily usage but still a work in progress
-        </li>
-        <li> <a href="https://github.com/Vanille-N/chandeliers">Chandeliers (Rust)</a> is a proc macro
-            library that implements the
-            <a href="https://en.wikipedia.org/wiki/Lustre_(programming_language)">Lustre language</a>
-            inside Rust.
-        </li>
-        <li> <a href="https://gitlab.com/Vanille-N/mpri-2.4-project-2023-2024">Minihell (OCaml)</a> is a type
-            inference engine for a toy language implemented for the
-            <a href="https://gitlab.inria.fr/fpottier/mpri-2.4-public/blob/master/README.md">MPRI class 2.4 (Functionnal Programming)</a>.
-            The language is ML-style without polymorphism and supports inductive algebraic datatypes.
-        </li>
-    </p>
-
-
-    <h2>Talks</h2>
-    <h3>Hysteresis in a model of thermohaline oceanic circulation</h3>
-    <p>
-        Should have been used for the 2020 TIPE oral exam<br>
-        <a href="https://github.com/Vanille-N/TIPE">[git]</a>
-    </p>
-    <h3>Recognition of Dynamic Unit Disk Graphs</h3>
-    <p>
-        Following an intership with <a href="https://www.labri.fr/perso/acasteig/">Arnaud Casteigts</a>
-        at <a href="https://www.labri.fr/">LaBRI (France)</a>.<br>
-        Presented at <a href="https://mertzios.net/Workshops/ICALP-21-Satellite/Temporal-Graphs-ICALP-2021.html#casteigts">AATG 2021</a> (online).<br>
-        <a href="https://youtu.be/yZRNLjbfxxs">[video]</a>
-        <a href="share/satge/beamer.pdf">[beamer]</a>
-        <a href="share/satge/report.pdf">[report]</a>
-    </p>
-    <h3>Mending Partial Solutions with Few Changes</h3>
-    <p>
-        Following an internship with <a href="https://jukkasuomela.fi/">Jukka Suomela</a>
-        and <a href="https://darya-melnyk.github.io/">Darya Melnyk</a> at
-        <a href="https://www.aalto.fi/en">Aalto University, Finland</a><br>
-        To appear in <a href="https://sites.uclouvain.be/OPODIS2022/">OPODIS 2022</a> (Brussels, Belgium).<br>
-        <a href="https://arxiv.org/abs/2209.05363">[arxiv]</a>
-        <a href="https://perso.crans.org/vanille/share/satge/m1/paper.pdf">[paper]</a>
-        <a href="https://perso.crans.org/vanille/share/satge/m1/beamer.pdf">[beamer]</a>
-    </p>
-    <h3>Tree Borrows</h3>
-    <p>
-        I have worked at <a href="https://www.mpi-sws.org/">MPI-SWS, Saarland (Germany)</a>
-        on the <a href="https://github.com/rust-lang/miri">miri</a> Rust interpreter
-        to develop <a href="https://perso.crans.org/vanille/treebor">Tree Borrows</a>, an aliasing model.
-        Presentations of Tree Borrows have been given online at
-        <a href="https://rust-formal-methods.github.io/">RFMIG</a>
-        and in person to teams from
-        <a href="https://ethz.ch/en.html">ETH Zurich</a> and
-        <a href="https://www.inria.fr/en/inria-saclay-centre">Inria Saclay</a>.
-        You can look at the <a href="https://github.com/vanille-n/tree-beamer">material</a>
-        and a <a href="https://www.youtube.com/watch?v=zQ76zLXesxA&t=2381s&pp=ygUMdHJlZSBib3Jyb3dz">recording</a>.
-    </p>
-
-    <h2>Tooling</h2>
-    <p>
-        Some various tools I like and frequently use.<br>
-
-        zathura (pdf viewer)
-            <a href="https://pwmt.org/projects/zathura/">[Official]</a>
-            <a href="https://wiki.archlinux.org/title/zathura">[ArchWiki]</a>
-            <a href="https://archlinux.org/packages/community/x86_64/zathura/">[Arch]</a>
-            <br>
-
-        mpv (video player)
-            <a href="https://mpv.io/">[Official]</a>
-            <a href="https://wiki.archlinux.org/title/mpv">[ArchWiki]</a>
-            <a href="https://archlinux.org/packages/community/x86_64/mpv/">[Arch]</a>
-            <br>
-
-        bat (cat)
-            <a href="https://github.com/sharkdp/bat">[GitHub]</a>
-            <a href="https://crates.io/crates/bat">[Crates]</a>
-            <br>
-
-        skim (fuzzy file finder)
-            <a href="https://github.com/lotabout/skim">[GitHub]</a>
-            <a href="https://crates.io/crates/skim">[Crates]</a>
-            <br>
-
-        starship (shell prompt)
-            <a href="https://starship.rs/">[Official]</a>
-            <a href="https://github.com/starship/starship">[GitHub]</a>
-            <a href="https://crates.io/crates/starship">[Crates]</a>
-            <br>
-
-        ripgrep (grep replacement)
-            <a href="https://github.com/BurntSushi/ripgrep">[GitHub]</a>
-            <a href="https://crates.io/crates/ripgrep">[Crates]</a>
-            <br>
-
-        tealdeer (tldr client, short man pages)
-            <a href="https://github.com/dbrgn/tealdeer">[GitHub]</a>
-            <a href="https://crates.io/crates/tealdeer">[Crates]</a>
-            <br>
-
-        tokei (count lines of code)
-            <a href="https://github.com/XAMPPRocky/tokei">[GitHub]</a>
-            <a href="https://crates.io/crates/tokei">[Crates]</a>
-            <br>
-
-        hyperfine (benchmarking)
-            <a href="https://github.com/sharkdp/hyperfine">[GitHub]</a>
-            <a href="https://crates.io/crates/hyperfine">[Crates]</a>
-            <br>
-
-    </p>
-    <!--
-    <p>
-        <a href="languages.pdf">Programming languages</a>
-    </p>
-    -->
-
-
-
-
-
+<h1 id="neven-villani-vanille">Neven Villani (Vanille)</h1>
+<p>PhD student in Computer Science at VERIMAG</p>
+<p>Github: <a href="https://github.com/Vanille-N">Vanille-N</a></p>
+<p><img src="data:image/jpeg;base64,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" /></p>
+<p>Mail (personnal): <code>neven (dot) villani (at) crans.org</code>
+<br> Mail (professional)
+<code>neven (dot) villani (at) univ-grenoble-alpes.fr</code></p>
+<h2 id="documents">Documents</h2>
+<p>Here are documents that I make available, mostly PDFs of past
+presentations.</p>
+<p>See <a href="share/"><code>/share</code></a></p>
+<h2 id="projects">Projects</h2>
+<p>Some personal or academic projects that I have built.</p>
+<p>See <a href="projects.html">/projects</a></p>
+<h2 id="tooling">Tooling</h2>
+<p>A list of command-line tools that I strongly recommend.</p>
+<p>See <a href="tooling.html">/tooling</a></p>
 </body>
+</html>

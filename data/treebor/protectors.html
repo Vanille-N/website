@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Neven Villani" />
+  <title>Tree Borrows – Introducing Protectors</title>
+  <style>
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+background-color: #1a1a1a;
+border: none;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+background-color: #232629;
+color: #7a7c7d;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #7a7c7d; padding-left: 4px; }
+div.sourceCode
+{ color: #fbf1c7; background-color: #181818; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span { } 
+code span.al { font-weight: bold; } 
+code span.an { } 
+code span.at { } 
+code span.bn { } 
+code span.bu { } 
+code span.cf { color: #fe8019; font-weight: bold; } 
+code span.ch { } 
+code span.cn { color: #d3869b; } 
+code span.co { color: #a89984; } 
+code span.cv { } 
+code span.do { } 
+code span.dt { color: #458588; } 
+code span.dv { color: #fabd2f; } 
+code span.er { text-decoration: underline; } 
+code span.ex { font-weight: bold; } 
+code span.fl { } 
+code span.fu { } 
+code span.im { } 
+code span.in { } 
+code span.kw { color: #d85d0e; font-weight: bold; } 
+code span.op { color: #d5c6a1; } 
+code span.ot { } 
+code span.pp { color: #d79921; } 
+code span.re { background-color: #153042; } 
+code span.sc { } 
+code span.ss { } 
+code span.st { color: #fb4934; } 
+code span.va { } 
+code span.vs { } 
+code span.wa { } 
+</style>
+  <style>
+html { background-color: #1d2021; }
+body {
+margin: 40px auto;
+max-width: 1200px;
+line-height: 1.5;
+font-size: 18px;
+font-weight: 350;
+color: #fbf1c7;
+background: #282828;
+padding: 0 10px
+}
+h1,h2,h3 {
+line-height: 1.2
+}
+h1 {
+color: #a8ab16;
+font-weight: 800;
+}
+h2 {
+color: #b8bb26;
+font-weight: 700;
+}
+h3 {
+color: #c8cb36;
+font-weight: 600;
+}
+html:not(.inverted) a {
+color: #8ec07c;
+font-weight: 300;
+}
+html:not(.inverted) a:visited {
+color: #d3869b;
+font-weight: 300;
+}
+.implnote {
+color: #afcf92;
+}
+.sbnote {
+color: #9bb4a1;
+}
+.tldr {
+color: #fad473;
+}
+.intuition {
+color: #d3869b;
+}
+.alert {
+color: #de3012;
+}
+.info {
+color: #afcf92;
+}
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Tree Borrows – Introducing Protectors</h1>
+<p class="subtitle">A new aliasing model for Rust</p>
+<p class="author">Neven Villani</p>
+<p class="date">Jan. 2024</p>
+</header>
+<p>[ <a href="shared.html">Prev</a> | <a href="index.html">Up</a> | <a href="interiormut.html">Next</a> ]</p>
+<h2 id="stronger-aliasing-constraints-for-function-arguments">Stronger
+aliasing constraints for function arguments</h2>
+<p>Within functions, the compiler generally knows less about the context
+and must make more assumptions for useful optimizations to be possible.
+In particular, we wish to be able to assume that references live until
+the end of the function, as well as give reference and <code>Box</code>
+arguments to functions the LLVM attribute <a href="https://llvm.org/docs/LangRef.html#noalias">noalias</a>, which is
+described as</p>
+<blockquote>
+<p><span style="color:white"> noalias <br> This indicates that memory
+locations accessed via pointer values based on the argument are not also
+accessed, during the execution of the function, via pointer values not
+based on the argument. This guarantee only holds for memory locations
+that are modified, by any means, during the execution of the function.
+</span></p>
+</blockquote>
+<p>Or in the language of Tree Borrows:</p>
+<ul>
+<li>a pointer based on the argument is a child pointer,</li>
+<li>a pointer not based on the argument is a foreign pointer,</li>
+<li><code>noalias</code> requires that locations that are written to are
+not accessed through both foreign and child pointers,</li>
+<li>once the function has returned, this constraint is lifted.</li>
+</ul>
+<p>To enforce this we add a notion of <em>protectors</em>: on function
+entry, each reference or <code>Box</code> argument gets added a
+protector. This protector is removed on function exit. As long as a
+protector is in place, the reference or <code>Box</code> must adhere to
+additional rules, namely it must satisfy the requirements of
+<code>noalias</code>. Additionally, references (but not
+<code>Box</code>) must be valid until the end of the function.</p>
+<h2 id="required-additions">Required additions</h2>
+<h3 id="references-should-be-dereferenceable-for-the-entire-function">References
+should be dereferenceable for the entire function</h3>
+<p>References (both mutable and shared) must be at least readable for
+the entire execution of the function. In Tree Borrows terms, this means
+that it must be UB for any protected pointer to become
+<code>Disabled</code>, since <code>Disabled</code> means that the
+pointer is not even readable anymore.</p>
+<p>This aligns with the <code>noalias</code> requirements in that it
+prevents foreign writes (foreign writes are what cause pointers to
+become <code>Disabled</code>) to locations that have been read from, and
+it additionally allows using the <code>dereferenceable</code> attribute
+on reference function arguments.</p>
+<h3 id="boxes-should-be-dereferencable-until-the-function-deallocates-them"><code>Box</code>es
+should be dereferencable until the function deallocates them</h3>
+<p><code>Box&lt;T&gt;</code> must be at least readable unless and until
+the function <code>free</code>s its backing allocation. In Tree Borrows
+terms this also means that it must be UB for any protected
+<code>Box</code> to become <code>Disabled</code>.</p>
+<p>This aligns with the <code>noalias</code> requirements in that it
+prevents foreign writes to locations that have been read from, but it
+does <em>not</em> allow using the <code>dereferencable</code> attribute
+(as a deallocated <code>Box</code> is no longer dereferencable).</p>
+<h3 id="child-writes-are-incompatible-with-foreign-reads">Child writes
+are incompatible with foreign reads</h3>
+<p>Detecting this takes two forms:</p>
+<ul>
+<li>if the child write occurs first, then a subsequent foreign read will
+cause an <code>Active</code> pointer to experience a foreign read. To
+make this UB, we declare that a protected <code>Active</code>’s behavior
+to foreign reads changes to become immediately <code>Disabled</code>,
+which will trigger the protector.</li>
+<li>if the foreign read occurs first, then it means that the protected
+pointer is still <code>Reserved</code> at that point. When a protected
+<code>Reserved</code> encounters a foreign read, it must not allow
+future child writes until at least the end of this function call. We
+model this by adding a boolean flag <code>conflicted</code> to
+<code>Reserved</code> that is initially <code>false</code>, becomes
+<code>true</code> if the tag is protected while a foreign read occurs,
+and triggers UB if it is <code>true</code> while the tag is still
+protected if we try to perform a foreign write.</li>
+</ul>
+<blockquote>
+<p><span class="sbnote"> <strong>[Note: Stacked Borrows]</strong> This
+mostly aligns with the concept of protectors from Stacked Borrows,
+except that in SB loss of permissions is indicated by being popped from
+the stack, whereas in TB it takes the form of becoming
+<code>Disabled</code>. Thus what triggers protectors in SB is popping a
+protected item, in TB it is performing an invalid transition.
+</span></p>
+</blockquote>
+<blockquote>
+<span class="tldr"> <strong>[Summary]</strong> A pointer passed as
+reference or <code>Box</code> argument to a function is protected until
+the end of the function call. Protected pointers behave slightly
+differently to add more guarantees:
+<ul>
+<li>
+Any protected pointer that becomes <code>Disabled</code> is UB (this
+includes all three of <code>Reserved</code>, <code>Active</code>, and
+<code>Frozen</code> reacting to a foreign write, as well as
+<code>Active</code> to a foreign read);
+</li>
+<li>
+Protected <code>Reserved</code> pointers are not unchanged by foreign
+reads: an internal <code>conflicted</code> flag is set that will
+temporarily forbid activation.
+</li>
+</ul>
+<p></span></p>
+</blockquote>
+<h3 id="protected-tags-emit-an-implicit-read-on-function-exit">Protected
+tags emit an implicit read on function exit</h3>
+<p>The protector guarantees that at the end of the function call the
+pointer is still readable. By inserting an implicit read on function
+exit, we make the protector announce its presence, which will make other
+protected tags existing at the same time experience a foreign read that
+will prevent their activation.</p>
+<p>We do not apply this implicit read to children of the tag that just
+lost its protector, this is only for foreign tags.</p>
+<p>For <code>Box</code> protectors only, this implicit read is omitted
+if the <code>Box</code> was deallocated during the execution of the
+function.</p>
+<h2 id="new-possible-optimizations">New possible optimizations</h2>
+<p>With the addition of protectors, it is still possible to reorder
+accesses across unknown code to move them towards a stronger access (a
+read towards a read, a read towards a write, or a write towards a
+write). In addition there are now new optimizations that are possible,
+but only in the presence of a protected pointer.</p>
+<h3 id="delayed-accesses">Delayed accesses</h3>
+<p>Since protected pointers can be assumed to be valid until the end of
+the function, it is possible to delay an access to occur after arbitrary
+code, as long as said arbitrary code does not own any child
+pointers.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode rs"><code class="sourceCode rust"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">extern</span> <span class="kw">fn</span> opaque()<span class="op">;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="dv">//? Unoptimized</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> convoluted_read(u<span class="op">:</span> <span class="op">&amp;</span><span class="dt">u8</span>) <span class="op">-&gt;</span> <span class="dt">u8</span> <span class="op">{</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">// u: Frozen</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> uval <span class="op">=</span> <span class="op">*</span>u<span class="op">;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    opaque()<span class="op">;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">// If any write occured during `opaque` then `u` became `Disabled`</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="co">// which is `UB` because `u` is protected. We can thus assume that `opaque`</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">// does not write to the location of `u`.</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    uval</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="dv">//? Optimized</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> convoluted_read_opt(u<span class="op">:</span> <span class="op">&amp;</span><span class="dt">u8</span>) <span class="op">-&gt;</span> <span class="dt">u8</span> <span class="op">{</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    opaque()<span class="op">;</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>u <span class="co">// One fewer local variable thanks to being able to assume that `*u` is unchanged</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode rs"><code class="sourceCode rust"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">extern</span> <span class="kw">fn</span> opaque()<span class="op">;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="dv">//? Unoptimized</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> convoluted_write(u<span class="op">:</span> <span class="op">&amp;</span><span class="kw">mut</span> <span class="dt">u8</span>) <span class="op">-&gt;</span> <span class="dt">u8</span> <span class="op">{</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">// u: Reserved</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>u <span class="op">=</span> <span class="cn">42</span><span class="op">;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    opaque()<span class="op">;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">// If any read occured during `opaque` then `u` became `Frozen`</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="co">// which is `UB` because `u` is protected. We can thus assume that `opaque`</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">// does not read from the location of `u`.</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>u</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="dv">//? Optimized</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> convoluted_write_opt(u<span class="op">:</span> <span class="op">&amp;</span><span class="kw">mut</span> <span class="dt">u8</span>) <span class="op">-&gt;</span> <span class="dt">u8</span> <span class="op">{</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    opaque()<span class="op">;</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>u <span class="op">=</span> <span class="cn">42</span><span class="op">;</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    <span class="cn">42</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="anticipated-reads">Anticipated reads</h3>
+<p>Since references can be assumed to be dereferenceable on function
+entry, we can also move read accesses up, even if they possibly never
+actually happen.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dv">//? Unoptimized</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> iter_until(arg<span class="op">:</span> <span class="op">&amp;</span><span class="dt">u8</span>) <span class="op">{</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> condition() <span class="op">{</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>        <span class="co">// We can assume that</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 1. `condition` and `step` do not modify `*arg`</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 2. `arg` is dereferenceable even if `condition` does not terminate</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 3. `arg` is dereferenceable even if the loop runs zero times</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>        step(<span class="op">*</span>arg)<span class="op">;</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="dv">//? Optimized</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> iter_until_opt(arg<span class="op">:</span> <span class="op">&amp;</span><span class="dt">u8</span>) <span class="op">-&gt;</span> <span class="dt">u8</span> <span class="op">{</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> varg <span class="op">=</span> <span class="op">*</span>arg<span class="op">;</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> condition() <span class="op">{</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>        step(varg)<span class="op">;</span> <span class="co">// Removed the dereference</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="not-always-possible-anticipated-writes">[Not always possible]
+Anticipated writes</h3>
+<p>However, if the function is not guaranteed to write (either because
+some code might not terminate or because the write is conditional), then
+Tree Borrows does not allow anticipated writes.</p>
+<p>An example from <a href="https://rust-lang.zulipchat.com/#narrow/stream/136281-t-opsem/topic/can.20.26mut.20just.20always.20be.20two-phase/near/307569740">this
+thread</a> is not supported by Tree Borrows:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="dv">//? Unoptimized</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> foo(x<span class="op">:</span> <span class="op">&amp;</span><span class="kw">mut</span> <span class="dt">u8</span><span class="op">,</span> n<span class="op">:</span> <span class="dt">u8</span>) <span class="op">{</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="cn">0</span><span class="op">..</span>n <span class="op">{</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        <span class="op">*</span>x <span class="op">=</span> i<span class="op">;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="st">//- Incorrectly optimized</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> foo_opt_invalid(x<span class="op">:</span> <span class="op">&amp;</span><span class="kw">mut</span> <span class="dt">u8</span><span class="op">,</span> n<span class="op">:</span> <span class="dt">u8</span>) <span class="op">{</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> val <span class="op">=</span> <span class="op">*</span>x<span class="op">;</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">// This optimization assumes that `x` is writeable, which was not necessarily</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">// the case in the unoptimized version when `n == 0`.</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>x <span class="op">=</span> n <span class="op">-</span> <span class="cn">1</span><span class="op">;</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> unlikely(n <span class="op">==</span> <span class="cn">0</span>) <span class="op">{</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        <span class="op">*</span>x <span class="op">=</span> val<span class="op">;</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>More generally, writing to the location then later reverting the
+write still counts as a write access and could introduce new UB to the
+program.</p>
+<blockquote>
+<p><span class="sbnote"> <strong>[Note: Stacked Borrows]</strong> This
+is a loss of potential optimization compared to Stacked Borrows, which
+does allow spurious writes, but it is necessary if we want the previous
+<code>copy_nonoverlapping</code> example to be allowed. </span></p>
+</blockquote>
+<hr />
+<p>[ <a href="shared.html">Prev</a> | <a href="index.html">Up</a> | <a href="interiormut.html">Next</a> ]</p>
+<hr />
+</body>
+</html>

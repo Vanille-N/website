@@ -1,0 +1,6 @@
+recurse better-pbm-viewer
+recurse ijo-pona
+recurse pics
+recurse share
+recurse treebor
+exec make

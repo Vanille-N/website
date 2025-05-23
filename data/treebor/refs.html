@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Neven Villani" />
+  <title>Tree Borrows – References</title>
+  <style>
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+background-color: #1a1a1a;
+border: none;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style>
+html { background-color: #1d2021; }
+body {
+margin: 40px auto;
+max-width: 1200px;
+line-height: 1.5;
+font-size: 18px;
+font-weight: 350;
+color: #fbf1c7;
+background: #282828;
+padding: 0 10px
+}
+h1,h2,h3 {
+line-height: 1.2
+}
+h1 {
+color: #a8ab16;
+font-weight: 800;
+}
+h2 {
+color: #b8bb26;
+font-weight: 700;
+}
+h3 {
+color: #c8cb36;
+font-weight: 600;
+}
+html:not(.inverted) a {
+color: #8ec07c;
+font-weight: 300;
+}
+html:not(.inverted) a:visited {
+color: #d3869b;
+font-weight: 300;
+}
+.implnote {
+color: #afcf92;
+}
+.sbnote {
+color: #9bb4a1;
+}
+.tldr {
+color: #fad473;
+}
+.intuition {
+color: #d3869b;
+}
+.alert {
+color: #de3012;
+}
+.info {
+color: #afcf92;
+}
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Tree Borrows – References</h1>
+<p class="subtitle">A new aliasing model for Rust</p>
+<p class="author">Neven Villani</p>
+<p class="date">Mar. 2023</p>
+</header>
+<h2 id="tree-borrows">Tree Borrows</h2>
+<ul>
+<li><a href="https://perso.crans.org/vanille/treebor">This</a></li>
+<li><a href="https://github.com/Vanille-N/tree-borrows">Description</a></li>
+<li><a href="https://github.com/rust-lang/miri/tree/master/src/borrow_tracker/tree_borrows">Implementation</a></li>
+<li><a href="https://rust-lang.zulipchat.com/#narrow/stream/136281-t-opsem/topic/can.20.26mut.20just.20always.20be.20two-phase/near/281330834">Early
+thoughts about <code>Reserved</code></a></li>
+<li><a href="https://www.youtube.com/watch?v=zQ76zLXesxA">Talk at
+RFMIG</a> and the corresponding <a href="https://github.com/Vanille-N/tree-beamer/tree/rfmig">slides</a></li>
+<li><a href="https://github.com/Vanille-N/tree-beamer/tree/etaps">Talk
+at the Rust Verification Workshop (ETAPS 2024)</a></li>
+<li><a href="aux/preprint.pdf">Preprint</a></li>
+</ul>
+<p>Note: although <a href="https://internals.rust-lang.org/t/improve-upon-stacked-borrows-by-introducing-a-tree/16576">this
+project</a> shares the same name and purpose, it is otherwise unrelated
+and has a completely different approach to how the tree structure and
+permissions are interpreted and updated.</p>
+<h2 id="stacked-borrows">Stacked Borrows</h2>
+<ul>
+<li><a href="https://plv.mpi-sws.org/rustbelt/stacked-borrows/">Paper</a></li>
+<li><a href="https://github.com/rust-lang/unsafe-code-guidelines/blob/master/wip/stacked-borrows.md">Reference</a></li>
+<li><a href="https://www.ralfj.de/blog/2019/05/21/stacked-borrows-2.1.html">Design
+steps</a></li>
+<li><a href="https://github.com/rust-lang/miri/tree/master/src/borrow_tracker/stacked_borrows">Implementation</a></li>
+</ul>
+<h2 id="ub-according-to-tree-borrows-in-existing-code">UB according to
+Tree Borrows in existing code</h2>
+<ul>
+<li><a href="https://github.com/rust-lang/rust/pull/107954">[Resolved]
+In the standard library test suite</a></li>
+</ul>
+<hr />
+</body>
+</html>

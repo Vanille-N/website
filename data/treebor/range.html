@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Neven Villani" />
+  <title>Tree Borrows – Ranges</title>
+  <style>
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+background-color: #1a1a1a;
+border: none;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+background-color: #232629;
+color: #7a7c7d;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #7a7c7d; padding-left: 4px; }
+div.sourceCode
+{ color: #fbf1c7; background-color: #181818; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span { } 
+code span.al { font-weight: bold; } 
+code span.an { } 
+code span.at { } 
+code span.bn { } 
+code span.bu { } 
+code span.cf { color: #fe8019; font-weight: bold; } 
+code span.ch { } 
+code span.cn { color: #d3869b; } 
+code span.co { color: #a89984; } 
+code span.cv { } 
+code span.do { } 
+code span.dt { color: #458588; } 
+code span.dv { color: #fabd2f; } 
+code span.er { text-decoration: underline; } 
+code span.ex { font-weight: bold; } 
+code span.fl { } 
+code span.fu { } 
+code span.im { } 
+code span.in { } 
+code span.kw { color: #d85d0e; font-weight: bold; } 
+code span.op { color: #d5c6a1; } 
+code span.ot { } 
+code span.pp { color: #d79921; } 
+code span.re { background-color: #153042; } 
+code span.sc { } 
+code span.ss { } 
+code span.st { color: #fb4934; } 
+code span.va { } 
+code span.vs { } 
+code span.wa { } 
+</style>
+  <style>
+html { background-color: #1d2021; }
+body {
+margin: 40px auto;
+max-width: 1200px;
+line-height: 1.5;
+font-size: 18px;
+font-weight: 350;
+color: #fbf1c7;
+background: #282828;
+padding: 0 10px
+}
+h1,h2,h3 {
+line-height: 1.2
+}
+h1 {
+color: #a8ab16;
+font-weight: 800;
+}
+h2 {
+color: #b8bb26;
+font-weight: 700;
+}
+h3 {
+color: #c8cb36;
+font-weight: 600;
+}
+html:not(.inverted) a {
+color: #8ec07c;
+font-weight: 300;
+}
+html:not(.inverted) a:visited {
+color: #d3869b;
+font-weight: 300;
+}
+.implnote {
+color: #afcf92;
+}
+.sbnote {
+color: #9bb4a1;
+}
+.tldr {
+color: #fad473;
+}
+.intuition {
+color: #d3869b;
+}
+.alert {
+color: #de3012;
+}
+.info {
+color: #afcf92;
+}
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Tree Borrows – Ranges</h1>
+<p class="subtitle">A new aliasing model for Rust</p>
+<p class="author">Neven Villani</p>
+<p class="date">Mar. 2023</p>
+</header>
+<p>[ <a href="interiormut.html">Prev</a> | <a href="index.html">Up</a> |
+———– ]</p>
+<p>The model is complete for one-byte allocations, but we have not yet
+talked about allocations that contain several locations. The first step
+to this is to observe that the tree of pointers is the same for an
+entire allocation since the parent-child relationship is global, and
+only the permissions have to be managed on a per-location basis. When an
+access is performed, pointers have their permissions updated only on the
+affected locations, so pointers performing accesses on disjoint ranges
+of memory do not cause aliasing UB.</p>
+<p>Since the range on which an access is performed is known, the
+remaining difficulty is to determine the range on which a reborrow
+should be performed and which locations the pointer should receive
+permissions on. These difficulties were noted in</p>
+<ul>
+<li><a href="https://github.com/rust-lang/unsafe-code-guidelines/issues/276">Issue
+#276: handling <code>extern type</code></a></li>
+<li><a href="https://github.com/rust-lang/unsafe-code-guidelines/issues/134">Issue
+#134: range of raw pointers is too strict</a></li>
+</ul>
+<p>These boil down to an issue of knowing on what range a pointer can be
+used. Reborrowing immediately for the entire allocation is much too
+strict, since we need the following code to be accepted:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">//+ TB: NOT UB (Disjoint mutable references)</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="dt">//+ This is safe code that compiles, it MUST NOT BE UB.</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> main() <span class="op">{</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> <span class="kw">mut</span> t <span class="op">=</span> (<span class="cn">0</span><span class="op">,</span> <span class="cn">0</span>)<span class="op">;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">// `t.0` and `t.1` belong to the same allocation, but it is allowed</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">// to take a mutable reference to each. Thus reborrowing `t.0` MUST NOT</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">// reborrow all of `t`.</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    inc_both(<span class="op">&amp;</span><span class="kw">mut</span> t<span class="op">.</span><span class="cn">0</span><span class="op">,</span> <span class="op">&amp;</span><span class="kw">mut</span> t<span class="op">.</span><span class="cn">1</span>)<span class="op">;</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> inc_both(u<span class="op">:</span> <span class="op">&amp;</span><span class="kw">mut</span> <span class="dt">u8</span><span class="op">,</span> v<span class="op">:</span> <span class="op">&amp;</span><span class="kw">mut</span> <span class="dt">u8</span>) <span class="op">{</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>u <span class="op">+=</span> <span class="cn">1</span><span class="op">;</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>v <span class="op">+=</span> <span class="cn">1</span><span class="op">;</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>But on the other hand we would also like to be able to, among other
+things</p>
+<ul>
+<li>use a <code>*mut T</code> to access an entire array of
+<code>T</code>;</li>
+<li>access locations with the <code>add</code> method on pointers, which
+could offset the pointer beyond the range it was reborrowed on;</li>
+<li>have some guarantees for <code>extern type</code>s, the size of
+which is unknown.</li>
+</ul>
+<p>All of these involve using a pointer out of the bounds of its
+reborrow (but still within the bounds of its allocation), so in order to
+allow these Tree Borrows must have some tolerance with regards to using
+a pointer outside of the range it was reborrowed for. Tree Borrows’
+solution is to not reborrow for the locations outside the range, but to
+maintain enough information so that whenever the location is accessed
+through a pointer for which it is out of range it can be initialized
+with a delay and receive the permissions it would have had if it had
+been reborrowed from the start.</p>
+<blockquote>
+<p><span class="implnote"> <strong>[Note: Implementation]</strong> This
+delayed initialization outside of the known reborrowed range is
+indicated by the <code>initialized</code> boolean field of each memory
+location for each pointer </span></p>
+</blockquote>
+<p>If such a location becomes <code>Disabled</code> it will not trigger
+a possible protector because it has never been accessed through a child
+pointer. We write these not yet initialized locations with
+<code>?</code>: they have the same transitions as the initialized
+versions, and they become initialized on the first child access. Here
+are examples of how this applies.</p>
+<p>An uninitialized location does not produce the implicit read on
+function exit that we introduced with protectors.</p>
+<h4 id="example-write-to-offset-pointer">Example: write to offset
+pointer</h4>
+<div class="sourceCode" id="cb2"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">//+ TB: NOT UB (Delayed initialization)</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="dt">//+ Common pattern, it would be PREFERABLY NOT UB.</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> val <span class="op">=</span> [<span class="cn">1u8</span><span class="op">,</span> <span class="cn">2</span>]<span class="op">;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                                     <span class="co">// --- val: [Active, Active]</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> ptr <span class="op">=</span> <span class="op">&amp;</span>val[<span class="cn">0</span>] <span class="kw">as</span> <span class="op">*</span><span class="kw">const</span> <span class="dt">u8</span><span class="op">;</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>                                     <span class="co">// --- val: [Active, Active]</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>                                     <span class="co">//     |--- ptr: [Frozen, Frozen?]</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> _val <span class="op">=</span> <span class="kw">unsafe</span> <span class="op">{</span> <span class="op">*</span>ptr<span class="op">.</span>add(<span class="cn">1</span>) <span class="op">};</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>                                     <span class="co">// --- val: [Active, Active]</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>                                     <span class="co">//     |--- ptr: [Frozen, Frozen]</span></span></code></pre></div>
+<h4 id="example-write-to-disjoint-fields">Example: write to disjoint
+fields</h4>
+<div class="sourceCode" id="cb3"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dt">//+ TB: NOT UB (Disjoint mutable references)</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="dt">//+ This is safe code that compiles, it MUST NOT BE UB.</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> main() <span class="op">{</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> <span class="kw">mut</span> t <span class="op">=</span> (<span class="cn">0</span><span class="op">,</span> <span class="cn">0</span>)<span class="op">;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    inc_both(<span class="op">&amp;</span><span class="kw">mut</span> t<span class="op">.</span><span class="cn">0</span><span class="op">,</span> <span class="op">&amp;</span><span class="kw">mut</span> t<span class="op">.</span><span class="cn">1</span>)<span class="op">;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> inc_both(u<span class="op">:</span> <span class="op">&amp;</span><span class="kw">mut</span> <span class="dt">u8</span><span class="op">,</span> v<span class="op">:</span> <span class="op">&amp;</span><span class="kw">mut</span> <span class="dt">u8</span>) <span class="op">{</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>              <span class="co">// ---t: [Active, Active]</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>              <span class="co">//    |--- u: [Reserved, Reserved?] (protected)</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>              <span class="co">//    |--- v: [Reserved?, Reserved] (protected)</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>u <span class="op">+=</span> <span class="cn">1</span><span class="op">;</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>              <span class="co">// ---t: [Active, Active]</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>              <span class="co">//    |--- u: [Active, Reserved?] (protected)</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>              <span class="co">//    |--- v: [Disabled?, Reserved] (protected)</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>v <span class="op">+=</span> <span class="cn">1</span><span class="op">;</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>              <span class="co">// ---t: [Active, Active]</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>              <span class="co">//    |--- u: [Active, Disabled?] (protected)</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>              <span class="co">//    |--- v: [Disabled?, Active] (protected)</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<blockquote>
+<p><span class="sbnote"> <strong>[Note: Stacked Borrows]</strong>
+Stacked Borrows has no such mechanism, and the
+“<code>&amp;array[0] as *const _</code> + <code>ptr.add(_)</code>”
+pattern has been the cause of UB according to SB in common crates
+including <code>rand</code> and <code>hashbrown</code>. </span></p>
+</blockquote>
+<blockquote>
+<p><span class="tldr"> <strong>[Summary]</strong> Tree Borrows includes
+some delayed initialization of permissions outside of the range of a
+pointer. This permits using raw pointers outside of their initial range
+while still providing aliasing guarantees on all bytes. </span></p>
+</blockquote>
+<hr />
+<p>[ <a href="interiormut.html">Prev</a> | <a href="index.html">Up</a> |
+———– ]</p>
+<hr />
+</body>
+</html>

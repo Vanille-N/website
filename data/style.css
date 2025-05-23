@@ -1,38 +1,49 @@
-/*
-*/
-html { background-color: #202020; }
-body {
-    margin: 40px auto;
-    max-width: 750px;
-    line-height: 1.5;
-    font-size: 18px;
-    font-weight: 350;
-    color: #fbecb2;
-    background: #282828;
-    padding: 0 10px
-}
-h1,h2,h3 {
-    line-height: 1.2
-}
-h1 {
-    color: #e6e6ff;
-    font-weight: 800;
-}
-h2 {
-    color: #b3b3ff;
-    font-weight: 700;
-}
-h3 {
-    color: #4d4dff;
-    font-weight: 600;
-}
-html:not(.inverted) a {
-    color: #ccffff;
-    font-weight: 300;
-}
-html:not(.inverted) a:visited {
-    color: #ffccff;
-    font-weight: 300;
-}
+<style>
+    html { background-color: #1d2021; }
+    body {
+        margin: 40px auto;
+        max-width: 1200px;
+        line-height: 1.5;
+        font-size: 18px;
+        font-weight: 350;
+        color: #fbf1c7;
+        background: #282828;
+        padding: 0 10px
+    }
+    h1,h2,h3 {
+        line-height: 1.2
+    }
+    h1 {
+        color: #a8ab16;
+        font-weight: 800;
+    }
+    h2 {
+        color: #b8bb26;
+        font-weight: 700;
+    }
+    h3 {
+        color: #c8cb36;
+        font-weight: 600;
+    }
+    html:not(.inverted) a {
+        color: #8ec07c;
+        font-weight: 300;
+    }
+    html:not(.inverted) a:visited {
+        color: #d3869b;
+        font-weight: 300;
+    }
 
+    .alert {
+        color: #de3012;
+    }
+    .info {
+        color: #afcf92;
+    }
 
+    .box {
+        box-sizing: content-box;
+        padding: 2px;
+        border: 1px solid #afcf92;
+    }
+</style>

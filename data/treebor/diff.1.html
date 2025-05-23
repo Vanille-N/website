@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Neven Villani" />
+  <title>Tree Borrows – Diff for 2023-07-04</title>
+  <style>
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+background-color: #1a1a1a;
+border: none;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+background-color: #232629;
+color: #7a7c7d;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #7a7c7d; padding-left: 4px; }
+div.sourceCode
+{ color: #fbf1c7; background-color: #181818; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span { } 
+code span.al { font-weight: bold; } 
+code span.an { } 
+code span.at { } 
+code span.bn { } 
+code span.bu { } 
+code span.cf { color: #fe8019; font-weight: bold; } 
+code span.ch { } 
+code span.cn { color: #d3869b; } 
+code span.co { color: #a89984; } 
+code span.cv { } 
+code span.do { } 
+code span.dt { color: #458588; } 
+code span.dv { color: #fabd2f; } 
+code span.er { text-decoration: underline; } 
+code span.ex { font-weight: bold; } 
+code span.fl { } 
+code span.fu { } 
+code span.im { } 
+code span.in { } 
+code span.kw { color: #d85d0e; font-weight: bold; } 
+code span.op { color: #d5c6a1; } 
+code span.ot { } 
+code span.pp { color: #d79921; } 
+code span.re { background-color: #153042; } 
+code span.sc { } 
+code span.ss { } 
+code span.st { color: #fb4934; } 
+code span.va { } 
+code span.vs { } 
+code span.wa { } 
+</style>
+  <style>
+html { background-color: #1d2021; }
+body {
+margin: 40px auto;
+max-width: 1200px;
+line-height: 1.5;
+font-size: 18px;
+font-weight: 350;
+color: #fbf1c7;
+background: #282828;
+padding: 0 10px
+}
+h1,h2,h3 {
+line-height: 1.2
+}
+h1 {
+color: #a8ab16;
+font-weight: 800;
+}
+h2 {
+color: #b8bb26;
+font-weight: 700;
+}
+h3 {
+color: #c8cb36;
+font-weight: 600;
+}
+html:not(.inverted) a {
+color: #8ec07c;
+font-weight: 300;
+}
+html:not(.inverted) a:visited {
+color: #d3869b;
+font-weight: 300;
+}
+.implnote {
+color: #afcf92;
+}
+.sbnote {
+color: #9bb4a1;
+}
+.tldr {
+color: #fad473;
+}
+.intuition {
+color: #d3869b;
+}
+.alert {
+color: #de3012;
+}
+.info {
+color: #afcf92;
+}
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Tree Borrows – Diff for 2023-07-04</h1>
+<p class="subtitle">A new aliasing model for Rust</p>
+<p class="author">Neven Villani</p>
+<p class="date">De.c 2024</p>
+</header>
+<p>[ ———— | <a href="index.html">Up</a> | ———— ]</p>
+<p>In the process of trying to formalize the rules of Tree Borrows to
+prove that they do indeed provide the optimizations we claim, we
+discovered some issues and attempted to fix them.</p>
+<p>This document is an explanation of what issues we found, and how we
+solved them.</p>
+<p>If you are already familiar with the old Tree Borrows model and want
+to have a quick update on what changed since the last time Tree Borrows
+was fully explained, you’re in the right place. If you are new to Tree
+Borrows you should consider reading directly the <a href="https://perso.crans.org/vanille/treebor">updated model</a> so that
+you don’t waste time learning about things that were later changed.</p>
+<hr />
+<h1 id="the-problem">The problem</h1>
+<p>The issue is outlined in this <a href="https://github.com/rust-lang/miri/pull/3732">pull request</a>. In
+short, when we added implicit reads on function exit for protected
+locations (see <a href="https://perso.crans.org/vanille/treebor/diff.0.html">explanation</a>),
+we were not thorough enough and failed to notice that this does not
+enable reordering writes as we intended.</p>
+<p>It is known that Tree Borrows does not permit spurious writes, but it
+should allow reordering writes to already-activated locations in
+function calls!</p>
+<h1 id="our-solution">Our solution</h1>
+<p>This is an easy fix because we already have all the ingredients in
+the model. We simply switch the implicit read on function exit to be an
+implicit write for protected <code>Active</code> locations.</p>
+<p>See for example the newly added test, written by J. Hostert, that
+explains why this is necessary:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode rs"><code class="sourceCode rust"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> the_other_function(ref_to_fst_elem<span class="op">:</span> <span class="op">&amp;</span><span class="kw">mut</span> <span class="dt">i32</span><span class="op">,</span> ptr_to_vec<span class="op">:</span> <span class="op">*</span><span class="kw">mut</span> <span class="dt">i32</span>) <span class="op">-&gt;</span> <span class="op">*</span><span class="kw">mut</span> <span class="dt">i32</span> <span class="op">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Activate the reference. Afterwards, we should be able to reorder arbitrary writes.</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>ref_to_fst_elem <span class="op">=</span> <span class="cn">0</span><span class="op">;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Here is such an arbitrary write.</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">// It could be moved down after the retag, in which case the `funky_ref` would be invalidated.</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">// We need to ensure that the `funky_ptr` is unusable even if the write to `ref_to_fst_elem`</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">// happens before the retag.</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>ref_to_fst_elem <span class="op">=</span> <span class="cn">42</span><span class="op">;</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="co">// this creates a reference that is Reserved Lazy on the first element (offset 0).</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">// It does so by doing a proper retag on the second element (offset 1), which is fine</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">// since nothing else happens at that offset, but the lazy init mechanism means it&#39;s</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">// also reserved at offset 0, but not initialized.</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> funky_ptr_lazy_on_fst_elem <span class="op">=</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        <span class="kw">unsafe</span> <span class="op">{</span> (<span class="op">&amp;</span><span class="kw">mut</span> <span class="op">*</span>(ptr_to_vec<span class="op">.</span>wrapping_add(<span class="cn">1</span>))) <span class="kw">as</span> <span class="op">*</span><span class="kw">mut</span> <span class="dt">i32</span> <span class="op">}.</span>wrapping_sub(<span class="cn">1</span>)<span class="op">;</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">// If we write to `ref_to_fst_elem` here, then any further access to `funky_ptr_lazy_on_fst_elem` would</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="co">// definitely be UB. Since the compiler ought to be able to reorder the write of `42` above down to</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="co">// here, that means we want this program to also be UB.</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> funky_ptr_lazy_on_fst_elem<span class="op">;</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> main() <span class="op">{</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> <span class="kw">mut</span> v <span class="op">=</span> <span class="pp">vec!</span>[<span class="cn">0</span><span class="op">,</span> <span class="cn">1</span>]<span class="op">;</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="co">// get a pointer to the root of the allocation</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="co">// note that it&#39;s not important it&#39;s the actual root, what matters is that it&#39;s a parent</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="co">// of both references that will be created</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> ptr_to_vec <span class="op">=</span> v<span class="op">.</span>as_mut_ptr()<span class="op">;</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> ref_to_fst_elem <span class="op">=</span> <span class="kw">unsafe</span> <span class="op">{</span> <span class="op">&amp;</span><span class="kw">mut</span> <span class="op">*</span>ptr_to_vec <span class="op">};</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> funky_ptr_lazy_on_fst_elem <span class="op">=</span> the_other_function(ref_to_fst_elem<span class="op">,</span> ptr_to_vec)<span class="op">;</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    <span class="co">// now we try to use the funky lazy pointer.</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    <span class="co">// It should be UB, since the write-on-protector-end should disable it.</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    <span class="kw">unsafe</span> <span class="op">{</span> <span class="pp">println!</span>(<span class="st">&quot;Value of funky: {}&quot;</span><span class="op">,</span> <span class="op">*</span>funky_ptr_lazy_on_fst_elem) <span class="op">}</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    <span class="co">//^~ ERROR: /reborrow through .* is forbidden/</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>[ ———— | <a href="index.html">Up</a> | ———— ]</p>
+<hr />
+</body>
+</html>

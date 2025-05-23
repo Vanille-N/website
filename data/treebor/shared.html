@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Neven Villani" />
+  <title>Tree Borrows – Sharing Data</title>
+  <style>
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+background-color: #1a1a1a;
+border: none;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+background-color: #232629;
+color: #7a7c7d;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #7a7c7d; padding-left: 4px; }
+div.sourceCode
+{ color: #fbf1c7; background-color: #181818; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span { } 
+code span.al { font-weight: bold; } 
+code span.an { } 
+code span.at { } 
+code span.bn { } 
+code span.bu { } 
+code span.cf { color: #fe8019; font-weight: bold; } 
+code span.ch { } 
+code span.cn { color: #d3869b; } 
+code span.co { color: #a89984; } 
+code span.cv { } 
+code span.do { } 
+code span.dt { color: #458588; } 
+code span.dv { color: #fabd2f; } 
+code span.er { text-decoration: underline; } 
+code span.ex { font-weight: bold; } 
+code span.fl { } 
+code span.fu { } 
+code span.im { } 
+code span.in { } 
+code span.kw { color: #d85d0e; font-weight: bold; } 
+code span.op { color: #d5c6a1; } 
+code span.ot { } 
+code span.pp { color: #d79921; } 
+code span.re { background-color: #153042; } 
+code span.sc { } 
+code span.ss { } 
+code span.st { color: #fb4934; } 
+code span.va { } 
+code span.vs { } 
+code span.wa { } 
+</style>
+  <style>
+html { background-color: #1d2021; }
+body {
+margin: 40px auto;
+max-width: 1200px;
+line-height: 1.5;
+font-size: 18px;
+font-weight: 350;
+color: #fbf1c7;
+background: #282828;
+padding: 0 10px
+}
+h1,h2,h3 {
+line-height: 1.2
+}
+h1 {
+color: #a8ab16;
+font-weight: 800;
+}
+h2 {
+color: #b8bb26;
+font-weight: 700;
+}
+h3 {
+color: #c8cb36;
+font-weight: 600;
+}
+html:not(.inverted) a {
+color: #8ec07c;
+font-weight: 300;
+}
+html:not(.inverted) a:visited {
+color: #d3869b;
+font-weight: 300;
+}
+.implnote {
+color: #afcf92;
+}
+.sbnote {
+color: #9bb4a1;
+}
+.tldr {
+color: #fad473;
+}
+.intuition {
+color: #d3869b;
+}
+.alert {
+color: #de3012;
+}
+.info {
+color: #afcf92;
+}
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Tree Borrows – Sharing Data</h1>
+<p class="subtitle">A new aliasing model for Rust</p>
+<p class="author">Neven Villani</p>
+<p class="date">Mar. 2023</p>
+</header>
+<p>[ <a href="core.html">Prev</a> | <a href="index.html">Up</a> | <a href="protectors.html">Next</a> ]</p>
+<p>Previously we introduced the core of the Tree Borrows model which
+tracks the permissions of mutable references between <code>Active</code>
+and <code>Disabled</code> to guarantee that no two references hold
+mutable access to the same piece of memory at the same time.</p>
+<p>We now introduce the transitory permissions <code>Frozen</code> and
+<code>Reserved</code> which let us extend the model with shared
+references and delayed activation respectively.</p>
+<h2 id="implicit-accesses-on-reborrows">Implicit accesses on
+reborrows</h2>
+<p>Being able to assume that a newly created reference is readable is
+desireable, since it allows the insertion of read accesses in
+optimizations such as the following one</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dv">//? Unoptimized</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> x <span class="op">=</span> <span class="op">&amp;*</span>u<span class="op">;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> <span class="kw">mut</span> sum <span class="op">=</span> <span class="cn">0</span><span class="op">;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> condition() <span class="op">{</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    sum <span class="op">+=</span> <span class="op">*</span>x<span class="op">;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="dv">//? Optimized</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> x <span class="op">=</span> <span class="op">&amp;*</span>u<span class="op">;</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> <span class="kw">mut</span> sum <span class="op">=</span> <span class="cn">0</span><span class="op">;</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> xval <span class="op">=</span> <span class="op">*</span>x<span class="op">;</span> <span class="co">// Assuming that `x` is unconditionally dereferenceable</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> condition() <span class="op">{</span> <span class="co">// Assuming also that `condition()` does not modify `*x`</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    sum <span class="op">+=</span> xval<span class="op">;</span> <span class="co">// We can remove dereferencing operations</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>This optimization is incorrect if we only rely on
+<code>condition()</code> to protect against <code>x</code> being
+dangling. Indeed in the unoptimized version it suffices that
+<code>condition()</code> implies <code>x</code> is readable, whereas the
+optimized version requires the unconditional validity of <code>x</code>.
+Tree Borrow’s approach to this is to perform a fake read access upon a
+reborrow, thus asserting that every newly created reference can be read
+from.</p>
+<blockquote>
+<p><span class="sbnote"> <strong>[Note: Stacked Borrows]</strong> Both
+Tree Borrows and Stacked Borrows perform this fake read access on a
+shared reborrow. However on a mutable reborrow, Stacked Borrows performs
+an additional fake write access, which Tree Borrows does not. This costs
+some optimizations (some reorderings involving writes) but makes mutable
+references interact more consistently with shared references.
+</span></p>
+</blockquote>
+<p>This also allows the use of the <a href="https://llvm.org/docs/LangRef.html">dereferenceable</a> attribute
+in LLVM, which enables additional optimizations.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="st">//- TB: UB (reborrow from `Disabled`)</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="st">//- This code violates LLVM assumptions, it MUST BE UB.</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> reborrow_disabled(u<span class="op">:</span> <span class="op">&amp;</span><span class="kw">mut</span> <span class="dt">u8</span>) <span class="op">{</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> x <span class="op">=</span> <span class="op">&amp;</span><span class="kw">mut</span> <span class="op">*</span>u<span class="op">;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>x <span class="op">=</span> <span class="cn">42</span><span class="op">;</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> y <span class="op">=</span> <span class="op">&amp;</span><span class="kw">mut</span> <span class="op">*</span>u<span class="op">;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>y <span class="op">=</span> <span class="cn">36</span><span class="op">;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>                        <span class="co">// --- u: Active</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>                        <span class="co">//     |--- x: Disabled</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>                        <span class="co">//     |--- y: Active</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> z <span class="op">=</span> <span class="op">&amp;*</span>x<span class="op">;</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>                        <span class="co">// This is an attempted reborrow from `x: Disabled`.</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>                        <span class="co">// It counts as an attempted read, and `Disabled` forbids</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>                        <span class="co">// reads.</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>                        <span class="co">// This is UB.</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Creating a raw pointer however does not perform this check, and the
+operation <code class="sourceCode rust"><span class="kw">let</span> xraw <span class="op">=</span> x <span class="kw">as</span> <span class="op">*</span><span class="kw">mut</span> <span class="dt">u8</span></code>
+produces no read access. In addition, Tree Borrows considers accesses
+through raw pointers to be equivalent to accesses through their parent
+reference.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dt">//+ TB: NO UB (raw pointers derived from the same reference can coexist)</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> several_raw(u<span class="op">:</span> <span class="op">&amp;</span><span class="kw">mut</span> <span class="dt">u8</span>) <span class="op">{</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> r0 <span class="op">=</span> <span class="op">&amp;</span><span class="kw">mut</span> <span class="op">*</span>u<span class="op">;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>r0 <span class="op">=</span> <span class="cn">42</span><span class="op">;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                           <span class="co">// --- u: Active</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                           <span class="co">//     |--- r0: Active</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> r1 <span class="op">=</span> r0 <span class="kw">as</span> <span class="op">*</span><span class="kw">mut</span> <span class="dt">u8</span><span class="op">;</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> r2 <span class="op">=</span> r0 <span class="kw">as</span> <span class="op">*</span><span class="kw">mut</span> <span class="dt">u8</span><span class="op">;</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> r3 <span class="op">=</span> r0 <span class="kw">as</span> <span class="op">*</span><span class="kw">mut</span> <span class="dt">u8</span><span class="op">;</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>                           <span class="co">// Raw pointers are considered equivalent to their parent reference.</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>                           <span class="co">// --- u: Active</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>                           <span class="co">//     |--- r0,r1,r2,r3: Active</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>r1 <span class="op">+=</span> <span class="cn">1</span><span class="op">;</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>r3 <span class="op">+=</span> <span class="cn">1</span><span class="op">;</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>r0 <span class="op">+=</span> <span class="cn">1</span><span class="op">;</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>r2 <span class="op">+=</span> <span class="cn">1</span><span class="op">;</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>r1 <span class="op">+=</span> <span class="cn">1</span><span class="op">;</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>                           <span class="co">// Any sequence of operations is allowed between raw pointers derived from</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>                           <span class="co">// the same reference, since TB sees all of these as if they were accesses</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>                           <span class="co">// through `r0` directly.</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>u <span class="op">+=</span> <span class="cn">1</span><span class="op">;</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>                           <span class="co">// Raw pointers die when their parent reference dies.</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>                           <span class="co">// --- u: Active</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>                           <span class="co">//     |--- r0,r1,r2,r3: Disabled</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<blockquote>
+<p><span class="sbnote"> <strong>[Note: Stacked Borrows]</strong> Tree
+Borrows’ approach to raw pointers (having them share exactly the same
+permission as their direct parent at all times) avoids Stacked Borrows’
+<a href="https://github.com/rust-lang/unsafe-code-guidelines/issues/227">Issue
+#227</a> of ambiguity in inherited permissions. </span></p>
+</blockquote>
+<h2 id="references-can-live-together-when-frozen">References can live
+together when <code>Frozen</code></h2>
+<p>Shared references point to data that must by definition allow
+sharing. There must be some permission to represent data that is
+borrowed immutably, and it must allow both child and foreign reads. We
+call this permission <code>Frozen</code>, and it is unaffected by all
+read accesses. Of course <code>Frozen</code> disallows child writes.</p>
+<p>An assumption that we wish to make is that the shared data is
+immutable, which allows the following optimization</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="dv">//? Unoptimized</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> x <span class="op">=</span> <span class="op">&amp;*</span>u<span class="op">;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> before <span class="op">=</span> <span class="op">*</span>x<span class="op">;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>foo()<span class="op">;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> after <span class="op">=</span> <span class="op">*</span>x<span class="op">;</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> sum <span class="op">=</span> before <span class="op">+</span> after<span class="op">;</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="dv">//? Optimized</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> x <span class="op">=</span> <span class="op">&amp;*</span>u<span class="op">;</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> xval <span class="op">=</span> <span class="op">*</span>x<span class="op">;</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>foo()<span class="op">;</span> <span class="co">// Assumption: `foo()` cannot mutate `*x`</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> sum <span class="op">=</span> xval <span class="op">*</span> <span class="cn">2</span><span class="op">;</span></span></code></pre></div>
+<p>This suggests that when the location is written to,
+<code>Frozen</code> must become <code>Disabled</code>: a shared
+reference is only alive as long as no foreign writes occur.</p>
+<h4 id="example-write-access-kills-shared-references">Example: write
+access kills shared references</h4>
+<div class="sourceCode" id="cb5"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="st">//- TB: UB (shared reference is killed by write)</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> share_until_write(u<span class="op">:</span> <span class="op">&amp;</span><span class="kw">mut</span> <span class="dt">u8</span>) <span class="op">{</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> x <span class="op">=</span> <span class="op">&amp;*</span>u<span class="op">;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> y <span class="op">=</span> <span class="op">&amp;*</span>x<span class="op">;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> z <span class="op">=</span> <span class="op">&amp;*</span>u<span class="op">;</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>                        <span class="co">// As many `Frozen` as needed can coexist.</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>                        <span class="co">// They can be only read, but the order does not matter.</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>                        <span class="co">// --- u: Active</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> _v <span class="op">=</span> <span class="op">*</span>y<span class="op">;</span>        <span class="co">//     |--- x: Frozen</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> _v <span class="op">=</span> <span class="op">*</span>x<span class="op">;</span>        <span class="co">//     |    |--- y: Frozen</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> _v <span class="op">=</span> <span class="op">*</span>z<span class="op">;</span>        <span class="co">//     |--- z: Frozen</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>                        <span class="co">// (`Frozen` is unaffected by child and foreign reads)</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>                        <span class="co">// (`Active` is unaffected by child reads)</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> w <span class="op">=</span> <span class="op">&amp;</span><span class="kw">mut</span> <span class="op">*</span>u<span class="op">;</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>w <span class="op">=</span> <span class="cn">42</span><span class="op">;</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>                       <span class="co">// All shared borrows are killed on a write access</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>                       <span class="co">// --- u: Active</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>                       <span class="co">//     |--- x: Disabled</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>                       <span class="co">//     |    |--- y: Disabled</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>                       <span class="co">//     |--- z: Disabled</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>                       <span class="co">//     |--- w: Active</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> _v <span class="op">=</span> <span class="op">*</span>x<span class="op">;</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>                       <span class="co">// Attempted read through a `Disabled` pointer</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>                       <span class="co">// This is UB.</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h2 id="dont-disable-immediately-keep-frozen-instead">Don’t
+<code>Disable</code> immediately, keep <code>Frozen</code> instead</h2>
+<p>Until now we have avoided the question of what to do when an
+<code>Active</code> encounters a read. Since mutable references also
+permit read-only access it should be obvious that child reads are
+allowed, but what happens on a foreign read ?</p>
+<p>The Borrow Checker suggests that the mutable reference should be
+killed completely, but we argue that it should merely become
+<code>Frozen</code>. In other words a mutable reference is downgraded to
+a shared reference when other shared references start accessing the data
+immutably.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="dt">//+ TB: NOT UB (mutable reference is still accessible as read-only)</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="st">//- Does not compile. error[E0502]: cannot borrow `*u` as immutable because it is also borrowed as mutable.</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> shared_from_mut(u<span class="op">:</span> <span class="op">&amp;</span><span class="kw">mut</span> <span class="dt">u8</span>) <span class="op">{</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> x <span class="op">=</span> <span class="op">&amp;</span><span class="kw">mut</span> <span class="op">*</span>u<span class="op">;</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                        <span class="co">// First mutable borrow</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>                        <span class="co">// --- u: Active</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>                        <span class="co">//     |--- x: Active</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>                        <span class="co">// (`u: Active` is unaffected by the child write)</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>x <span class="op">=</span> <span class="cn">42</span><span class="op">;</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">// The mutable lifetime of `x` ends here, but it will still be available read-only</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> y <span class="op">=</span> <span class="op">&amp;*</span>u<span class="op">;</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>                        <span class="co">// Second borrow is immutable</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>                        <span class="co">// --- u: Active</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>                        <span class="co">//     |--- x: Frozen</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>                        <span class="co">//     |--- y: Frozen</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>                        <span class="co">// (`u: Active` is unaffected by the child read)</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>                        <span class="co">// (`x: Active` is made `Frozen` by the foreign read)</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> _v <span class="op">=</span> <span class="op">*</span>x<span class="op">;</span>        <span class="co">// `x` has been downgraded to a shared reference,</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>                        <span class="co">// this read access _is_ allowed by TB (not by the compiler though),</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>                        <span class="co">// and is a no-op in terms of permissions.</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>So why do we allow this ? The main reason is that we want the
+compiler to always be able to reorder read-only accesses, and doing so
+must absolutely not introduce new UB !</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="dt">//+ TB: NOT UB (properly nested)</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="dt">//+ This is safe code that compiles, it MUST NOT BE UB.</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> swappable_reads(u<span class="op">:</span> <span class="op">&amp;</span><span class="kw">mut</span> <span class="dt">u8</span>) <span class="op">{</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> x <span class="op">=</span> <span class="op">&amp;</span><span class="kw">mut</span> <span class="op">*</span>u<span class="op">;</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>x <span class="op">=</span> <span class="cn">42</span><span class="op">;</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>                      <span class="co">// Currently</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>                      <span class="co">// --- u: Active</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>                      <span class="co">//     |--- x: Active</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>                      <span class="co">//</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>                      <span class="co">// What happens if we reorder these two reads ?</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> _v <span class="op">=</span> <span class="op">*</span>x<span class="op">;</span>      <span class="co">//  &lt;--- (1)</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> _v <span class="op">=</span> <span class="op">*</span>u<span class="op">;</span>      <span class="co">//  &lt;--- (2)</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>                      <span class="co">//</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>                      <span class="co">// Answer: `x: Active` would be subjected to (2) a foreign read.</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>                      <span class="co">// If this made `x` become `Disabled`, then the following (1) child read would be UB.</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>                      <span class="co">// For reads to always be possible to reorder, it must hold that a read through a</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>                      <span class="co">// pointer never makes another pointer `Disabled`. Since the other pointer must not stay</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>                      <span class="co">// `Active`, `Frozen` is the solution.</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<blockquote>
+<p><span class="sbnote"> <strong>[Note: Stacked Borrows]</strong> In
+Stacked Borrows mutable references are <em>not</em> downgraded to shared
+references, they are instead completely invalidated on a read access.
+This is undesirable since it invalidates a standard optimization, but it
+is also required in Stacked Borrows otherwise other bigger problems
+appear. </span></p>
+</blockquote>
+<blockquote>
+<p><span class="tldr"> <strong>[Summary]</strong> <code>Frozen</code> is
+a permission that represents immutable or no-longer-mutable references.
+It is the permission that shared references are initialized to, and it
+enables sharing read-only data. <br>- <code>Frozen</code> allows child
+reads and forbids (UB) child writes, <br>- <code>Frozen</code> is
+unaffected by foreign reads, <br>- <code>Frozen</code> becomes
+<code>Disabled</code> on a foreign write. <br>- <code>Active</code>
+becomes <code>Frozen</code> on a foreign read. </span></p>
+</blockquote>
+<h2 id="reserve-until-needed"><code>Reserve</code> until needed</h2>
+<p>There are several motivations for not making mutable references
+immediately <code>Active</code> and for not performing a fake write upon
+creation:</p>
+<ul>
+<li><a href="https://rustc-dev-guide.rust-lang.org/borrow_check/two_phase_borrows.html">two-phase
+borrows</a> require that a mutable reference implicitly reborrowed in a
+function argument still allows read-only accesses until function
+entry;</li>
+<li>some functions such as <code>as_mut_ptr</code> require an
+<code>&amp;mut</code> reference but do not actually mutate the data, so
+making the mere creation of an <code>&amp;mut</code> a write access
+causes some read-only code to contain UB.</li>
+</ul>
+<p>We model this by introducing a new state called
+<code>Reserved</code>, which allows child and foreign reads until the
+reference is written to.</p>
+<blockquote>
+<p><span class="tldr"> <strong>[Summary]</strong> <code>Reserved</code>
+is the permission of a not-yet-mutable or two-phase-borrowed pointer.
+<br>- <code>Reserved</code> becomes <code>Active</code> on the first
+child write, <br>- <code>Reserved</code> otherwise behaves exactly like
+a <code>Frozen</code>: it allows child reads, is unaffected by foreign
+reads, and becomes <code>Disabled</code> on a foreign write. </span></p>
+</blockquote>
+<p>This <code>Reserved</code> permission makes a lot of code allowed,
+including some very common patterns of <code>unsafe</code> code, and
+even some safe code that we would have needed to allow anyway and would
+have been much more difficult to handle were it not for
+<code>Reserved</code>.</p>
+<h4 id="example-easy-two-phase-borrow-with-reserved">Example: easy
+two-phase borrow with <code>Reserved</code></h4>
+<p><a href="https://rustc-dev-guide.rust-lang.org/borrow_check/two_phase_borrows.html">Two-phase
+borrows</a> are the main use of <code>Reserved</code>.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="dt">//+ TB: NOT UB (standard two-phase borrow example)</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="dt">//+ This is safe code that compiles, it MUST NOT BE UB.</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> push_len(v<span class="op">:</span> <span class="op">&amp;</span><span class="kw">mut</span> <span class="dt">Vec</span><span class="op">&lt;</span><span class="dt">usize</span><span class="op">&gt;</span>) <span class="op">{</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    v<span class="op">.</span>push(v<span class="op">.</span>len())<span class="op">;</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>The above code desugars to approximately</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="dt">//+ TB: NOT UB (standard two-phase borrow example -- desugared)</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="dt">//+ This is (unsafe) desugaring of safe code, it would be PREFERABLY NOT UB.</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> push_len_desugared(v<span class="op">:</span> <span class="op">&amp;</span><span class="kw">mut</span> <span class="dt">Vec</span><span class="op">&lt;</span><span class="dt">usize</span><span class="op">&gt;</span>) <span class="op">{</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> temp_vmut <span class="op">=</span> <span class="op">&amp;</span><span class="kw">mut</span> v<span class="op">;</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">// --- Two-phase borrow begins ---</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> temp_vshr <span class="op">=</span> <span class="op">&amp;</span>v<span class="op">;</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>                                        <span class="co">// At this point we have</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>                                        <span class="co">// --- v: Reserved</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>                                        <span class="co">//     |--- temp_vmut: Reserved</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>                                        <span class="co">//     |--- temp_vshr: Frozen</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> temp_len <span class="op">=</span> <span class="dt">Vec</span><span class="pp">::</span>len(temp_vshr)<span class="op">;</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">// This is a foreign read for `temp_vmut: Reserved` which is unaffected.</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">// No write has occured since the beginning of the two-phase borrow.</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    <span class="co">// --- Two-phase borrow becomes a true active mutable borrow. ---</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    <span class="dt">Vec</span><span class="pp">::</span>push(temp_vmut<span class="op">,</span> temp_len)<span class="op">;</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>                                        <span class="co">// Now a child write through `temp_vmut` finally occurs</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>                                        <span class="co">// --- v: Active</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>                                        <span class="co">//     |--- temp_vmut: Active</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>                                        <span class="co">//     |--- temp_vshr: Disabled</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<blockquote>
+<p><span class="sbnote"> <strong>[Note: Stacked Borrows]</strong>
+Stacked Borrows has no direct equivalent of <code>Reserved</code>: in SB
+two-phase borrows are raw pointers (much more permissive than
+<code>Reserved</code>) and standard mutable borrows are
+<code>Unique</code> (much more strict than <code>Reserved</code>).
+</span></p>
+</blockquote>
+<h4 id="example-stdlib-test-that-passes-thanks-to-reserved">Example:
+stdlib test that passes thanks to <code>Reserved</code></h4>
+<div class="sourceCode" id="cb10"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="dt">//+ TB: NOT UB (still `Reserved` at the time of `assert`)</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="dt">//+ This is (almost) stdlib code, it would be PREFERABLY NOT UB.</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> mut_raw_then_mut_shr() <span class="op">{</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> <span class="kw">mut</span> x <span class="op">=</span> <span class="cn">2</span><span class="op">;</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> xref <span class="op">=</span> <span class="op">&amp;</span><span class="kw">mut</span> x<span class="op">;</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> xmut <span class="op">=</span> <span class="op">&amp;</span><span class="kw">mut</span> <span class="op">*</span>xref<span class="op">;</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> xshr <span class="op">=</span> <span class="op">&amp;*</span>xref<span class="op">;</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="pp">assert_eq!</span>(<span class="op">*</span>xshr<span class="op">,</span> <span class="cn">2</span>)<span class="op">;</span> <span class="co">// At this point, `xmut: Reserved`. It allows the foreign read through `xshr: Frozen`.</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>xmut <span class="op">=</span> <span class="cn">4</span><span class="op">;</span>            <span class="co">// Now `xmut` becomes `Active`.</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    <span class="pp">assert_eq!</span>(x<span class="op">,</span> <span class="cn">4</span>)<span class="op">;</span>     <span class="co">// And then a parent read through `x: Active` makes `xmut: Frozen`</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h4 id="example-copy_nonoverlapping">Example:
+<code>copy_nonoverlapping</code></h4>
+<div class="sourceCode" id="cb11"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="dt">//+ TB: NOT UB (Reserved interacts nicely with reborrow-and-offset)</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="dt">//+ Common pattern, would be PREFERABLY NOT UB.</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> data <span class="op">=</span> <span class="op">&amp;</span><span class="kw">mut</span> [<span class="cn">0u8</span><span class="op">,</span> <span class="cn">1u8</span>]<span class="op">;</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="kw">unsafe</span> <span class="op">{</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> raw_shr <span class="op">=</span> data<span class="op">.</span>as_ptr()<span class="op">;</span> <span class="co">// implicitly reborrows an `&amp;` reference, producing `Frozen`</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> raw_mut <span class="op">=</span> data<span class="op">.</span>as_mut_ptr()<span class="op">.</span>add(<span class="cn">1</span>)<span class="op">;</span> <span class="co">// implicitly reborrows an `&amp;mut` reference, producing `Reserved`</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>                                            <span class="co">// At this point we have</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>                                            <span class="co">// --- data: Active|Active</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>                                            <span class="co">//     |--- raw_shr: Frozen|Frozen</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>                                            <span class="co">//     |--- raw_mut: Reserved|Reserved</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    <span class="pp">core::ptr::</span>copy_nonoverlapping(raw_shr<span class="op">,</span> raw_mut<span class="op">,</span> <span class="cn">1</span>)<span class="op">;</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>                                            <span class="co">// The write affects only the second location,</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>                                            <span class="co">// no UB occurs and the borrows are now</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>                                            <span class="co">// --- data: Active|Active</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>                                            <span class="co">//     |--- raw_shr: Frozen|Disabled</span></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>                                            <span class="co">//     |--- raw_mut: Reserved|Active</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>In this example we call <code class="sourceCode rust">data<span class="op">.</span>as_ptr()</code>
+followed by <code class="sourceCode rust">data<span class="op">.</span>as_mut_ptr()</code>.
+The opposite ordering (computing <code>raw_mut</code> then
+<code>raw_shr</code>) results in exactly the same tree since both
+<code>Reserved</code> and <code>Frozen</code> tolerate the read-only
+reborrow of <code>as{_mut,}_ptr</code>.</p>
+<blockquote>
+<p><span class="sbnote"> <strong>[Note: Stacked Borrows]</strong>
+Stacked Borrows does not allow both orderings: computing
+<code>raw_mut</code> second asserts uniqueness and invalidates
+<code>raw_shr</code>. More generally Stacked Borrows immediately asserts
+uniqueness upon creation of an <code>&amp;mut</code>, which has been
+reported to be <a href="https://github.com/rust-lang/unsafe-code-guidelines/issues/133">too
+strict</a>. </span></p>
+</blockquote>
+<!-- FIXME: sometimes needs less brutal context switching and reasoning skips -->
+<h2 id="permitted-optimizations">Permitted optimizations</h2>
+<p>The model so far allows at least the following optimizations:</p>
+<h3 id="grouping-together-related-writes">Grouping together related
+writes</h3>
+<p>Unfortunately it is not always possible to reorder writes accesses
+with code that performs reads, as the following example shows</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode rs"><code class="sourceCode rust"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> x <span class="op">=</span> <span class="op">&amp;</span><span class="kw">mut</span> <span class="op">*</span>u<span class="op">;</span> <span class="co">// `x: Reserved`</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> yval <span class="op">=</span> <span class="op">*</span>y<span class="op">;</span>   <span class="co">// Regardless of whether `x` and `y` alias, `x` is still `Reserved`</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="op">*</span>x <span class="op">+=</span> <span class="cn">1</span><span class="op">;</span>         <span class="co">// `x: Active`</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>                 <span class="co">// NO UB according to TB even if `x` and `y` alias.</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>                 <span class="co">// Therefore we can&#39;t _assume_ that `x` and `y` don&#39;t alias,</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>                 <span class="co">// the read and the write cannot be reordered unless we _know_</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>                 <span class="co">// through other means that they are disjoint.</span></span></code></pre></div>
+<blockquote>
+<p><span class="sbnote"> <strong>[Note: Stacked Borrows]</strong>
+Stacked Borrows allows the above optimization, at the cost of a less
+homogeneous handling of mutable references (allowed for standard
+reborrows but disallowed for two-phase borrows). </span></p>
+</blockquote>
+<p>However in Tree Borrows we can still group together related writes if
+there are no child pointers.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode rs"><code class="sourceCode rust"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="dv">//? Unoptimized</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> x <span class="op">=</span> <span class="op">&amp;</span><span class="kw">mut</span> <span class="op">*</span>u<span class="op">;</span>  <span class="co">// `x: Reserved`, also `x` does not have child pointers</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="op">*</span>x <span class="op">+=</span> <span class="cn">1</span><span class="op">;</span>          <span class="co">// `x: Active`</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> yval <span class="op">=</span> <span class="op">*</span>y<span class="op">;</span>    <span class="co">// If `y` and `x` alias then `x: Frozen` otherwise `x: Active`</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="op">*</span>x <span class="op">+=</span> <span class="cn">1</span><span class="op">;</span>          <span class="co">// If `y` and `x` alias then UB Otherwise `x: Active`</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co">// We can assume that `x` and `y` do not alias and group together the two increments</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="dv">//? Optimized</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> x <span class="op">=</span> <span class="op">&amp;</span><span class="kw">mut</span> <span class="op">*</span>u<span class="op">;</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="op">*</span>x <span class="op">+=</span> <span class="cn">2</span><span class="op">;</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> yval <span class="op">=</span> <span class="op">*</span>y<span class="op">;</span></span></code></pre></div>
+<h3 id="reordering-any-two-reads">Reordering any two reads</h3>
+<p>Reordering two read operations is a standard optimization and it
+obviously does not change the behavior of the program, but we must take
+care that it does not introduce additional UB.</p>
+<blockquote>
+<p><span class="sbnote"> <strong>[Note: Stacked Borrows]</strong>
+Stacked Borrows suffers from this issue, where a read-only access to a
+reference invalidates existing mutable references even for reading.
+While the original purpose is to enable more optimizations, this results
+in existing optimizations actually being forbidden because the optimized
+code exhibits UB. </span></p>
+</blockquote>
+<p>For Tree Borrows, in defining the effects of read accesses we have
+ensured that a read access never invalidates (causes to be UB) another
+read: permissions that allow reading (<code>Reserved</code>,
+<code>Active</code>, and <code>Frozen</code>) and are subjected to a
+foreign read result in permissions that still allow reading
+(<code>Reserved</code> and <code>Frozen</code>). Therefore the model
+allows any reordering of any adjacent read operations.</p>
+<p>This also includes the possibility of reordering reborrows with each
+other and with reads, since (1) reborrows do not count as write accesses
+and (2) both initial permissions (<code>Reserved</code> and
+<code>Frozen</code>) created after a reborrow tolerate foreign reads.
+The <code>copy_nonoverlapping</code> example above is one such
+instance.</p>
+<hr />
+<p>[ <a href="core.html">Prev</a> | <a href="index.html">Up</a> | <a href="protectors.html">Next</a> ]</p>
+<hr />
+</body>
+</html>
