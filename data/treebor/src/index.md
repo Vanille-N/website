@@ -48,8 +48,14 @@ you can consult [the diff](diff.1.html).
 > <span class="info">
 (Nov. 2024) Tree Borrows has been submitted for publication!
 You may read a preprint [here](aux/preprint.pdf). <br>
-An alternative mirror can be found on [J. Hostert's website](https://jhostert.de/news/ann_03_tree_borrows_submitted/),
-who joined the project to work on several aspects, from proving some of Tree Borrows' claims in Coq
+
+(May 2024) Tree Borrows has been accepted for publication at PLDI'25 <br>
+I will be giving the talk next June in [Seoul](https://pldi25.sigplan.org/details/pldi-2025-papers/42/Tree-Borrows) <br>
+
+An alternative mirror for the preprint can be found on
+[J. Hostert's website](https://jhostert.de/news/ann_03_tree_borrows_submitted/),
+who joined the project to work on several aspects,
+from proving some of Tree Borrows' claims in Coq
 and fixing bugs in the core model, to improving performance in Miri. <br>
 In related news, the formalization of Tree Borrows in Coq is complete,
 significantly increasing our confidence in the claims we have made.

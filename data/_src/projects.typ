@@ -1,4 +1,11 @@
-## Projects
+#import "utils.typ"
+#import "common.typ"
+
+#common.style("")
+#common.navbar("projects")
+#common.under-reconstruction()
+
+== Projects
 
 The projects in this list are at various stages of being
 completed / stalled / abandoned, but I am at least somewhat proud of all of them.

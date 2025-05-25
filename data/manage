@@ -3,4 +3,6 @@ recurse ijo-pona
 recurse pics
 recurse share
 recurse treebor
+recurse demo
 exec make
+exec just build all

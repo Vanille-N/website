@@ -1,11 +1,17 @@
-## Talks
+#import "common.typ"
 
-### Hysteresis in a model of thermohaline oceanic circulation
+#common.style("")
+#common.navbar-research("talks")
+#common.under-reconstruction()
+
+== Talks
+
+=== Hysteresis in a model of thermohaline oceanic circulation
 
 Should have been used for the 2020 TIPE oral exam\
 [\[git\]](https://github.com/Vanille-N/TIPE)
 
-### Recognition of Dynamic Unit Disk Graphs
+=== Recognition of Dynamic Unit Disk Graphs
 
 Following an intership with [Arnaud
 Casteigts](https://www.labri.fr/perso/acasteig/) at [LaBRI
@@ -17,7 +23,7 @@ Presented at [AATG
 [\[beamer\]](share/satge/beamer.pdf)
 [\[report\]](share/satge/report.pdf)
 
-### Mending Partial Solutions with Few Changes
+=== Mending Partial Solutions with Few Changes
 
 Following an internship with [Jukka Suomela](https://jukkasuomela.fi/)
 and [Darya Melnyk](https://darya-melnyk.github.io/) at [Aalto
@@ -29,7 +35,7 @@ Published in [OPODIS 2022](https://sites.uclouvain.be/OPODIS2022/)
 [\[beamer\]](https://perso.crans.org/vanille/share/satge/m1/beamer.pdf)
 [\[paper\]](https://drops.dagstuhl.de/storage/00lipics/lipics-vol253-opodis2022/LIPIcs.OPODIS.2022.21/LIPIcs.OPODIS.2022.21.pdf)
 
-### Tree Borrows
+=== Tree Borrows
 
 I have worked at [MPI-SWS, Saarland (Germany)](https://www.mpi-sws.org/)
 on the [miri](https://github.com/rust-lang/miri) Rust interpreter to
