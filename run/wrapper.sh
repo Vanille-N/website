@@ -27,7 +27,8 @@ copy() {
 
 exec() {
   cd "$(virtpath in)"
-  "$1"
+  echo "Executing $@"
+  "$@"
   cd -
 }
 

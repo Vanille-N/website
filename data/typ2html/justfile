@@ -1,0 +1,20 @@
+compile-raw SRC TGT:
+  typst compile --features html --format html --root . {{SRC}} {{TGT}}
+
+watch-raw SRC TGT:
+  typst watch --features html --format html --root . --no-serve {{SRC}} {{TGT}}
+
+# Core usage
+
+compile BASE:
+  just compile-raw _src/{{BASE}}.typ {{BASE}}.html
+
+watch BASE:
+  just watch-raw _src/{{BASE}}.typ {{BASE}}.html
+
+compile-all:
+  cat list:page | parallel --lb just compile {}
+
+watch-all:
+  cat list:page | parallel --lb just watch {}
+

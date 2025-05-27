@@ -1,8 +1,7 @@
 #import "excerpt.typ"
-#import "css.typ"
 
 #let this = "_src/index.typ"
-#let css = "_assets/style.css"
+#let common = "_src/common.typ"
 
 // These markers are used to paste pieces of code in the final document.
 // See `excerpt.typ`.
@@ -15,78 +14,7 @@
 #import "css.typ"
 // :prelude}
 
-#css.elem(":root", (
-  "--black": "#1d2021",
-  "--dk-gray0": "#282828",
-  "--dk-gray1": "#3c3836",
-  "--dk-gray2": "#504945",
-  "--dk-gray3": "#665c54",
-  "--dk-gray4": "#7c6f64",
-  "--gray": "#928374",
-  "--white": "#fbf1c7",
-  "--lt-gray0": "#ebdbb2",
-  "--lt-gray1": "#d5c4a1",
-  "--lt-gray2": "#bdae93",
-  "--lt-gray3": "#a89984",
-  "--dk-red": "#cc241d",
-  "--dk-green": "#98971a",
-  "--dk-yellow": "#d79921",
-  "--dk-blue": "#458588",
-  "--dk-purple": "#b16286",
-  "--dk-aqua": "#689d6a",
-  "--dk-orange": "#d65d0e",
-  "--lt-red": "#fb4934",
-  "--lt-green": "#b8bb26",
-  "--lt-yellow": "#fabd2f",
-  "--lt-blue": "#83a598",
-  "--lt-purple": "#d3869b",
-  "--lt-aqua": "#8ec07c",
-  "--lt-orange": "#fe8019",
-))
-
-// {style:
-#css.elems((
-  html: (
-    background-color: "var(--black)",
-  ),
-  body: (
-    margin: "40px auto",
-    max-width: "1200px",
-    line-height: 1.5,
-    font-size: "18px",
-    font-weight: 350,
-    color: "#fbf1c7",
-    background: "var(--dk-gray0)",
-    padding: "0 10px",
-  ),
-  "h1,h2,h3,h4": (
-    line-weight: 1.2,
-    color: "var(--lt-green)",
-  ),
-  h1: ( font-weight: 800 ),
-  h2: ( font-weight: 700 ),
-  h3: ( font-weight: 600 ),
-  a: ( color: "var(--dk-aqua)" ),
-  "a:visited": ( color: "var(--lt-purple)" ),
-))
-// :style}
-
-// {highlight:
-// Unpacked the archive from https://highlightjs.org/download to _highlight/
-#xhtml.script(src: "_highlight/highlight.min.js")
-#xhtml.link(rel: "stylesheet", href: "_highlight/styles/base16/gruvbox-dark-soft.css")
-
-// Copied from https://www.npmjs.com/package/@myriaddreamin/highlighter-typst
-// the "cjs, js bundled, wasm bundled" script
-#xhtml.script(src: "_highlight/highlight-typst.js")
-
-#xhtml.script("
-  const run = window.$typst$parserModule.then(() => {
-    hljs.registerLanguage('typst', window.hljsTypst({}))
-    hljs.highlightAll();
-  });
-")
-// :highlight}
+#include "common.typ"
 
 Last build: 2025-05-25 with typst 0.13.1
 
@@ -155,12 +83,14 @@ _highlight/
   \-- ...
 ```
 
-And I have my `Makefile` as such:
-#excerpt.incl("Makefile", "", lang: "make")
+And I have my `justfile` as such:
+#excerpt.incl("justfile", "", lang: "make")
+#excerpt.incl("list:page", "", lang: "make")
+#excerpt.incl("list:all", "", lang: "make")
 
 This builds `index.html` in the root directory. \
 To watch changes live, I open `index.html` in a browser
-and `watch make` in the background.
+and run `just watch-all` in the background.
 
 == Non-builtins
 
@@ -212,13 +142,13 @@ document-wide attributes, including background and foreground color,
 font size, title color, etc.
 You may recognize below something that reads like raw CSS, but formatted as nested Typst dictionaries.
 
-#excerpt.incl(this, "style")
+#excerpt.incl(common, "style")
 
 There is also a way to call some external `.js` code,
 the use-case for this document is for syntax highlighing through
 #link("https://highlightjs.org/")[`highlight.js`]
 
-#excerpt.incl(this, "highlight")
+#excerpt.incl(common, "highlight")
 
 === Inline style
 

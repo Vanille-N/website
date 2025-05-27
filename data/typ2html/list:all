@@ -1,0 +1,10 @@
+list:page none
+list:all none
+justfile make
+_src/xhtml.typ typst
+_src/css.typ typst
+_src/common.typ typst
+_src/excerpt.typ typst
+_src/index.typ typst
+_src/meta.typ typst
+
