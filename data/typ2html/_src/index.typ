@@ -131,10 +131,10 @@ Some stuff just works out of the box.
 - Making titles
   #excerpt.incl(this, "title")
 - Adding
-  // {link:
+  // {builtin-link:
   #link("https://example.com")[hyperrefs]
-  // :link}
-  #excerpt.incl(this, "link")
+  // :builtin-link}
+  #excerpt.incl(this, "builtin-link")
 
 == Build process
 
