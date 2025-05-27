@@ -2,11 +2,8 @@ TYPCFG = _src/common.typ _src/utils.typ _src/xhtml.typ _src/pona.typ
 TYPFILES = $(wildcard _src/*.typ)
 TYPBASE = $(TYPFILES:_src/%.typ=%)
 
-# Custom themes (syntax highlighting, html style, rust syntax definition)
-CSS = _assets/style.css
-
 # Globally relevant files (rebuild everything on every change)
-CONFIG = $(CSS) Makefile
+CONFIG = Makefile
 
 # Build html from md
 all: $(TYPFILES:_src/%.typ=%.html)

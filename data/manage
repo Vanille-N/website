@@ -1,8 +1,6 @@
 recurse better-pbm-viewer
-recurse ijo-pona
 recurse pics
 recurse share
 recurse treebor
-recurse demo
+recurse typ2html
 exec make
-exec just build all
