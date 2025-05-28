@@ -85,8 +85,6 @@ _highlight/
 
 And I have my `justfile` as such:
 #excerpt.incl("justfile", "", lang: "make")
-#excerpt.incl("list:page", "", lang: "make")
-#excerpt.incl("list:all", "", lang: "make")
 
 This builds `index.html` in the root directory. \
 To watch changes live, I open `index.html` in a browser
@@ -134,7 +132,7 @@ There are separate features of html that make this possible:
 
 I will show both.
 
-=== Global style
+=== Static global
 
 This document already uses this method.
 Through the module `css.typ` I have made it more or less easy to set
@@ -144,56 +142,92 @@ You may recognize below something that reads like raw CSS, but formatted as nest
 
 #excerpt.incl(common, "style")
 
-There is also a way to call some external `.js` code,
-the use-case for this document is for syntax highlighing through
-#link("https://highlightjs.org/")[`highlight.js`]
+=== On-the-fly global
 
-#excerpt.incl(common, "highlight")
+HTML is not limited to a single global `<style>` declaration,
+so this can be used also to set more properties after the fact.
+For example let us define `my-style` as such:
+#excerpt.incl(this, "my-style")
+
+// {my-style:
+#let my-style = (
+  color: "var(--black)",
+  background: "var(--dk-blue)",
+  border-radius: "3pt",
+  display: "inline-block",
+  padding: "5pt",
+)
+// :my-style}
+
+and then we can for example bind it to the `.on-the-fly` class as such:
+#excerpt.incl(this, "my-style-fly")
+
+// {my-style-fly:
+#css.elem(".on-the-fly", my-style)
+#xhtml.div(class: "on-the-fly", {
+  [Black on blue (on the fly)]
+})
+// :my-style-fly}
 
 === Inline style
 
+Additionally, HTML elements accept a `style` parameter in which you can put CSS.
+#excerpt.incl(this, "my-style-inline")
 
-/*
-== Prettification
+// {my-style-inline:
+#xhtml.div(class: "inlined", style: css.raw-style(my-style), {
+  [Black on blue (inlined)]
+})
+// :my-style-inline}
 
-A default HTML page is quite sad.
-And a strain on the eyes.
-Luckily Typst is already capable of including a CSS stylesheet,
-simply by virtue of it being a builtin html element.
+=== Dynamic 
 
-So we can have for example
-#excerpt.incl(this, "style")
+As for much more complex styling, you can always resort to calling external JS code.
+In this document, this is the method I use to provide syntax highlighting for code
+snippets through #link("https://highlightjs.org/")[`highlight.js`]:
 
-== Advanced layout
+#excerpt.incl(common, "highlight")
 
-=== Styled text
 
-Here's one possible approach that keeps everything locally
-so you don't have to edit the global css too much:
+== Document layout
 
-#excerpt.incl(this, "alert")
-// {alert:
-#let add-css(target, ..params) = {
-  let style = target + " { " + params.named().pairs().map(args => {
-      let (key, val) = args
-      key + ": " + val + ";"
-    }).join(" ") + " }"
-  xhtml.style(style)
-}
-
-#add-css(".alert",
-  font-size: "30px",
-  color: "var(--black)",
-  background: "var(--lt-red)"
-)
-#xhtml.span(class: "alert")[Important]
-// :alert}
+Here I offer some very common functions that help set the layout.
+I've found that often the appearance is easy to set as just raw CSS,
+but the layout (centered / horizontal / vertical / grid / ...) is cumbersome.
+Here are functions that should help!
 
 === Box
+
+#let htmlbox(class: none, center: false, width: "100pt", inner) = {
+  let class-key = if class == none { (:) } else {
+    (class: class)
+  }
+  let align-key = if not center { (:) } else {
+    (justify-content: "center", align-items: "center")
+  }
+  xhtml.div(..class-key, style: css.raw-style((display: "flex", width: width, ..align-key)),
+    xhtml.div(inner)
+  )
+}
+
+#css.elem(".test", (
+  background-color: "var(--dk-gray2)",
+))
+#htmlbox(class: "test", width: "300px", center: true)[
+  Text in the box \
+  spanning multiple lines \
+  to test fit-to-width and alignment
+]
+
+
+/*
+=== Align
 
 === Line
 
 === Column
 
 === Grid
+
+=== Box
 */

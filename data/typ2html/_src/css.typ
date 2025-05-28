@@ -1,10 +1,14 @@
 #import "xhtml.typ"
 
-#let raw-elem(target, params) = {
-  target + " { " + params.pairs().map(args => {
+#let raw-style(params) = {
+  params.pairs().map(args => {
     let (key, val) = args
     key + ": " + str(val) + ";"
-  }).join(" ") + " }"
+  }).join(" ")
+}
+
+#let raw-elem(target, params) = {
+  target + " { " + raw-style(params) + " }"
 }
 
 #let raw-elems(dict) = {
