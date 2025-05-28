@@ -1,10 +1,11 @@
 #import "xhtml.typ"
 
 #let raw-style(params) = {
-  params.pairs().map(args => {
+  let ans = params.pairs().map(args => {
     let (key, val) = args
     key + ": " + str(val) + ";"
   }).join(" ")
+  if ans == none { "" } else { ans }
 }
 
 #let raw-elem(target, params) = {

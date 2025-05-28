@@ -198,36 +198,95 @@ Here are functions that should help!
 
 === Box
 
-#let htmlbox(class: none, center: false, width: "100pt", inner) = {
+
+#let text(size: none, fill: none, inner) = {
+  let style = (:)
+  if size != none {
+    style.font-size = size
+  }
+  if fill != none {
+    style.color = fill
+  }
+  xhtml.span(style: css.raw-style(style), {
+    inner
+  })
+}
+
+#let align(where, inner) = {
+  let style = (:)
+  if where.y == top {
+    style.margin-bottom = "auto"
+  } else if where.y == bottom {
+    style.margin-top = "auto"
+  }
+  if where.x == right {
+    style.margin-left = "auto"
+  } else if where.x == left {
+    style.margin-right = "auto"
+  }
+  xhtml.div(style: css.raw-style(style), {
+    inner
+  })
+}
+
+#let box(class: none, inset: none, width: none, height: none, radius: none, fill: none, outset: none, inner) = {
   let class-key = if class == none { (:) } else {
     (class: class)
   }
-  let align-key = if not center { (:) } else {
-    (justify-content: "center", align-items: "center")
-  }
-  xhtml.div(..class-key, style: css.raw-style((display: "flex", width: width, ..align-key)),
-    xhtml.div(inner)
-  )
+  let style = (display: "flex", flex-direction: "column", justify-content: "center", align-items: "center")
+  if width != none { style.width = width }
+  if height != none { style.height = height }
+  if radius != none { style.border-radius = radius }
+  if fill != none { style.background-color = fill }
+  if inset != none { style.padding = inset }
+  if outset != none { style.margin = outset }
+  xhtml.div(..class-key, style: css.raw-style(style), {
+    inner
+  })
 }
 
-#css.elem(".test", (
-  background-color: "var(--dk-gray2)",
-))
-#htmlbox(class: "test", width: "300px", center: true)[
-  Text in the box \
-  spanning multiple lines \
-  to test fit-to-width and alignment
-]
+// {styled-box:
+#box(width: "500px", inset: "10pt", radius: "10pt", fill: "var(--dk-red)", {
+  text(fill: "var(--black)")[
+    *Text in the box \
+    spanning \
+    multiple lines.*
+  ]
+})
+// :styled-box}
+#excerpt.incl(this, "styled-box")
 
+=== Centering
 
-/*
-=== Align
+// {alignment:
+#let my-aligned-box(alignment, inner) = {
+  box(fill: "var(--dk-gray1)", width: "200px", height: "100px", outset: "5px", {
+    align(alignment)[#inner]
+  })
+}
+#my-aligned-box(center)[Center]
+#my-aligned-box(top)[Top]
+#my-aligned-box(right + bottom)[Bottom right]
+#my-aligned-box(right)[Right]
+#my-aligned-box(top + left)[Top left]
+// :alignment}
+#excerpt.incl(this, "alignment")
 
-=== Line
+Beware though that the alignment is not relative to the page itself
+(this is because the positioning is relative to the parent, and the parent
+needs to be `"flex"`, which `box` is but the entire page is not):
+
+// {align-do-dont:
+#align(center)[This doesn't work]
+#box(align(center)[This works])
+// :align-do-dont}
+#excerpt.incl(this, "align-do-dont")
+
+=== Row
+
 
 === Column
 
+
 === Grid
 
-=== Box
-*/
