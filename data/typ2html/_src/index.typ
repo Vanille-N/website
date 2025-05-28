@@ -198,8 +198,14 @@ Here are functions that should help!
 
 === Box
 
+#let class-key(class) = {
+  if class == none { (:) } else {
+    (class: class)
+  }
+}
 
-#let text(size: none, fill: none, inner) = {
+
+#let text(class: none, size: none, fill: none, inner) = {
   let style = (:)
   if size != none {
     style.font-size = size
@@ -229,21 +235,41 @@ Here are functions that should help!
   })
 }
 
-#let box(class: none, inset: none, width: none, height: none, radius: none, fill: none, outset: none, inner) = {
-  let class-key = if class == none { (:) } else {
-    (class: class)
+#let structural(base-style, style-func, elem-func) = {
+  let func(inline: true, class: none, ..args) = {
+    let style = style-func(base: base-style, ..args.named())
+    if inline {
+      elem-func(..class-key(class), style: css.raw-style(style), ..args.pos())
+    } else {
+      assert(class != none)
+      let css-elem = css.elem("." + class, style)
+      let html-elem-builder(..extra-args) = {
+        let extra-style = style-func(..extra-args.named())
+        elem-func(..class-key(class), style: css.raw-style(extra-style), ..extra-args.pos())
+      }
+      (css-elem, html-elem-builder)
+    }
   }
-  let style = (display: "flex", flex-direction: "column", justify-content: "center", align-items: "center")
+  func
+}
+
+#let box-base = (display: "flex", flex-direction: "column", justify-content: "center", align-items: "center")
+#let box-style(base: (:), inset: none, width: none, height: none, radius: none, fill: none, outset: none) = {
+  let style = base
   if width != none { style.width = width }
   if height != none { style.height = height }
   if radius != none { style.border-radius = radius }
   if fill != none { style.background-color = fill }
   if inset != none { style.padding = inset }
   if outset != none { style.margin = outset }
-  xhtml.div(..class-key, style: css.raw-style(style), {
-    inner
-  })
+  style
 }
+
+#let box-elem(class: none, style: none, inner) = {
+  xhtml.div(..class-key(class), style: style, inner)
+}
+
+#let box = structural(box-base, box-style, box-elem)
 
 // {styled-box:
 #box(width: "500px", inset: "10pt", radius: "10pt", fill: "var(--dk-red)", {
@@ -282,11 +308,37 @@ needs to be `"flex"`, which `box` is but the entire page is not):
 // :align-do-dont}
 #excerpt.incl(this, "align-do-dont")
 
-=== Row
-
-
-=== Column
-
-
 === Grid
+
+#let table-base = (display: "grid", )
+
+#let table-style(base: (:), class: none, columns: none, gutter: none, column-gutter: none, row-gutter: none, ..elts, style-only: none) = {
+  let style = base
+  if columns != none { style.grid-template-columns = "repeat(" + str(columns) + ", 1fr)" }
+  if gutter != none { style.gap = gutter }
+  if column-gutter != none { style.column-gap = column-gutter }
+  if row-gutter != none { style.row-gap = row-gutter }
+  style
+}
+
+#let table-elem(class: none, style: none, inner) = {
+  xhtml.div(..class-key(class), style: style, inner)
+}
+
+#let table = structural(table-base, table-style, table-elem)
+
+#let thing = box(fill: "var(--dk-gray1)", height: "100px")[A cell]
+#table(columns: 3, gutter: "15px", { for elt in range(6).map(_ => thing) { elt } })
+
+
+== Style builders
+
+Admittedly, the above approach is concerning in terms of the size of the resulting
+HTML, because all that inlined CSS is duplicated many times.
+For this purpose, I offer builder patterns.
+
+#let (style, alert-box) = box(inline: false, class: "alert", fill: "var(--dk-red)", radius: "5pt", width: "50%", outset: "5pt")
+#style
+#alert-box[Alert 1]
+#alert-box(height: "100px")[Alert 2]
 
