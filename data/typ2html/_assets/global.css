@@ -1,3 +1,4 @@
+/* Color definitions, gruvbox style */
 :root {
   --black: #1d2021;
   --dk-gray0: #282828;
@@ -37,22 +38,20 @@ body {
   line-height: 1.5;
   font-size: 18px;
   font-weight: 350;
-  color: #fbf1c7;
+  color: var(--white);
   background: var(--dk-gray0);
   padding: 0 10px;
 }
+
 h1,h2,h3,h4 {
   line-weight: 1.2;
   color: var(--lt-green);
 }
-h1 { font-weight: 800 }
-h2 { font-weight: 700 }
-h3 { font-weight: 600 }
+h1 { font-size: 33px }
+h2 { font-size: 31px }
+h3 { font-size: 29px }
+h4 { font-size: 27px }
 
-a {
-  color: var(--dk-aqua);
-}
-a:visited {
-  color: var(--lt-purple);
-}
+a { color: var(--dk-aqua) }
+a:visited { color: var(--lt-purple) }
 /* :main} */

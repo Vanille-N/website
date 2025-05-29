@@ -15,6 +15,7 @@
 // the "cjs, js bundled, wasm bundled" script
 #xhtml.script(src: "_highlight/highlight-typst.js")
 
+// As soon as the scripts have loaded, highlight all code blocks.
 #xhtml.script("
   const run = window.$typst$parserModule.then(() => {
     hljs.registerLanguage('typst', window.hljsTypst({}))
@@ -22,5 +23,4 @@
   });
 ")
 // :highlight}
-
 

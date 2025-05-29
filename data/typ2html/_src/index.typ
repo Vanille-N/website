@@ -17,8 +17,6 @@
 
 #include "common.typ"
 
-Last build: 2025-05-25 with typst 0.13.1
-
 = Typst to HTML: playground and tutorial
 
 This page, and more broadly all of #link("../index.html")[my website],
@@ -31,6 +29,8 @@ In the process of building this website, I found that although experimental,
 the feature is already very powerful (though not fully ergonomic yet),
 and a bigger obstacle to my development was simply knowing what to do
 with the few features available.
+This document should make it clear that the issue with Typst's HTML output
+currently is not what is *possible*, but what is *convenient*.
 
 This page is intended:
 - for current me, a playground where I can test in real time some features;
@@ -41,7 +41,7 @@ This page is intended:
   because that would be #link("https://typst.app/docs/reference/html/elem/")[trivial],
   but rather of how to leverage this one function to obtain nontrivial results.
 
-Via some #link("_src/excerpt.typ")[dark magic], I shall embed in this document
+Via some #link("meta.html#_src/excerpt.typ")[dark magic], I shall embed in this document
 not just the output but also the source code that generates it,
 helping towards the goal of this being a usable showcase and tutorial.
 
@@ -64,7 +64,8 @@ Some stuff just works out of the box.
   #link("https://example.com")[hyperrefs]
   // :builtin-link}
   #excerpt.incl(this, "builtin-link")
-- And bullet lists
+- Bullet lists
+  // TODO: highlighting bug here
   // {bullet-list:
   - just
   - like
@@ -72,20 +73,31 @@ Some stuff just works out of the box.
 
   // :bullet-list}
   #excerpt.incl(this, "bullet-list")
+- Enumerations
+  // {enum-list:
+  1. work
+  2. as
+  3. well
+
+  // :enum-list}
+  #excerpt.incl(this, "enum-list")
 
 == Build process
 
 Before we get into more technical stuff, a small note on the build process,
-because I feel that this is the most nontrivial part of using Typst for HTML
-currently.
-For the record, I use the following directory layout:
+because I feel that this is one of the least well-rounded parts of using Typst
+for HTML currently. For the record, I use the following directory layout:
 ```
 Makefile
+list:page
 _src/
   |-- index.typ
   |-- xhtml.typ
   |-- css.typ
   \-- ...
+_assets/
+  |-- global.css
+  \-- link.svg
 _highlight/
   |-- highlight.min.js
   |-- highlight-typst.js
@@ -108,7 +120,8 @@ where to build for example a \
 `<div class="test">inner</div>`, you write \
 `html.elem("div", attrs: (class: "test"), { [inner] })`.
 
-I find that it is slighly more convenient to have the following:
+I find that it is slighly more convenient to have the following in
+#link("meta.html#_src/xhtml.typ")[`xhtml.typ`]:
 #excerpt.incl("_src/xhtml.typ", "func")
 and then instanciate it for each element as such:
 #excerpt.incl("_src/xhtml.typ", "apply")
@@ -135,8 +148,10 @@ As a concrete example, here is an image that is also a hyperref:
 
 Now we get to more advanced styling options.
 There are at least 4 standard ways of doing this in HTML:
-- A static CSS file can be imported into a document with a `<link rel="stylesheet" ...>` declaration;
-- Raw CSS code can be inserted into a regular `.html` file inside a `<style>...</style>` block;
+- A static CSS file can be imported into a document with a
+  `<link rel="stylesheet" ...>` declaration;
+- Raw CSS code can be inserted into a regular `.html` file inside a
+  `<style>...</style>` block;
 - HTML elements support inline styling attributes as `style=...`;
 - a `<script>` block can dynamically set some styling options.
 
@@ -144,12 +159,12 @@ All of these methods can be replicated in Typst.
 
 === Static global
 
-You can import a pre-written CSS as such:
+You can import a pre-written CSS that dictates the style of headers
+and the color palette that you see in this document as such:
 #excerpt.incl(common, "style")
 #excerpt.incl("_assets/global.css", "main", lang: "css")
-
-This dictates the style of headers and the color palette that you see
-in this document.
+(see #link("meta.html#_assets/global.css")[`global.css`] if you're curious where
+the colors are defined)
 
 === On-the-fly global
 
@@ -211,38 +226,38 @@ must be passed as strings, not as length literals.
 
 === Text
 
+#{let cc(shade, t) = struct.text(fill: "var(--dk-" + shade + ")", t)
+[
+  #cc("red")[You can] #cc("purple")[control] #cc("blue")[the style] #cc("aqua")[of text]
+  #cc("green")[just like] #cc("yellow")[you would] #cc("orange")[in Typst:]
+]
+}
+#excerpt.incl(this, "todo-text")
+
 // {todo-text:
-#struct.text(fill: "var(--dk-red)", size: "50pt")[*TODO*]
+#struct.text(fill: "var(--dk-red)", size: "50pt")[*Some text*]
 // :todo-text}
 
-#excerpt.incl(this, "todo-text")
+(reminder: you can do color definitions #link("meta.html#_assets/global.css")[like this])
 
 === Box
 
-`struct.box` tries to mimic as possible the behavior of Typst's `box`.
+`struct.box` tries to mimic to some extent the behavior of Typst's `box`.
 It supports automatic or fixed width and height, rounded corners, background color.
 #excerpt.incl(this, "styled-box")
 
 // {styled-box:
-#struct.box(width: "500px", inset: "10pt", radius: "10pt", fill: "var(--dk-purple)", {
+#struct.box(width: "800px", inset: "10pt", radius: "10pt", fill: "var(--dk-purple)", {
   struct.text(fill: "var(--black)")[
     Notice the box's style:
     - fixed width,
-    - height adapts to content,
-    - content is centered,
+    - height adapts to content (default behavior),
+    - content is centered (see later how to override),
     - rounded corners,
     - colored background.
   ]
 })
 // :styled-box}
-
-=== Line
-
-TODO
-
-=== Vertical and horizontal space
-
-TODO
 
 === Table
 
@@ -275,11 +290,10 @@ the style rather than include its own.
 
 #excerpt.incl(this, "builder-demo")
 // {builder-demo:
-#let (style, orange-box) = struct.box(
+#let orange-box = struct.box(
   inline: false, class: "orange-box",
   fill: "var(--dk-orange)", radius: "5pt", width: "fit-content", outset: "5pt",
 )
-#style
 #orange-box[These]
 #orange-box[boxes]
 #orange-box[share]
@@ -288,6 +302,7 @@ the style rather than include its own.
 #orange-box[style.]
 // :builder-demo}
 and now the corresponding CSS is not duplicated, resulting in a smaller HTML output!
+In fact, the CSS style is included only if necessary, and at most once.
 
 You can still overwrite on-the-fly some elements:
 #excerpt.incl(this, "builder-overwrite")
@@ -302,11 +317,10 @@ This mimics Typst's `align` function.
 #excerpt.incl(this, "alignment")
 
 // {alignment:
-#let (style, gray-box) = struct.box(
+#let gray-box = struct.box(
   inline: false, class: "cell",
   fill: "var(--dk-gray1)", height: "100px", outset: "5px", inset: "5pt",
 )
-#style
 #let my-aligned-box(alignment, inner) = {
   gray-box({
     struct.align(alignment)[#inner]
@@ -325,15 +339,37 @@ This mimics Typst's `align` function.
 })
 // :alignment}
 
-Beware though that the alignment is not relative to the page itself
-(this is because the positioning is relative to the parent, and the parent
-needs to be `"flex"`, which `box` is but the entire page is not):
+Beware though that with my current configuration the alignment is not relative
+to the page itself (this is because the positioning is relative to the parent,
+and the parent needs to be `"flex"`, which `box` is but the entire page is not):
 #excerpt.incl(this, "align-do-dont")
 
 // {align-do-dont:
 #struct.align(center)[This doesn't work]
-#struct.box(struct.align(center)[This works])
+#struct.box(width: "100%", struct.align(center)[This works])
 // :align-do-dont}
+As is often the case, this comes down to CSS edge cases, and you will find that getting
+the correct rendering is highly dependent on your setup.
 
+
+== More coming soon...
+
+I will keep updating this page occasionally if I find an interesting trick,
+or simply to implement more features. I have plans for:
+- more options on already implemented elements
+- justified text
+- horizontal and vertical spaces
+- images
+- hrule
+
+Don't hesitate to browse the source code in more detail, either #link("meta.html")[here]
+or #link("https://github.com/vanille-n/website/tree/master/data/typ2html")[on the repo].
+
+If you have suggestions you can open an
+#link("https://github.com/login?return_to=https://github.com/Vanille-N/website/issues")[issue]
+or #link("https://github.com/Vanille-N/website/compare")[pull request].
+
+// TODO: there's something to do with links in general.
 
 #include "footer.typ"
+

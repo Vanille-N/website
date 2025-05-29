@@ -11,6 +11,9 @@
 #let img = htmlfunc("img")
 // :apply}
 
+#let h1 = htmlfunc("h1")
+#let h2 = htmlfunc("h2")
+#let h3 = htmlfunc("h3")
 #let p = htmlfunc("p")
 #let span = htmlfunc("span")
 #let link = htmlfunc("link")

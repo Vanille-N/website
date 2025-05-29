@@ -1,9 +1,12 @@
 list:page none
 list:all none
 justfile make
+_assets/global.css css
 _src/xhtml.typ typst
 _src/css.typ typst
+_src/struct.typ typst
 _src/common.typ typst
+_src/footer.typ typst
 _src/excerpt.typ typst
 _src/index.typ typst
 _src/meta.typ typst
