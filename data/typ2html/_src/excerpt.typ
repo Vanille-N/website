@@ -14,20 +14,21 @@
 // The tags work anywhere on the line, so you can wrap them in any comment
 // format that is appropriate for the filetype.
 //
-// If you want the entire file, just write `excerpt.incl("path/to/file", "")`
-// and make sure the tags `{: ... :}` are used nowhere.
+// If you want the entire file, write instead `excerpt.incl("path/to/file", none)`
 //
-// You can specify a language with `lang: ...` (Typst by default).
+// You can optionally specify a language with `lang: ...` (Typst by default).
 #let incl(src, label, lang: "typst") = {
   let lines = read("../" + src).split("\n")
   // Find the begin and end tags
   let start = -1
   let end = lines.len()
-  for (idx, line) in lines.enumerate() {
-    if line.contains("{" + label + ":") {
-      start = idx
-    } else if line.contains(":" + label + "}") {
-      end = idx
+  if label != none {
+    for (idx, line) in lines.enumerate() {
+      if line.contains("{" + label + ":") {
+        start = idx
+      } else if line.contains(":" + label + "}") {
+        end = idx
+      }
     }
   }
   // TODO: maybe print a warning if the tags look malformed ?
@@ -42,7 +43,11 @@
     "none": (t) => "# " + t,
   )
   // TODO: allow disabling the header.
-  let fstline = comment-style.at(lang)(src + " @ ll. " + str(start + 2) + "-" + str(end))
+  let fstline = if label == none {
+    comment-style.at(lang)(src)
+  } else {
+    comment-style.at(lang)(src + " @ ll. " + str(start + 2) + "-" + str(end))
+  }
   // Construct the block.
   // The parameter `class: "language-xyz"` allows it to be targeted by highlight.js
   xhtml.pre({

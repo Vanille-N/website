@@ -17,7 +17,7 @@
 
 #include "common.typ"
 
-= Typst to HTML: playground and tutorial
+= Typst to HTML: playground, tutorial, and showcase
 
 This page, and more broadly all of #link("../index.html")[my website],
 are (for the most part) just composed of static HTML and CSS. \
@@ -105,7 +105,7 @@ _highlight/
 ```
 
 And I have my `justfile` as such:
-#excerpt.incl("justfile", "", lang: "make")
+#excerpt.incl("justfile", none, lang: "make")
 
 This builds `index.html` in the root directory. \
 To watch changes live, I open `index.html` in a browser
