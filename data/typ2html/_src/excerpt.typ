@@ -15,6 +15,7 @@
     typst: (t) => "/* " + t + " */",
     css: (t) => "/* " + t + " */",
     make: (t) => "# " + t,
+    markdown: (t) => "<!-- " + t + " -->",
     "none": (t) => "# " + t,
   )
   let fstline = comment-style.at(lang)(src + " @ ll. " + str(start + 2) + "-" + str(end))

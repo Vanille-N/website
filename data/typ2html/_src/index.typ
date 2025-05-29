@@ -12,6 +12,7 @@
 // {prelude:
 #import "xhtml.typ"
 #import "css.typ"
+#import "struct.typ"
 // :prelude}
 
 #include "common.typ"
@@ -63,6 +64,14 @@ Some stuff just works out of the box.
   #link("https://example.com")[hyperrefs]
   // :builtin-link}
   #excerpt.incl(this, "builtin-link")
+- And bullet lists
+  // {bullet-list:
+  - just
+  - like
+  - normally
+
+  // :bullet-list}
+  #excerpt.incl(this, "bullet-list")
 
 == Build process
 
@@ -88,7 +97,7 @@ And I have my `justfile` as such:
 
 This builds `index.html` in the root directory. \
 To watch changes live, I open `index.html` in a browser
-and run `just watch-all` in the background.
+and run `just watch index` in the background.
 
 == Non-builtins
 
@@ -125,22 +134,22 @@ As a concrete example, here is an image that is also a hyperref:
 == Prettification
 
 Now we get to more advanced styling options.
-There are separate features of html that make this possible:
-- CSS can be inserted into a regular `.html` file inside a `<style>...</style>`
-  block;
-- HTML elements support inline styling attributes as `style=...`.
+There are at least 4 standard ways of doing this in HTML:
+- A static CSS file can be imported into a document with a `<link rel="stylesheet" ...>` declaration;
+- Raw CSS code can be inserted into a regular `.html` file inside a `<style>...</style>` block;
+- HTML elements support inline styling attributes as `style=...`;
+- a `<script>` block can dynamically set some styling options.
 
-I will show both.
+All of these methods can be replicated in Typst.
 
 === Static global
 
-This document already uses this method.
-Through the module `css.typ` I have made it more or less easy to set
-document-wide attributes, including background and foreground color,
-font size, title color, etc.
-You may recognize below something that reads like raw CSS, but formatted as nested Typst dictionaries.
-
+You can import a pre-written CSS as such:
 #excerpt.incl(common, "style")
+#excerpt.incl("_assets/global.css", "main", lang: "css")
+
+This dictates the style of headers and the color palette that you see
+in this document.
 
 === On-the-fly global
 
@@ -159,7 +168,7 @@ For example let us define `my-style` as such:
 )
 // :my-style}
 
-and then we can for example bind it to the `.on-the-fly` class as such:
+Then we can for example bind it to the `.on-the-fly` class by:
 #excerpt.incl(this, "my-style-fly")
 
 // {my-style-fly:
@@ -188,157 +197,143 @@ snippets through #link("https://highlightjs.org/")[`highlight.js`]:
 
 #excerpt.incl(common, "highlight")
 
-
 == Document layout
 
 Here I offer some very common functions that help set the layout.
 I've found that often the appearance is easy to set as just raw CSS,
 but the layout (centered / horizontal / vertical / grid / ...) is cumbersome.
 Here are functions that should help!
+See #link("_src/struct.typ")[`struct.typ`] for the definition of these functions.
+
+The goal is that these functions should provide as close an interface to the
+real Typst version as possible. One major difference will be that lengths
+must be passed as strings, not as length literals.
+
+=== Text
+
+// {todo-text:
+#struct.text(fill: "var(--dk-red)", size: "50pt")[*TODO*]
+// :todo-text}
+
+#excerpt.incl(this, "todo-text")
 
 === Box
 
-#let class-key(class) = {
-  if class == none { (:) } else {
-    (class: class)
-  }
-}
-
-
-#let text(class: none, size: none, fill: none, inner) = {
-  let style = (:)
-  if size != none {
-    style.font-size = size
-  }
-  if fill != none {
-    style.color = fill
-  }
-  xhtml.span(style: css.raw-style(style), {
-    inner
-  })
-}
-
-#let align(where, inner) = {
-  let style = (:)
-  if where.y == top {
-    style.margin-bottom = "auto"
-  } else if where.y == bottom {
-    style.margin-top = "auto"
-  }
-  if where.x == right {
-    style.margin-left = "auto"
-  } else if where.x == left {
-    style.margin-right = "auto"
-  }
-  xhtml.div(style: css.raw-style(style), {
-    inner
-  })
-}
-
-#let structural(base-style, style-func, elem-func) = {
-  let func(inline: true, class: none, ..args) = {
-    let style = style-func(base: base-style, ..args.named())
-    if inline {
-      elem-func(..class-key(class), style: css.raw-style(style), ..args.pos())
-    } else {
-      assert(class != none)
-      let css-elem = css.elem("." + class, style)
-      let html-elem-builder(..extra-args) = {
-        let extra-style = style-func(..extra-args.named())
-        elem-func(..class-key(class), style: css.raw-style(extra-style), ..extra-args.pos())
-      }
-      (css-elem, html-elem-builder)
-    }
-  }
-  func
-}
-
-#let box-base = (display: "flex", flex-direction: "column", justify-content: "center", align-items: "center")
-#let box-style(base: (:), inset: none, width: none, height: none, radius: none, fill: none, outset: none) = {
-  let style = base
-  if width != none { style.width = width }
-  if height != none { style.height = height }
-  if radius != none { style.border-radius = radius }
-  if fill != none { style.background-color = fill }
-  if inset != none { style.padding = inset }
-  if outset != none { style.margin = outset }
-  style
-}
-
-#let box-elem(class: none, style: none, inner) = {
-  xhtml.div(..class-key(class), style: style, inner)
-}
-
-#let box = structural(box-base, box-style, box-elem)
+`struct.box` tries to mimic as possible the behavior of Typst's `box`.
+It supports automatic or fixed width and height, rounded corners, background color.
+#excerpt.incl(this, "styled-box")
 
 // {styled-box:
-#box(width: "500px", inset: "10pt", radius: "10pt", fill: "var(--dk-red)", {
-  text(fill: "var(--black)")[
-    *Text in the box \
-    spanning \
-    multiple lines.*
+#struct.box(width: "500px", inset: "10pt", radius: "10pt", fill: "var(--dk-purple)", {
+  struct.text(fill: "var(--black)")[
+    Notice the box's style:
+    - fixed width,
+    - height adapts to content,
+    - content is centered,
+    - rounded corners,
+    - colored background.
   ]
 })
 // :styled-box}
-#excerpt.incl(this, "styled-box")
 
-=== Centering
+=== Line
+
+TODO
+
+=== Vertical and horizontal space
+
+TODO
+
+=== Table
+
+Partially mimicking Typst's `table` function, we have `struct.table`.
+Note that this version does not have a stroke, it's only a grid layout.
+
+#excerpt.incl(this, "table")
+
+// {table:
+#let cell = struct.box(fill: "var(--dk-gray1)", height: "100px")[A cell]
+#struct.table(
+  columns: 3, gutter: "15px", {
+    for elt in range(7).map(_ => cell) { elt }
+  },
+)
+// :table}
+
+=== Side note: style builders
+
+If you look at the generated HTML for the code above, you will see that the
+inline style for `cell` is repeated as many times as there are cells.
+Here I propose a mechanic to cut down on this repetition.
+
+All functions defined in `struct.typ` offer another behavior when passed
+the parameter `inline: false`.
+Whereas `box(...)` will construct a box, `box(inline: false, class: "box-name", ...)`
+will instead return a pair `(style, box-builder)` of a CSS style for the box
+and a function that builds a box. The difference is that the function will reference
+the style rather than include its own.
+
+#excerpt.incl(this, "builder-demo")
+// {builder-demo:
+#let (style, orange-box) = struct.box(
+  inline: false, class: "orange-box",
+  fill: "var(--dk-orange)", radius: "5pt", width: "fit-content", outset: "5pt",
+)
+#style
+#orange-box[These]
+#orange-box[boxes]
+#orange-box[share]
+#orange-box[the]
+#orange-box[same]
+#orange-box[style.]
+// :builder-demo}
+and now the corresponding CSS is not duplicated, resulting in a smaller HTML output!
+
+You can still overwrite on-the-fly some elements:
+#excerpt.incl(this, "builder-overwrite")
+// {builder-overwrite:
+#orange-box(inset: "10pt")[Add margins to existing style.]
+#orange-box(radius: "0pt")[Remove the rouded corners.]
+// :builder-overwrite}
+
+=== Alignment
+
+This mimics Typst's `align` function.
+#excerpt.incl(this, "alignment")
 
 // {alignment:
+#let (style, gray-box) = struct.box(
+  inline: false, class: "cell",
+  fill: "var(--dk-gray1)", height: "100px", outset: "5px", inset: "5pt",
+)
+#style
 #let my-aligned-box(alignment, inner) = {
-  box(fill: "var(--dk-gray1)", width: "200px", height: "100px", outset: "5px", {
-    align(alignment)[#inner]
+  gray-box({
+    struct.align(alignment)[#inner]
   })
 }
-#my-aligned-box(center)[Center]
-#my-aligned-box(top)[Top]
-#my-aligned-box(right + bottom)[Bottom right]
-#my-aligned-box(right)[Right]
-#my-aligned-box(top + left)[Top left]
+#struct.table(columns: 3, gutter: "10px", {
+  my-aligned-box(top + left)[Top left]
+  my-aligned-box(top)[Top]
+  my-aligned-box(top + right)[Top right]
+  my-aligned-box(left)[Left]
+  my-aligned-box(center)[Center]
+  my-aligned-box(right)[Right]
+  my-aligned-box(left + bottom)[Bottom left]
+  my-aligned-box(bottom)[Bottom]
+  my-aligned-box(right + bottom)[Bottom right]
+})
 // :alignment}
-#excerpt.incl(this, "alignment")
 
 Beware though that the alignment is not relative to the page itself
 (this is because the positioning is relative to the parent, and the parent
 needs to be `"flex"`, which `box` is but the entire page is not):
-
-// {align-do-dont:
-#align(center)[This doesn't work]
-#box(align(center)[This works])
-// :align-do-dont}
 #excerpt.incl(this, "align-do-dont")
 
-=== Grid
-
-#let table-base = (display: "grid", )
-
-#let table-style(base: (:), class: none, columns: none, gutter: none, column-gutter: none, row-gutter: none, ..elts, style-only: none) = {
-  let style = base
-  if columns != none { style.grid-template-columns = "repeat(" + str(columns) + ", 1fr)" }
-  if gutter != none { style.gap = gutter }
-  if column-gutter != none { style.column-gap = column-gutter }
-  if row-gutter != none { style.row-gap = row-gutter }
-  style
-}
-
-#let table-elem(class: none, style: none, inner) = {
-  xhtml.div(..class-key(class), style: style, inner)
-}
-
-#let table = structural(table-base, table-style, table-elem)
-
-#let thing = box(fill: "var(--dk-gray1)", height: "100px")[A cell]
-#table(columns: 3, gutter: "15px", { for elt in range(6).map(_ => thing) { elt } })
+// {align-do-dont:
+#struct.align(center)[This doesn't work]
+#struct.box(struct.align(center)[This works])
+// :align-do-dont}
 
 
-== Style builders
-
-Admittedly, the above approach is concerning in terms of the size of the resulting
-HTML, because all that inlined CSS is duplicated many times.
-For this purpose, I offer builder patterns.
-
-#let (style, alert-box) = box(inline: false, class: "alert", fill: "var(--dk-red)", radius: "5pt", width: "50%", outset: "5pt")
-#style
-#alert-box[Alert 1]
-#alert-box(height: "100px")[Alert 2]
-
+#include "footer.typ"

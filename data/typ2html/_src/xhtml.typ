@@ -1,6 +1,7 @@
 // {func:
 #let htmlfunc(label) = (..attrs) => {
-  html.elem(label, attrs: attrs.named(), ..attrs.pos())
+  let keyvals = attrs.named().pairs().filter(p => p.at(1) != none).to-dict()
+  html.elem(label, attrs: keyvals, ..attrs.pos())
 }
 // :func}
 
@@ -17,4 +18,5 @@
 #let style = htmlfunc("style")
 #let script = htmlfunc("script")
 #let code = htmlfunc("code")
+#let footer = htmlfunc("footer")
 
