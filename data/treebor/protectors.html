@@ -364,7 +364,7 @@ model this by adding a boolean flag <code>conflicted</code> to
 <code>Reserved</code> that is initially <code>false</code>, becomes
 <code>true</code> if the tag is protected while a foreign read occurs,
 and triggers UB if it is <code>true</code> while the tag is still
-protected if we try to perform a foreign write.</li>
+protected if we try to perform a child write.</li>
 </ul>
 <blockquote>
 <p><span class="sbnote"> <strong>[Note: Stacked Borrows]</strong> This
