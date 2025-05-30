@@ -338,18 +338,58 @@ This mimics Typst's `align` function.
 
 Thanks to a #link("meta.html#_src/css.typ")[type-based translation from Typst to CSS],
 you can actually use any of Typst's length types wherever the CSS expects a length.
+In addition, you can also directly use whatever string is valid CSS for a length,
+e.g. in pixels which is not a valid Typst unit of length.
 #excerpt.incl(this, "lengths")
 
 // {lengths:
+#let as-len(l) = if type(l) == array { l.at(0) } else { l }
+#let as-repr(l) = if type(l) == array { l.at(1) } else { raw(repr(l)) }
+#let lengths = (
+  100%, 25%, 100pt, (5cm, `5cm`), (50% + 1cm, `50% + 1cm`),
+  50%, (50% - 1cm, `50% - 1cm`), 50% + 3em, (50% + 3em + 1cm, `50% + 3em + 1cm`),
+  "300px", "calc(50% + 200px)",
+)
 #struct.box(fill: "var(--dk-gray2)", width: 100%,
   struct.align(left, {
-    for width in (100%, 25%, 100pt, 5cm, 50% + 1cm, 50%, 50% - 1cm, 50% + 3em, 50% + 3em + 1cm) {
-      orange-box(width: width)[#width]
+    for l in lengths {
+      orange-box(width: as-len(l))[#as-repr(l)]
       struct.box-linebreak // A regular linebreak wouldn't work here, unfortunately.
     } 
   })
 )
 // :lengths}
+
+=== Side note: colors
+
+In the same way, there are multiple methods to define colors
+- Typst colors, including `rgb`, `cmyk`, `luma`,
+  and #link("https://typst.app/docs/reference/visualize/color")[more]
+- whatever is supported natively by CSS, including standard named colors,
+  hexadecimal, CSS global variables and
+  #link("https://www.w3schools.com/cssref/css_colors.php")[more]
+
+#excerpt.incl(this, "colors")
+
+// {colors:
+#let as-color(c) = if type(c) == array { c.at(0) } else { c }
+#let as-repr(c) = if type(c) == array { c.at(1) } else { raw(repr(c)) }
+#let colors = (
+  (aqua, `aqua`), (rgb(10, 50, 200), `rgb(10, 50, 200)`),
+  (rgb(80%, 50%, 5%), `rgb(80%, 50%, 5%)`), rgb("#aaaaff"),
+  (luma(50%), `luma(50%)`), (color.hsv(60deg, 50%, 30%), `color.hsv(60deg, 50%, 30%)`),
+  (red.negate(), `red.negate()`),
+  (red.darken(50%), `red.darken(50%)`), (blue.transparentize(80%), `blue.transparentize(80%)`),
+  "#fa1419", "blue", "YellowGreen", "var(--dk-orange)", "rgb(200, 30, 10)",
+  "rgba(200, 30, 10, 0.5)", "hsl(110, 80%, 30%)",
+)
+#let cbox = struct.box(inline: false, class: "cbox", inset: 1mm, outset: 1mm, radius: 1mm)
+#struct.box(fill: "var(--black)", width: 100%,
+  for c in colors {
+    cbox(fill: as-color(c))[#as-repr(c)]
+  }
+)
+// :colors}
 
 == More coming soon...
 

@@ -1,6 +1,6 @@
 #import "xhtml.typ"
 
-// TODO: document and test
+// TODO: document and test more thoroughly
 
 #let aux-to-css = (
   pt: (abs) => str(abs) + "pt",
@@ -8,9 +8,6 @@
 )
 
 // TODO: find more types that are useful
-// - color
-// - auto
-// - ...
 #let type-to-css = (
   string: (elt) => elt,
   integer: (elt) => str(elt),
@@ -50,6 +47,8 @@
       (" + ", em)
     }
     "calc(" + (type-to-css.ratio)(rat) + sign-em + (aux-to-css.em)(em) + sign-abs + (aux-to-css.pt)(abs) + ")"
+  } else if type(elt) == color {
+    elt.to-hex()
   } else {
     panic("Unsupported type " + str(type(elt)))
   }
