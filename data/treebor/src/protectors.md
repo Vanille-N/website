@@ -77,7 +77,7 @@ Detecting this takes two forms:
   this function call. We model this by adding a boolean flag `conflicted` to
   `Reserved` that is initially `false`, becomes `true` if the tag is protected
   while a foreign read occurs, and triggers UB if it is `true` while the tag is
-  still protected if we try to perform a foreign write.
+  still protected if we try to perform a child write.
 
 > <span class="sbnote">
 **[Note: Stacked Borrows]** This mostly aligns with the concept of protectors
