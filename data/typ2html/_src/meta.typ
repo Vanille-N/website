@@ -14,7 +14,7 @@ Also available directly
     if line != "" {
       let (file, lang) = line.split(" ")
       xhtml.h2(class: "header-link", id: file, raw(file))
-      excerpt.incl(file, none, lang: lang)
+      excerpt.full(file, lang: lang)
     }
   }
 }

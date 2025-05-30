@@ -105,7 +105,7 @@ _highlight/
 ```
 
 And I have my `justfile` as such:
-#excerpt.incl("justfile", none, lang: "make")
+#excerpt.full("justfile", lang: "make")
 
 This builds `index.html` in the root directory. \
 To watch changes live, I open `index.html` in a browser
@@ -247,14 +247,10 @@ It supports automatic or fixed width and height, rounded corners, background col
 #excerpt.incl(this, "styled-box")
 
 // {styled-box:
-#struct.box(width: "800px", inset: "10pt", radius: "10pt", fill: "var(--dk-purple)", {
+#struct.box(width: "60%", inset: "10pt", radius: "10pt", fill: "var(--dk-purple)", {
   struct.text(fill: "var(--black)")[
-    Notice the box's style:
-    - fixed width,
-    - height adapts to content (default behavior),
-    - content is centered (see later how to override),
-    - rounded corners,
-    - colored background.
+    A box \
+    with round corners
   ]
 })
 // :styled-box}
@@ -284,9 +280,8 @@ Here I propose a mechanic to cut down on this repetition.
 All functions defined in `struct.typ` offer another behavior when passed
 the parameter `inline: false`.
 Whereas `box(...)` will construct a box, `box(inline: false, class: "box-name", ...)`
-will instead return a pair `(style, box-builder)` of a CSS style for the box
-and a function that builds a box. The difference is that the function will reference
-the style rather than include its own.
+will instead return a `box-builder` function that will lazily declare the required
+CSS *at most once*.
 
 #excerpt.incl(this, "builder-demo")
 // {builder-demo:

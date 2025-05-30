@@ -14,22 +14,38 @@
 // The tags work anywhere on the line, so you can wrap them in any comment
 // format that is appropriate for the filetype.
 //
-// If you want the entire file, write instead `excerpt.incl("path/to/file", none)`
+// If you want the entire file, use instead the companion function `excerpt.full("path/to/file")`
 //
 // You can optionally specify a language with `lang: ...` (Typst by default).
 #let incl(src, label, lang: "typst") = {
   let lines = read("../" + src).split("\n")
   // Find the begin and end tags
-  let start = -1
-  let end = lines.len()
-  if label != none {
-    for (idx, line) in lines.enumerate() {
-      if line.contains("{" + label + ":") {
+  let start = none
+  let end = none
+  for (idx, line) in lines.enumerate() {
+    if line.contains("{" + label + ":") {
+      if start == none {
         start = idx
-      } else if line.contains(":" + label + "}") {
-        end = idx
+      } else {
+        panic("Found the starting tag twice: at l. " + str(start + 1) + ", then at l. " + str(idx + 1))
       }
     }
+    if line.contains(":" + label + "}") {
+      if end == none {
+        end = idx
+      } else {
+        panic("Found the ending tag twice: at l. " + str(end + 1) + ", then at l. " + str(idx + 1))
+      }
+    }
+  }
+  if start == none {
+    panic("Did not find the starting tag {" + label + ":")
+  }
+  if end == none {
+    panic("Did not find the ending tag :" + label + "}")
+  }
+  if start == end {
+    panic("The start and and tags are on the same line " + str(idx + 1))
   }
   // TODO: maybe print a warning if the tags look malformed ?
   // e.g. end found but not beginning, multiple instances, not found, etc.
@@ -43,8 +59,9 @@
     "none": (t) => "# " + t,
   )
   // TODO: allow disabling the header.
-  let fstline = if label == none {
-    comment-style.at(lang)(src)
+  // TODO: print differently if single-line
+  let fstline = if start + 2 == end {
+    comment-style.at(lang)(src + " @ l. " + str(end))
   } else {
     comment-style.at(lang)(src + " @ ll. " + str(start + 2) + "-" + str(end))
   }
@@ -53,6 +70,27 @@
   xhtml.pre({
     xhtml.code(class: "language-" + lang, {
       fstline + "\n" + lines.slice(start + 1, end).join("\n")
+    })
+  })
+}
+
+#let full(src, lang: "typst") = {
+  let lines = read("../" + src)
+  // Based on the language, choose what style of comments to use.
+  let comment-style = (
+    typst: (t) => "/* " + t + " */",
+    css: (t) => "/* " + t + " */",
+    make: (t) => "# " + t,
+    markdown: (t) => "<!-- " + t + " -->",
+    "none": (t) => "# " + t,
+  )
+  // TODO: allow disabling the header.
+  let fstline = comment-style.at(lang)(src)
+  // Construct the block.
+  // The parameter `class: "language-xyz"` allows it to be targeted by highlight.js
+  xhtml.pre({
+    xhtml.code(class: "language-" + lang, {
+      fstline + "\n" + lines
     })
   })
 }

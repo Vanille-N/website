@@ -1,23 +1,6 @@
 #import "xhtml.typ"
 #import "css.typ"
-
-// This is a trick to declare the CSS for a class at most once.
-// We use `state` to store the styles that were already declared,
-// so that we know which ones not to include twice.
-#let registered-styles = state("registered-styles", (:))
-#let maybe-generate-style(label, style) = {
-  context {
-    let styles = registered-styles.get()
-    if not styles.at(label, default: false) {
-      // Run this code only if not declared yet.
-      css.elem(label, style) // Declare.
-      registered-styles.update(styles => {
-        styles.insert(label, true) // Record in the state as declared.
-        styles
-      })
-    }
-  }
-}
+#import "once.typ"
 
 // Easy way to optionally pass `class: class` to a function.
 #let class-key(class) = {
@@ -73,7 +56,7 @@
       // We return a builder that will on-demand...
       let html-elem-builder(..extra-args) = {
         // ...declare the default style at most once
-        maybe-generate-style("." + class, style)
+        once.once("style:" + class, css.elem("." + class, style))
         // ...bind the defaults and any overriding values to the specific element
         let extra-style = style-func((:), ..extra-args.named())
         elem-func(..class-key(class), style: css.raw-style(extra-style), ..extra-args.pos())
