@@ -8,6 +8,7 @@
 )
 
 // TODO: find more types that are useful
+// - fr
 #let type-to-css = (
   string: (elt) => elt,
   integer: (elt) => str(elt),

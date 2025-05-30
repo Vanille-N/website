@@ -93,6 +93,7 @@
 
 
 // `box` simulates Typst's function of the same name.
+// TODO: comment
 #let box-base = (
   display: "inline-flex", flex-direction: "line",
   justify-content: "center", align-items: "center",
@@ -103,16 +104,69 @@
   inset: none, width: none, height: none, radius: none,
   fill: none, outset: none,
   // TODO: stroke
-  // TODO: per-corner radius
-  // TODO: per-border inset and margin
 ) = {
   let style = base
   if width != none { style.width = width }
   if height != none { style.height = height }
-  if radius != none { style.border-radius = radius }
+  if radius != none {
+    if type(radius) == dictionary {
+      let precedence = (
+        ("top-left", ("top-left",)),
+        ("top-right", ("top-right",)),
+        ("bottom-left", ("bottom-left",)),
+        ("bottom-right", ("bottom-right",)),
+        ("top", ("top-left", "top-right")),
+        ("bottom", ("bottom-left", "bottom-right")),
+        ("left", ("top-left", "bottom-left")),
+        ("right", ("top-right", "bottom-right")),
+        ("rest", ("top-left", "top-right", "bottom-left", "bottom-right")),
+      )
+      let radii = (:)
+      for (key, targets) in precedence {
+        if key in radius {
+          for target in targets {
+            if target not in radii {
+              radii.insert(target, radius.at(key))
+            }
+          }
+        }
+      }
+      style.border-radius = (radii.at("top-left", default: 0), radii.at("top-right", default: 0),
+        radii.at("bottom-right", default: 0), radii.at("bottom-left", default: 0)).map(css.into-css-str).join(" ")
+    } else {
+      style.border-radius = radius
+    }
+  }
   if fill != none { style.background-color = fill }
-  if inset != none { style.padding = inset }
-  if outset != none { style.margin = outset }
+  if inset != none {
+    if type(inset) == dictionary {
+      if "y" in outset {
+        style.padding-top = inset.y
+        style.padding-bottom = inset.y
+      }
+      if "x" in outset {
+        style.padding-left = inset.x
+        style.padding-right = inset.x
+      }
+
+    } else {
+      style.padding = inset
+    }
+  }
+  if outset != none {
+    if type(outset) == dictionary {
+      if "y" in outset {
+        style.margin-top = outset.y
+        style.margin-bottom = outset.y
+      }
+      if "x" in outset {
+        style.margin-left = outset.x
+        style.margin-right = outset.x
+      }
+    } else {
+      style.margin = outset
+    }
+  }
   style
 }
 #let box-elem(class: none, style: none, inner) = {

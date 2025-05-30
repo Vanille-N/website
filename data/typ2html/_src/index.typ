@@ -219,10 +219,8 @@ I've found that often the appearance is easy to set as just raw CSS,
 but the layout (centered / horizontal / vertical / grid / ...) is cumbersome.
 Here are functions that should help!
 See #link("_src/struct.typ")[`struct.typ`] for the definition of these functions.
-
 The goal is that these functions should provide as close an interface to the
-real Typst version as possible. One major difference will be that lengths
-must be passed as strings, not as length literals.
+real Typst version as possible.
 
 === Text
 
@@ -247,13 +245,28 @@ It supports automatic or fixed width and height, rounded corners, background col
 #excerpt.incl(this, "styled-box")
 
 // {styled-box:
-#struct.box(width: 60%, inset: 10pt, radius: 10pt, fill: "var(--dk-purple)", {
+#struct.box(width: 60%, inset: 10pt, outset: 2mm, radius: 10pt, fill: "var(--dk-purple)", {
   struct.text(fill: "var(--black)")[
     A box \
     with round corners
   ]
 })
 // :styled-box}
+
+You can even specify corners and margins as dictionaries the same way you would
+do for a regular Typst `box`.
+#excerpt.incl(this, "rounded-corners")
+
+// {rounded-corners:
+#struct.box(fill: "var(--dk-gray3)", radius: (bottom-left: "1cm", bottom: "3mm"))[
+  #struct.box(fill: "var(--dk-aqua)",
+    inset: (x: 5mm, y: 2mm), outset: (x: 1cm, y: 2mm),
+    radius: (top-left: 5mm, bottom-right: 0, rest: 2mm),
+  )[
+    Inner
+  ]
+]
+// :rounded-corners}
 
 === Table
 
@@ -355,7 +368,7 @@ e.g. in pixels which is not a valid Typst unit of length.
     for l in lengths {
       orange-box(width: as-len(l))[#as-repr(l)]
       struct.box-linebreak // A regular linebreak wouldn't work here, unfortunately.
-    } 
+    }
   })
 )
 // :lengths}
