@@ -15,14 +15,21 @@
   // Vertical handling.
   if where.y == top {
     style.margin-bottom = "auto"
+    style.width = 100%
   } else if where.y == bottom {
     style.margin-top = "auto"
+    style.width = 100%
   }
   // Horizontal handling.
   if where.x == right {
-    style.margin-left = "auto"
+    style.width = 100%
+    style.text-align = "right"
   } else if where.x == left {
-    style.margin-right = "auto"
+    style.width = 100%
+    style.text-align = "left"
+  } else {
+    style.width = 100%
+    style.text-align = "center"
   }
   // Make the div.
   xhtml.div(style: css.raw-style(style), {
@@ -89,6 +96,7 @@
 #let box-base = (
   display: "inline-flex", flex-direction: "line",
   justify-content: "center", align-items: "center",
+  flex-wrap: "wrap",
 )
 #let box-style(
   base,
@@ -133,3 +141,6 @@
 }
 #let table = structural(table-base, table-style, table-elem)
 
+#let box-linebreak = {
+  xhtml.div(style: css.raw-style((flex-basis: 100%, height: 0)))
+}

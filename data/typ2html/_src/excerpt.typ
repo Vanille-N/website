@@ -1,5 +1,30 @@
 #import "xhtml.typ"
 
+#let code(text, lang: "typst") = {
+  xhtml.pre({
+    xhtml.code(class: "language-" + lang, {
+      text
+    })
+  })
+}
+
+#let inline(text, lang: "typst") = {
+  xhtml.span({
+    xhtml.code(class: "language-" + lang, {
+      text
+    })
+  })
+}
+
+// Based on the language, choose what style of comments to use.
+#let comment-style = (
+  typst: (t) => "/* " + t + " */",
+  css: (t) => "/* " + t + " */",
+  make: (t) => "# " + t,
+  markdown: (t) => "<!-- " + t + " -->",
+  "none": (t) => "# " + t,
+)
+
 // This function allows one to insert pieces of source code in the final document.
 // This is useful for tutorials because it guarantees that the version
 // of the code that is shown is definitionally the latest version.
@@ -47,19 +72,7 @@
   if start == end {
     panic("The start and and tags are on the same line " + str(idx + 1))
   }
-  // TODO: maybe print a warning if the tags look malformed ?
-  // e.g. end found but not beginning, multiple instances, not found, etc.
-
-  // Based on the language, choose what style of comments to use.
-  let comment-style = (
-    typst: (t) => "/* " + t + " */",
-    css: (t) => "/* " + t + " */",
-    make: (t) => "# " + t,
-    markdown: (t) => "<!-- " + t + " -->",
-    "none": (t) => "# " + t,
-  )
   // TODO: allow disabling the header.
-  // TODO: print differently if single-line
   let fstline = if start + 2 == end {
     comment-style.at(lang)(src + " @ l. " + str(end))
   } else {
@@ -67,30 +80,12 @@
   }
   // Construct the block.
   // The parameter `class: "language-xyz"` allows it to be targeted by highlight.js
-  xhtml.pre({
-    xhtml.code(class: "language-" + lang, {
-      fstline + "\n" + lines.slice(start + 1, end).join("\n")
-    })
-  })
+  code(lang: lang, fstline + "\n" + lines.slice(start + 1, end).join("\n"))
 }
 
 #let full(src, lang: "typst") = {
   let lines = read("../" + src)
-  // Based on the language, choose what style of comments to use.
-  let comment-style = (
-    typst: (t) => "/* " + t + " */",
-    css: (t) => "/* " + t + " */",
-    make: (t) => "# " + t,
-    markdown: (t) => "<!-- " + t + " -->",
-    "none": (t) => "# " + t,
-  )
   // TODO: allow disabling the header.
   let fstline = comment-style.at(lang)(src)
-  // Construct the block.
-  // The parameter `class: "language-xyz"` allows it to be targeted by highlight.js
-  xhtml.pre({
-    xhtml.code(class: "language-" + lang, {
-      fstline + "\n" + lines
-    })
-  })
+  code(lang: lang, fstline + "\n" + lines)
 }

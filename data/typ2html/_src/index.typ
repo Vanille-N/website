@@ -117,8 +117,8 @@ and run `just watch index` in the background.
 
 For now Typst only provides the function `elem`,
 where to build for example a \
-`<div class="test">inner</div>`, you write \
-`html.elem("div", attrs: (class: "test"), { [inner] })`.
+#excerpt.inline(lang: "html", "<div class=\"test\">inner</div>"), you write \
+#excerpt.inline("#html.elem(\"div\", attrs: (class: \"test\"), { [inner] })").
 
 I find that it is slighly more convenient to have the following in
 #link("meta.html#_src/xhtml.typ")[`xhtml.typ`]:
@@ -177,9 +177,9 @@ For example let us define `my-style` as such:
 #let my-style = (
   color: "var(--black)",
   background: "var(--dk-blue)",
-  border-radius: "3pt",
+  border-radius: 3pt,
   display: "inline-block",
-  padding: "5pt",
+  padding: 5pt,
 )
 // :my-style}
 
@@ -235,7 +235,7 @@ must be passed as strings, not as length literals.
 #excerpt.incl(this, "todo-text")
 
 // {todo-text:
-#struct.text(fill: "var(--dk-red)", size: "50pt")[*Some text*]
+#struct.text(fill: "var(--dk-red)", size: 50pt)[*Some text*]
 // :todo-text}
 
 (reminder: you can do color definitions #link("meta.html#_assets/global.css")[like this])
@@ -247,7 +247,7 @@ It supports automatic or fixed width and height, rounded corners, background col
 #excerpt.incl(this, "styled-box")
 
 // {styled-box:
-#struct.box(width: "60%", inset: "10pt", radius: "10pt", fill: "var(--dk-purple)", {
+#struct.box(width: 60%, inset: 10pt, radius: 10pt, fill: "var(--dk-purple)", {
   struct.text(fill: "var(--black)")[
     A box \
     with round corners
@@ -287,7 +287,7 @@ CSS *at most once*.
 // {builder-demo:
 #let orange-box = struct.box(
   inline: false, class: "orange-box",
-  fill: "var(--dk-orange)", radius: "5pt", width: "fit-content", outset: "5pt",
+  fill: "var(--dk-orange)", radius: 5pt, width: "fit-content", outset: 5pt,
 )
 #orange-box[These]
 #orange-box[boxes]
@@ -302,8 +302,8 @@ In fact, the CSS style is included only if necessary, and at most once.
 You can still overwrite on-the-fly some elements:
 #excerpt.incl(this, "builder-overwrite")
 // {builder-overwrite:
-#orange-box(inset: "10pt")[Add margins to existing style.]
-#orange-box(radius: "0pt")[Remove the rouded corners.]
+#orange-box(inset: 10pt)[Add margins to existing style.]
+#orange-box(radius: 0pt)[Remove the rouded corners.]
 // :builder-overwrite}
 
 === Alignment
@@ -314,14 +314,14 @@ This mimics Typst's `align` function.
 // {alignment:
 #let gray-box = struct.box(
   inline: false, class: "cell",
-  fill: "var(--dk-gray1)", height: "100px", outset: "5px", inset: "5pt",
+  fill: "var(--dk-gray1)", height: 3cm, outset: 3pt, inset: 5pt,
 )
 #let my-aligned-box(alignment, inner) = {
   gray-box({
     struct.align(alignment)[#inner]
   })
 }
-#struct.table(columns: 3, gutter: "10px", {
+#struct.table(columns: 3, gutter: 3mm, {
   my-aligned-box(top + left)[Top left]
   my-aligned-box(top)[Top]
   my-aligned-box(top + right)[Top right]
@@ -334,18 +334,22 @@ This mimics Typst's `align` function.
 })
 // :alignment}
 
-Beware though that with my current configuration the alignment is not relative
-to the page itself (this is because the positioning is relative to the parent,
-and the parent needs to be `"flex"`, which `box` is but the entire page is not):
-#excerpt.incl(this, "align-do-dont")
+=== Side note: lengths
 
-// {align-do-dont:
-#struct.align(center)[This doesn't work]
-#struct.box(width: "100%", struct.align(center)[This works])
-// :align-do-dont}
-As is often the case, this comes down to CSS edge cases, and you will find that getting
-the correct rendering is highly dependent on your setup.
+Thanks to a #link("meta.html#_src/css.typ")[type-based translation from Typst to CSS],
+you can actually use any of Typst's length types wherever the CSS expects a length.
+#excerpt.incl(this, "lengths")
 
+// {lengths:
+#struct.box(fill: "var(--dk-gray2)", width: 100%,
+  struct.align(left, {
+    for width in (100%, 25%, 100pt, 5cm, 50% + 1cm, 50%, 50% - 1cm, 50% + 3em, 50% + 3em + 1cm) {
+      orange-box(width: width)[#width]
+      struct.box-linebreak // A regular linebreak wouldn't work here, unfortunately.
+    } 
+  })
+)
+// :lengths}
 
 == More coming soon...
 
