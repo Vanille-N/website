@@ -260,7 +260,7 @@ do for a regular Typst `box`.
 // {rounded-corners:
 #struct.box(fill: "var(--dk-gray3)",
   radius: (bottom-left: 1cm, bottom: 3mm),
-  stroke: red + 3pt,
+  stroke: 3pt,
 )[
   #struct.box(fill: "var(--dk-aqua)",
     inset: (x: 5mm, y: 2mm), outset: (x: 1cm, y: 2mm),
