@@ -2,6 +2,8 @@
 #import "css.typ"
 #import "once.typ"
 
+#let builtin-stroke = stroke
+
 // Easy way to optionally pass `class: class` to a function.
 #let class-key(class) = {
   if class == none { (:) } else {
@@ -102,7 +104,7 @@
 #let box-style(
   base,
   inset: none, width: none, height: none, radius: none,
-  fill: none, outset: none,
+  fill: none, outset: none, stroke: none,
   // TODO: stroke
 ) = {
   let style = base
@@ -165,6 +167,26 @@
       }
     } else {
       style.margin = outset
+    }
+  }
+  if stroke != none {
+    if type(stroke) == builtin-stroke {
+      style.border = builtin-stroke(stroke)
+    } else if type(stroke) == dictionary {
+      if "top" in stroke or "bottom" in stroke or "left" in stroke or "right" in stroke or "rest" in stroke {
+        for key in ("top", "bottom", "left", "right") {
+          if key in stroke {
+            style.insert("border-" + key, builtin-stroke(stroke.at(key)))
+          }
+        }
+        if "rest" in stroke {
+          style.border = builtin-stroke(stroke.rest)
+        }
+      } else {
+        style.border = builtin-stroke(stroke)
+      }
+    } else {
+      panic("Unsupported type for stroke " + str(type(stroke)))
     }
   }
   style

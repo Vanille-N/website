@@ -253,18 +253,20 @@ It supports automatic or fixed width and height, rounded corners, background col
 })
 // :styled-box}
 
-You can even specify corners and margins as dictionaries the same way you would
+You can even specify corners, margins, and stroke as dictionaries the same way you would
 do for a regular Typst `box`.
 #excerpt.incl(this, "rounded-corners")
 
 // {rounded-corners:
-#struct.box(fill: "var(--dk-gray3)", radius: (bottom-left: "1cm", bottom: "3mm"))[
+#struct.box(fill: "var(--dk-gray3)",
+  radius: (bottom-left: 1cm, bottom: 3mm),
+  stroke: red + 3pt,
+)[
   #struct.box(fill: "var(--dk-aqua)",
     inset: (x: 5mm, y: 2mm), outset: (x: 1cm, y: 2mm),
     radius: (top-left: 5mm, bottom-right: 0, rest: 2mm),
-  )[
-    Inner
-  ]
+    stroke: (top: green, left: 3pt, right: (paint: red, thickness: 4pt)),
+  )[Inner]
 ]
 // :rounded-corners}
 

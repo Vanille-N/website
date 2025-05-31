@@ -50,6 +50,14 @@
     "calc(" + (type-to-css.ratio)(rat) + sign-em + (aux-to-css.em)(em) + sign-abs + (aux-to-css.pt)(abs) + ")"
   } else if type(elt) == color {
     elt.to-hex()
+  } else if type(elt) == stroke {
+    let thickness = elt.thickness
+    if thickness == auto { thickness = 1pt }
+    let paint = elt.paint
+    if paint == auto { paint = black }
+    into-css-str((thickness, "solid", paint))
+  } else if type(elt) == array {
+    elt.map(into-css-str).join(" ")
   } else {
     panic("Unsupported type " + str(type(elt)))
   }
