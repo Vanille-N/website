@@ -218,3 +218,11 @@
 #let box-linebreak = {
   xhtml.div(style: css.raw-style((flex-basis: 100%, height: 0)))
 }
+
+#let h(len) = {
+  // TODO
+}
+
+#let v(len) = {
+  // TODO
+}

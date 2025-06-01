@@ -45,6 +45,8 @@ Via some #link("meta.html#_src/excerpt.typ")[dark magic], I shall embed in this 
 not just the output but also the source code that generates it,
 helping towards the goal of this being a usable showcase and tutorial.
 
+You can find the full source code of this page #link("meta.html#_src/index.typ")[here].
+
 // {title:
 == Getting started
 // :title}
@@ -405,6 +407,37 @@ In the same way, there are multiple methods to define colors
   }
 )
 // :colors}
+
+=== Side note: hover
+
+When you bind a style to a class, you can manually insert `:hover` properties:
+#excerpt.incl(this, "hover-demo")
+
+// TODO: let box dictate the style of the inner text
+// TODO: allow the :hover to be included in the box style
+// {hover-demo:
+#let gray-box = struct.box(inline: false, class: "highlightable",
+  fill: "var(--dk-gray2)", inset: 5mm,
+)
+#css.elems((
+  ".highlightable": (
+    transition: "0.3s",
+  ),
+  ".highlightable:hover": struct.box-style((:),
+    fill: "var(--dk-red)",
+    radius: (top-left: 5mm),
+  )
+))
+
+#gray-box[Hover over me]
+// :hover-demo}
+
+=== Spacing
+
+Horizontal space #struct.h(1cm) here.
+
+Vertical space #struct.v(1cm) here.
+
 
 == More coming soon...
 

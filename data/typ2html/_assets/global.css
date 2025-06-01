@@ -41,7 +41,7 @@ body {
   font-weight: 350;
   color: var(--white);
   background: var(--dk-gray0);
-  padding: 0 10px;
+  padding: 1cm 5mm 10cm 5mm;
 }
 
 h1,h2,h3,h4 {
