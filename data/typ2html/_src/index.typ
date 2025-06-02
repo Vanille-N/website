@@ -432,12 +432,15 @@ When you bind a style to a class, you can manually insert `:hover` properties:
 #gray-box[Hover over me]
 // :hover-demo}
 
-=== Spacing
+== Spacing
 
-Horizontal space #struct.h(1cm) here.
+#struct.box(width: 100%)[#struct.align(left)[
+This is #xhtml.div(style: css.raw-style((min-width: 5cm, background: red)))[] a test
+]]
 
-Vertical space #struct.v(1cm) here.
-
+#struct.box(width: 100%)[#struct.align(left)[
+This is #xhtml.div(style: css.raw-style((width: 100%, min-height: 1cm, background: red)))[] another test.
+]]
 
 == More coming soon...
 

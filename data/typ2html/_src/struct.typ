@@ -13,25 +13,28 @@
 
 // Implement alignment, simulating Typst's `align`.
 #let align(where, inner) = {
-  let style = (:)
+  let style = (
+    width: 100%,
+    display: "flex",
+    flex-wrap: "wrap",
+    flex-direction: "row",
+  )
   // Vertical handling.
   if where.y == top {
     style.margin-bottom = "auto"
-    style.width = 100%
   } else if where.y == bottom {
     style.margin-top = "auto"
-    style.width = 100%
   }
   // Horizontal handling.
   if where.x == right {
-    style.width = 100%
     style.text-align = "right"
+    style.justify-content = "flex-end"
   } else if where.x == left {
-    style.width = 100%
     style.text-align = "left"
+    style.justify-content = "flex-start"
   } else {
-    style.width = 100%
     style.text-align = "center"
+    style.justify-content = "center"
   }
   // Make the div.
   xhtml.div(style: css.raw-style(style), {
@@ -142,11 +145,11 @@
   if fill != none { style.background-color = fill }
   if inset != none {
     if type(inset) == dictionary {
-      if "y" in outset {
+      if "y" in inset {
         style.padding-top = inset.y
         style.padding-bottom = inset.y
       }
-      if "x" in outset {
+      if "x" in inset {
         style.padding-left = inset.x
         style.padding-right = inset.x
       }
@@ -219,10 +222,3 @@
   xhtml.div(style: css.raw-style((flex-basis: 100%, height: 0)))
 }
 
-#let h(len) = {
-  // TODO
-}
-
-#let v(len) = {
-  // TODO
-}
