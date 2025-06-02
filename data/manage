@@ -3,4 +3,4 @@ recurse pics
 recurse share
 recurse treebor
 recurse typ2html
-exec just compile-all
+just compile-all

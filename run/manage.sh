@@ -1,3 +1,9 @@
 #! /usr/bin/env bash
 
-run/wrapper.sh data
+recurse() {
+  pushd "$1"
+  source manage
+  popd
+}
+
+recurse data

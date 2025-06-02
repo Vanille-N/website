@@ -1,1 +1,1 @@
-exec just compile-all
+just compile-all
