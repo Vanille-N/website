@@ -224,9 +224,15 @@ See #link("_src/struct.typ")[`struct.typ`] for the definition of these functions
 The goal is that these functions should provide as close an interface to the
 real Typst version as possible.
 
+#excerpt.incl(this, "import-struct")
+
+// {import-struct:
+#import struct: text, box, table, align
+// :import-struct}
+
 === Text
 
-#{let cc(shade, t) = struct.text(fill: "var(--dk-" + shade + ")", t)
+#{let cc(shade, t) = text(fill: "var(--dk-" + shade + ")", t)
 [
   #cc("red")[You can] #cc("purple")[control] #cc("blue")[the style] #cc("aqua")[of text]
   #cc("green")[just like] #cc("yellow")[you would] #cc("orange")[in Typst:]
@@ -235,7 +241,7 @@ real Typst version as possible.
 #excerpt.incl(this, "todo-text")
 
 // {todo-text:
-#struct.text(fill: "var(--dk-red)", size: 50pt)[*Some text*]
+#text(fill: "var(--dk-red)", size: 50pt)[*Some text*]
 // :todo-text}
 
 (reminder: you can do color definitions #link("meta.html#_assets/global.css")[like this])
@@ -247,8 +253,8 @@ It supports automatic or fixed width and height, rounded corners, background col
 #excerpt.incl(this, "styled-box")
 
 // {styled-box:
-#struct.box(width: 60%, inset: 10pt, outset: 2mm, radius: 10pt, fill: "var(--dk-purple)", {
-  struct.text(fill: "var(--black)")[
+#box(width: 60%, inset: 10pt, outset: 2mm, radius: 10pt, fill: "var(--dk-purple)", {
+  text(fill: "var(--black)")[
     A box \
     with round corners
   ]
@@ -260,11 +266,11 @@ do for a regular Typst `box`.
 #excerpt.incl(this, "rounded-corners")
 
 // {rounded-corners:
-#struct.box(fill: "var(--dk-gray3)",
+#box(fill: "var(--dk-gray3)",
   radius: (bottom-left: 1cm, bottom: 3mm),
   stroke: 3pt,
 )[
-  #struct.box(fill: "var(--dk-aqua)",
+  #box(fill: "var(--dk-aqua)",
     inset: (x: 5mm, y: 2mm), outset: (x: 1cm, y: 2mm),
     radius: (top-left: 5mm, bottom-right: 0, rest: 2mm),
     stroke: (top: green, left: 3pt, right: (paint: red, thickness: 4pt)),
@@ -280,8 +286,8 @@ Note that this version does not have a stroke, it's only a grid layout.
 #excerpt.incl(this, "table")
 
 // {table:
-#let cell = struct.box(fill: "var(--dk-gray1)", height: "100px")[A cell]
-#struct.table(
+#let cell = box(fill: "var(--dk-gray1)", height: "100px")[A cell]
+#table(
   columns: 3, gutter: "15px", {
     for elt in range(7).map(_ => cell) { elt }
   },
@@ -302,7 +308,7 @@ CSS *at most once*.
 
 #excerpt.incl(this, "builder-demo")
 // {builder-demo:
-#let orange-box = struct.box(
+#let orange-box = box(
   inline: false, class: "orange-box",
   fill: "var(--dk-orange)", radius: 5pt, width: "fit-content", outset: 5pt,
 )
@@ -329,16 +335,16 @@ This mimics Typst's `align` function.
 #excerpt.incl(this, "alignment")
 
 // {alignment:
-#let gray-box = struct.box(
+#let gray-box = box(
   inline: false, class: "cell",
   fill: "var(--dk-gray1)", height: 3cm, outset: 3pt, inset: 5pt,
 )
 #let my-aligned-box(alignment, inner) = {
   gray-box({
-    struct.align(alignment)[#inner]
+    align(alignment)[#inner]
   })
 }
-#struct.table(columns: 3, gutter: 3mm, {
+#table(columns: 3, gutter: 3mm, {
   my-aligned-box(top + left)[Top left]
   my-aligned-box(top)[Top]
   my-aligned-box(top + right)[Top right]
@@ -367,8 +373,8 @@ e.g. in pixels which is not a valid Typst unit of length.
   50%, (50% - 1cm, `50% - 1cm`), 50% + 3em, (50% + 3em + 1cm, `50% + 3em + 1cm`),
   "300px", "calc(50% + 200px)",
 )
-#struct.box(fill: "var(--dk-gray2)", width: 100%,
-  struct.align(left, {
+#box(fill: "var(--dk-gray2)", width: 100%,
+  align(left, {
     for l in lengths {
       orange-box(width: as-len(l))[#as-repr(l)]
       struct.box-linebreak // A regular linebreak wouldn't work here, unfortunately.
@@ -400,8 +406,8 @@ In the same way, there are multiple methods to define colors
   "#fa1419", "blue", "YellowGreen", "var(--dk-orange)", "rgb(200, 30, 10)",
   "rgba(200, 30, 10, 0.5)", "hsl(110, 80%, 30%)",
 )
-#let cbox = struct.box(inline: false, class: "cbox", inset: 1mm, outset: 1mm, radius: 1mm)
-#struct.box(fill: "var(--black)", width: 100%,
+#let cbox = box(inline: false, class: "cbox", inset: 1mm, outset: 1mm, radius: 1mm)
+#box(fill: "var(--black)", width: 100%,
   for c in colors {
     cbox(fill: as-color(c))[#as-repr(c)]
   }
@@ -416,7 +422,7 @@ When you bind a style to a class, you can manually insert `:hover` properties:
 // TODO: let box dictate the style of the inner text
 // TODO: allow the :hover to be included in the box style
 // {hover-demo:
-#let gray-box = struct.box(inline: false, class: "highlightable",
+#let gray-box = box(inline: false, class: "highlightable",
   fill: "var(--dk-gray2)", inset: 5mm,
 )
 #css.elems((
@@ -434,11 +440,11 @@ When you bind a style to a class, you can manually insert `:hover` properties:
 
 == Spacing
 
-#struct.box(width: 100%)[#struct.align(left)[
+#box(width: 100%)[#align(left)[
 This is #xhtml.div(style: css.raw-style((min-width: 5cm, background: red)))[] a test
 ]]
 
-#struct.box(width: 100%)[#struct.align(left)[
+#box(width: 100%)[#align(left)[
 This is #xhtml.div(style: css.raw-style((width: 100%, min-height: 1cm, background: red)))[] another test.
 ]]
 
