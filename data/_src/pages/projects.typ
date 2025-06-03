@@ -1,9 +1,8 @@
-#import "utils.typ"
-#import "common.typ"
+#import "/_src/utils/mod.typ": global, header
 
-#common.style("")
-#common.navbar("projects")
-#common.under-reconstruction()
+#global.style("")
+#header.navbar-website("projects")
+#header.under-reconstruction()
 
 == Projects
 

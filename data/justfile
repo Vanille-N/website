@@ -1,11 +1,11 @@
 compile BASE:
-  typst compile --features html --format html --root . _src/{{BASE}}.typ {{BASE}}.html
+  typst compile --features html --format html --root . _src/pages/{{BASE}}.typ {{BASE}}.html
 
 watch BASE:
-  typst watch --features html --format html --root . --no-serve _src/{{BASE}}.typ {{BASE}}.html
+  typst watch --features html --format html --root . --no-serve _src/pages/{{BASE}}.typ {{BASE}}.html
 
 compile-all:
-  cat list:page | parallel --lb just compile {}
+  ls _src/pages | cut -d. -f1 | parallel --lb just compile {}
 
 watch-all:
-  cat list:page | parallel --lb just watch {}
+  ls _src/pages | cut -d. -f1 | parallel --lb just watch {}

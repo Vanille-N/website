@@ -1,8 +1,7 @@
-#import "common.typ"
-#import "pona.typ"
+#import "/_src/utils/mod.typ": global, header, pona
 
-#common.style("")
-#common.navbar("pona")
+#global.style("")
+#header.navbar-website("pona")
 
 #pona.toki[
   toki a \

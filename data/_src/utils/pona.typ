@@ -1,4 +1,4 @@
-#import "/_src/xhtml.typ"
+#import "/_src/lib/mod.typ": xhtml
 
 #let toki(tx) = {
   xhtml.span(class: "sitelen-pona", {

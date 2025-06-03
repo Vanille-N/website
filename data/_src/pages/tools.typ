@@ -1,9 +1,8 @@
-#import "xhtml.typ"
-#import "css.typ"
-#import "common.typ"
+#import "/_src/lib/mod.typ": xhtml, css
+#import "/_src/utils/mod.typ": global, header
 
-#common.style("")
-#common.navbar("tools")
+#global.style("")
+#header.navbar-website("tools")
 
 A curated list of lesser-known software I strongly recommend.
 
@@ -55,7 +54,7 @@ A curated list of lesser-known software I strongly recommend.
   ),
   ".badge": (
     background: "var(--black)",
-    border-radius: "12px",
+    border-radius: "2px",
     padding: "0.7rem",
     display: "flex",
     flex-direction: "row",
@@ -64,7 +63,7 @@ A curated list of lesser-known software I strongly recommend.
     color: "var(--lt-purple)",
   ),
   ".badge:hover": (
-    transform: "scale(1.02)",
+    border-radius: "2px 2px 60px 2px",
     background: "var(--white)",
     color: "var(--black)",
   ),

@@ -1,6 +1,4 @@
-#import "css.typ"
-#import "xhtml.typ"
-#import "struct.typ"
+#import "lib/mod.typ": css, xhtml, struct
 
 // Define and style the footer.
 

@@ -1,5 +1,4 @@
-#import "css.typ"
-#import "xhtml.typ"
+#import "lib/mod.typ": css, xhtml
 
 // {style:
 // Concretely this expands to <link rel="stylesheet" href="_assets/global.css">

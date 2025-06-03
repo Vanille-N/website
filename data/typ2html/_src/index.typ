@@ -1,5 +1,3 @@
-#import "excerpt.typ"
-
 #let this = "_src/index.typ"
 #let common = "_src/common.typ"
 
@@ -10,9 +8,7 @@
 // :setup}
 
 // {prelude:
-#import "xhtml.typ"
-#import "css.typ"
-#import "struct.typ"
+#import "lib/mod.typ": xhtml, css, struct, excerpt
 // :prelude}
 
 #include "common.typ"
@@ -124,9 +120,9 @@ where to build for example a \
 
 I find that it is slighly more convenient to have the following in
 #link("meta.html#_src/xhtml.typ")[`xhtml.typ`]:
-#excerpt.incl("_src/xhtml.typ", "func")
+#excerpt.incl("_src/lib/xhtml.typ", "func")
 and then instanciate it for each element as such:
-#excerpt.incl("_src/xhtml.typ", "apply")
+#excerpt.incl("_src/lib/xhtml.typ", "apply")
 
 This means that now for the same \
 `<div class="test">inner</div>`, we can write \

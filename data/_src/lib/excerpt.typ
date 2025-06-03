@@ -43,7 +43,7 @@
 //
 // You can optionally specify a language with `lang: ...` (Typst by default).
 #let incl(src, label, lang: "typst") = {
-  let lines = read("../" + src).split("\n")
+  let lines = read("/" + src).split("\n")
   // Find the begin and end tags
   let start = none
   let end = none
@@ -84,7 +84,7 @@
 }
 
 #let full(src, lang: "typst") = {
-  let lines = read("../" + src)
+  let lines = read("/" + src)
   // TODO: allow disabling the header.
   let fstline = comment-style.at(lang)(src)
   code(lang: lang, fstline + "\n" + lines)

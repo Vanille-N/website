@@ -1,18 +1,16 @@
-#import "xhtml.typ"
-#import "css.typ"
-#import "utils.typ"
-#import "common.typ"
+#import "../lib/mod.typ": xhtml, css
+#import "../utils/mod.typ": global, header, links, people
 
-#common.style("")
-#common.navbar("home")
+#global.style("")
+#header.navbar-website("home")
 
 = Neven Villani (Vanille)
 
 #xhtml.img(src: "_img/portrait.jpg")
 
-#common.github-link("Vanille-N")
-#common.email-link("Personnal: neven (dot) villani (at) crans.org")
-#common.email-link("Professional: neven (dot) villani (at) univ-grenoble-alpes.fr")
+#links.github-link("Vanille-N")
+#links.email-link("Personnal: neven (dot) villani (at) crans.org")
+#links.email-link("Professional: neven (dot) villani (at) univ-grenoble-alpes.fr")
 
 // TODO: Put a horizontal line here
 
@@ -46,13 +44,7 @@
     } else {
       panic("Unsupported type for collab: " + str(type(collab)))
     }
-    let collab-as-str = if type(collab) == str {
-      collab
-    } else if type(collab) == array {
-      collab.join(", ")
-    } else {
-      ""
-    }
+    let collab-as-str = collab.map(people.fmt-full-name).join(", ")
     if collab-is-empty { "" } else {
       "joint work with: " + collab-as-str
     }
@@ -140,7 +132,7 @@
         what: [Internship],
         where: [LaBRI (Bordeaux)],
         details: [Properties of Dynamic Unit Disk Graphs],
-        collab: "Arnaud Casteigts",
+        collab: (people.a-casteigts,),
       ),
       (
         start: (2022, 02),
@@ -148,7 +140,7 @@
         what: [Internship],
         where: [Aalto Univ. (Finland)],
         details: [Mending Volume Complexity of Locally Checkable Labelings],
-        collab: ("Jukka Suomela", "Darya Melnyk"),
+        collab: (people.d-melnyk, people.j-suomela),
       ),
       (
         start: (2022, 10),
@@ -156,7 +148,7 @@
         what: [Predoctorate],
         where: [MPI-SWS (Germany)],
         details: [Tree Borrows, a New Aliasing Model for Rust],
-        collab: ("Ralf Jung", "Derek Dreyer", "Johannes Hostert"),
+        collab: (people.r-jung, people.j-hostert, people.d-dreyer),
       ),
       (
         start: (2023, 09),
@@ -171,7 +163,7 @@
         what: [Internship],
         where: [Verimag (Grenoble)],
         details: [A Counting Abstraction for Parameterized Systems],
-        collab: ("Radu Iosif", "Arnaud Sangnier", "Marius Bozga"),
+        collab: (people.r-iosif, people.a-sangnier, people.m-bozga),
       ),
     ),
   ),
@@ -180,7 +172,7 @@
     what: [PhD in Computer Science],
     where: [Verimag (Grenoble)],
     details: [Automated Verification of Parameterized Reconfigurable Systems],
-    collab: ("Radu Iosif", "Arnaud Sangnier", "Marius Bozga"),
+    collab: (people.r-iosif, people.a-sangnier, people.m-bozga),
   )
 ))
 

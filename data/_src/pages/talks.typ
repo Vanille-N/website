@@ -1,8 +1,8 @@
-#import "common.typ"
+#import "/_src/utils/mod.typ": header, global
 
-#common.style("")
-#common.navbar-research("talks")
-#common.under-reconstruction()
+#global.style("")
+#header.navbar-research("talks")
+#header.under-reconstruction()
 
 == Talks
 

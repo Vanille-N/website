@@ -1,0 +1,5 @@
+#import "global.typ"
+#import "header.typ"
+#import "links.typ"
+#import "pona.typ"
+#import "people.typ"
