@@ -1,11 +1,18 @@
+compile-raw SRC TGT:
+  typst compile --features html --format html --root . {{SRC}} {{TGT}}
+
+watch-raw SRC TGT:
+  typst watch --features html --format html --root . --no-serve {{SRC}} {{TGT}}
+
 compile BASE:
-  typst compile --features html --format html --root . _src/pages/{{BASE}}.typ {{BASE}}.html
+  just compile-raw _src/pages/{{BASE}}.typ {{BASE}}.html
 
 watch BASE:
-  typst watch --features html --format html --root . --no-serve _src/pages/{{BASE}}.typ {{BASE}}.html
+  just watch-raw _src/pages/{{BASE}}.typ {{BASE}}.html
 
 compile-all:
   ls _src/pages | cut -d. -f1 | parallel --lb just compile {}
 
 watch-all:
   ls _src/pages | cut -d. -f1 | parallel --lb just watch {}
+

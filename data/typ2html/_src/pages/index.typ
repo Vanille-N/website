@@ -1,4 +1,4 @@
-#let this = "_src/index.typ"
+#let this = "_src/pages/index.typ"
 #let common = "_src/common.typ"
 
 // These markers are used to paste pieces of code in the final document.
@@ -8,10 +8,10 @@
 // :setup}
 
 // {prelude:
-#import "lib/mod.typ": xhtml, css, struct, excerpt
+#import "/_src/t2h/mod.typ": html, css, struct, excerpt
 // :prelude}
 
-#include "common.typ"
+#include "/_src/common.typ"
 
 = Typst to HTML: playground, tutorial, and showcase
 
@@ -82,32 +82,18 @@ Some stuff just works out of the box.
 
 == Build process
 
-Before we get into more technical stuff, a small note on the build process,
-because I feel that this is one of the least well-rounded parts of using Typst
-for HTML currently. For the record, I use the following directory layout:
-```
-Makefile
-list:page
-_src/
-  |-- index.typ
-  |-- xhtml.typ
-  |-- css.typ
-  \-- ...
-_assets/
-  |-- global.css
-  \-- link.svg
-_highlight/
-  |-- highlight.min.js
-  |-- highlight-typst.js
-  \-- ...
-```
-
-And I have my `justfile` as such:
+Before we get into more technical stuff, a small note on my build process.
+- `_src/t2h/` contains `html.typ`, `css.typ`, i.e. files that are very generic
+  and I expect to be easily reusable;
+- `_src/pages/` contains `index.typ`, and I have my `justfile` set to compile
+  every `_src/pages/{XYZ}.typ` into `{XYZ}.html`;
+- `_highlight/` contains files relevant to syntax highlighting;
+- `_assets/` contains additional auxiliary files.
 #excerpt.full("justfile", lang: "make")
 
-This builds `index.html` in the root directory. \
-To watch changes live, I open `index.html` in a browser
-and run `just watch index` in the background.
+In other words:
+- `just compile index` to compile `index.html` (this file);
+- `just watch-all` to dynamically autorecompile the entire directory.
 
 == Non-builtins
 
@@ -119,26 +105,26 @@ where to build for example a \
 #excerpt.inline("#html.elem(\"div\", attrs: (class: \"test\"), { [inner] })").
 
 I find that it is slighly more convenient to have the following in
-#link("meta.html#_src/xhtml.typ")[`xhtml.typ`]:
-#excerpt.incl("_src/lib/xhtml.typ", "func")
+#link("meta.html#_src/html.typ")[`html.typ`]:
+#excerpt.incl("_src/t2h/html.typ", "func")
 and then instanciate it for each element as such:
-#excerpt.incl("_src/lib/xhtml.typ", "apply")
+#excerpt.incl("_src/t2h/html.typ", "apply")
 
-This means that now for the same \
-`<div class="test">inner</div>`, we can write \
-`xhtml.div(class: "test", { [inner] })`
+This means that after importing `"/_src/t2h/mod.typ": html`,
+for the same `<div class="test">inner</div>`, we can now write
+`html.div(class: "test", { [inner] })`
 
-This document imports `xhtml.typ`,
+This document imports `html.typ`,
 in which more functions of the same shape are defined.
 Thus from now on you can assume that whenever you see
-a function `xhtml.foo`, it creates a `<foo>...</foo>` html element.
+a function `html.foo`, it creates a `<foo>...</foo>` html element.
 
 As a concrete example, here is an image that is also a hyperref:
 
 #excerpt.incl(this, "link")
 // {link:
-#xhtml.a(href: "https://www.example.com", {
-  xhtml.img(src: "_assets/link.svg", width: "50px")
+#html.a(href: "https://www.example.com", {
+  html.img(src: "_assets/link.svg", width: "50px")
 })
 // :link}
 
@@ -186,7 +172,7 @@ Then we can for example bind it to the `.on-the-fly` class by:
 
 // {my-style-fly:
 #css.elem(".on-the-fly", my-style)
-#xhtml.div(class: "on-the-fly", {
+#html.div(class: "on-the-fly", {
   [Black on blue (on the fly)]
 })
 // :my-style-fly}
@@ -197,7 +183,7 @@ Additionally, HTML elements accept a `style` parameter in which you can put CSS.
 #excerpt.incl(this, "my-style-inline")
 
 // {my-style-inline:
-#xhtml.div(class: "inlined", style: css.raw-style(my-style), {
+#html.div(class: "inlined", style: css.raw-style(my-style), {
   [Black on blue (inlined)]
 })
 // :my-style-inline}
@@ -437,11 +423,11 @@ When you bind a style to a class, you can manually insert `:hover` properties:
 == Spacing
 
 #box(width: 100%)[#align(left)[
-This is #xhtml.div(style: css.raw-style((min-width: 5cm, background: red)))[] a test
+This is #html.div(style: css.raw-style((min-width: 5cm, background: red)))[] a test
 ]]
 
 #box(width: 100%)[#align(left)[
-This is #xhtml.div(style: css.raw-style((width: 100%, min-height: 1cm, background: red)))[] another test.
+This is #html.div(style: css.raw-style((width: 100%, min-height: 1cm, background: red)))[] another test.
 ]]
 
 == More coming soon...
@@ -463,5 +449,5 @@ or #link("https://github.com/Vanille-N/website/compare")[pull request].
 
 // TODO: there's something to do with links in general.
 
-#include "footer.typ"
+#include "/_src/footer.typ"
 

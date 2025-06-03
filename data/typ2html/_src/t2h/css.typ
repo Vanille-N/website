@@ -1,4 +1,4 @@
-#import "xhtml.typ"
+#import "html.typ"
 
 // TODO: document and test more thoroughly
 
@@ -90,15 +90,15 @@
 
 // Include the raw CSS for `raw-elem` in a <style> tag.
 #let elem(target, params) = {
-  xhtml.style(raw-elem(target, params))
+  html.style(raw-elem(target, params))
 }
 
 // Include the raw CSS for `raw-elems` in a <style> element.
 #let elems(dict) = {
-  xhtml.style(raw-elems(dict))
+  html.style(raw-elems(dict))
 }
 
 // Include a separately written CSS file into the document.
 #let include-file(path) = {
-  xhtml.link(rel: "stylesheet", href: path)
+  html.link(rel: "stylesheet", href: path)
 }

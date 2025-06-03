@@ -1,4 +1,4 @@
-#import "xhtml.typ"
+#import "html.typ"
 #import "css.typ"
 #import "once.typ"
 
@@ -37,7 +37,7 @@
     style.justify-content = "center"
   }
   // Make the div.
-  xhtml.div(style: css.raw-style(style), {
+  html.div(style: css.raw-style(style), {
     inner
   })
 }
@@ -92,7 +92,7 @@
   style
 }
 #let text-elem(class: none, style: none, inner) = {
-  xhtml.span(..class-key(class), style: style, inner)
+  html.span(..class-key(class), style: style, inner)
 }
 #let text = structural(text-base, text-style, text-elem)
 
@@ -193,7 +193,7 @@
   style
 }
 #let box-elem(class: none, style: none, inner) = {
-  xhtml.div(..class-key(class), style: style, inner)
+  html.div(..class-key(class), style: style, inner)
 }
 #let box = structural(box-base, box-style, box-elem)
 
@@ -214,11 +214,11 @@
   style
 }
 #let table-elem(class: none, style: none, inner) = {
-  xhtml.div(..class-key(class), style: style, inner)
+  html.div(..class-key(class), style: style, inner)
 }
 #let table = structural(table-base, table-style, table-elem)
 
 #let box-linebreak = {
-  xhtml.div(style: css.raw-style((flex-basis: 100%, height: 0)))
+  html.div(style: css.raw-style((flex-basis: 100%, height: 0)))
 }
 

@@ -1,4 +1,6 @@
-#import "lib/mod.typ": css, xhtml, struct
+#import "/_src/t2h/mod.typ": css, html, struct
+
+#import struct: *
 
 // Define and style the footer.
 
@@ -13,24 +15,24 @@
   )
 ))
 
-#xhtml.footer[
-  #struct.box(width: "100%", inset: 1pt, radius: 3pt, fill: "var(--dk-gray2)")[
-      #struct.box(inset: (x: 5mm),
-        struct.text(size: 10pt)[
-          Last build: #datetime.today().display()
+#html.footer[
+  #box(width: "100%", inset: 1pt, radius: 3pt, fill: "var(--dk-gray2)")[
+    #box(inset: (x: 5mm),
+      text(size: 10pt)[
+        Last build: #datetime.today().display()
+      ]
+    )
+    #box(inset: (x: 5mm),
+      text(size: 10pt)[
+        Written by Vanille-N using Typst #sys.version
+      ]
+    )
+    #box(inset: (x: 5mm),
+      text(size: 10pt)[
+        #link("https://github.com/Vanille-N/website/tree/master/data/typ2html/_src")[
+          `github:vanille-n/website`
         ]
-      )
-      #struct.box(inset: (x: 5mm),
-        struct.text(size: 10pt)[
-          Written by Vanille-N using Typst #sys.version
-        ]
-      )
-      #struct.box(inset: (x: 5mm),
-        struct.text(size: 10pt)[
-          #link("https://github.com/Vanille-N/website/tree/master/data/typ2html/_src")[
-            `github:vanille-n/website`
-          ]
-        ]
-      )
+      ]
+    )
   ]
 ]

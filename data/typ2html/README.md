@@ -26,7 +26,7 @@ The file structure is thus:
 README.md                This file
 justfile                 Build process
 _src/                    Typst source code
-    xhtml.typ              Specializes html.elem for convenience
+    html.typ               Specializes html.elem for convenience
     css.typ                Enables dynamically defined CSS to be inserted in the document
     struct.typ             Redefines functions such as text, box, align, table, ...
     excerpt.typ            Allows including pieces of source code in a page
