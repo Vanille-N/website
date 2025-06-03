@@ -4,8 +4,16 @@
 #global.style("")
 #header.navbar-research("papers")
 
+#let status = (
+  published: struct.box(width: 100%)[],
+  occurred: struct.box(width: 100%)[#struct.align(center)[#struct.text(fill: "var(--lt-blue)")[*Soon*]]],
+  accepted: struct.box(width: 100%)[#struct.align(center)[#struct.text(fill: "var(--lt-green)")[*Accepted*]]],
+  submitted: struct.box(width: 100%)[#struct.align(center)[#struct.text(fill: "var(--lt-orange)")[*Submitted*]]],
+)
+
 #let published = (
   (
+    status: status.published,
     journal: [OPODIS],
     location: [Brussels],
     title: [Mending Partial Solutions with Few Changes],
@@ -19,6 +27,7 @@
   2022,
 
   (
+    status: status.occurred,
     journal: [NETYS],
     location: [Rabat],
     title: [Verifying Parameterized Networks
@@ -30,6 +39,7 @@
   ),
 
   (
+    status: status.accepted,
     journal: [PLDI],
     location: [Seoul],
     title: [Tree Borrows],
@@ -41,6 +51,7 @@
   ),
 
   (
+    status: status.accepted,
     journal: [CAV],
     location: [Zagreb],
     title: [Counting Abstraction and Decidability
@@ -56,6 +67,7 @@
 
 #{
   for paper in published.rev() {
+    // Ints represent year separators, not actual papers
     if type(paper) == int {
       struct.box(width: 100%, struct.align(center + horizon, {
         struct.box(width: 45%, height: 1pt, fill: "var(--lt-orange)")[]
@@ -66,9 +78,13 @@
       }))
       continue
     }
+    // Format one paper entry
     struct.box(inset: (y: 2mm), outset: 1mm, width: 100%, fill: "var(--dk-gray1)", struct.align(left, {
-      struct.box(width: 3cm, struct.align(center, {
-        struct.text(fill: "var(--lt-gray2)")[*#paper.journal* \ (#paper.location)]
+      struct.box(width: 3cm, struct.align(center + top, {
+        struct.box[
+          #struct.text(fill: "var(--lt-gray2)")[*#paper.journal* \ (#paper.location)]
+        ]
+        paper.status
       }))
       struct.box(width: 100% - 3cm)[#struct.align(left)[
         #struct.box(width: 100%)[*#paper.title*]
