@@ -1,4 +1,4 @@
-#import "/_src/lib/mod.typ": xhtml, css
+#import "/_src/t2h/mod.typ": html, css
 #import "pona.typ"
 
 #let style(prefix) = {
@@ -57,7 +57,7 @@
     "a:visited": ( color: "var(--lt-purple)" ),
   ))
   // TODO: migrate this
-  xhtml.link(rel: "stylesheet", href: prefix + "_assets/pona.css")
+  html.link(rel: "stylesheet", href: prefix + "_assets/pona.css")
   // Navigation bar
   css.elems((
     ".topnav": (

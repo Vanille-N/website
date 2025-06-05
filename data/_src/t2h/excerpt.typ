@@ -1,16 +1,16 @@
-#import "xhtml.typ"
+#import "html.typ"
 
 #let code(text, lang: "typst") = {
-  xhtml.pre({
-    xhtml.code(class: "language-" + lang, {
+  html.pre({
+    html.code(class: "language-" + lang, {
       text
     })
   })
 }
 
 #let inline(text, lang: "typst") = {
-  xhtml.span({
-    xhtml.code(class: "language-" + lang, {
+  html.span({
+    html.code(class: "language-" + lang, {
       text
     })
   })

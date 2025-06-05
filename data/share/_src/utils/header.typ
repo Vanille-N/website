@@ -31,26 +31,14 @@
 #let navbar-website(current) = {
   make-navbar(
     current: current,
-    ("home", "index.html", [*Home*]),
-    ("projects", "projects.html", [*Projects*]),
-    ("research", "research.html", [*Research*]),
-    ("tools", "tools.html", [*Tools*]),
-    ("share", "share/index.html", [*Documents*]),
-    ("pbm", "better-pbm-viewer/index.html", [*PBM Viewer*]),
-    ("pona", "lipu.html", [#pona.toki("o kama pona lon lipu mi")]),
-    ("typ2html", "typ2html/index.html", [*Typ2HTML*]),
-  )
-}
-
-#let navbar-research(current) = {
-  navbar-website("research")
-  make-navbar(
-    current: current,
-    ("home", "research.html", [Overview]),
-    ("talks", "talks.html", [Talks]),
-    ("papers", "papers.html", [Publications]),
-    ("treebor", "treebor/index.html", [Tree Borrows]),
-    ("phd", "phd.html", [PhD]),
+    ("home", "../index.html", [*Home*]),
+    ("projects", "../projects.html", [*Projects*]),
+    ("research", "../research.html", [*Research*]),
+    ("tools", "../tools.html", [*Tools*]),
+    ("share", "index.html", [*Documents*]),
+    ("pbm", "../better-pbm-viewer/index.html", [*PBM Viewer*]),
+    ("pona", "../lipu.html", [#pona.toki("o kama pona lon lipu mi")]),
+    ("typ2html", "../typ2html/index.html", [*Typ2HTML*]),
   )
 }
 

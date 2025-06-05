@@ -1,7 +1,4 @@
-#import "xhtml.typ"
-#import "css.typ"
-#import "utils.typ"
-#import "pona.typ"
+#import "/_src/t2h/mod.typ": html, css
 
 #let style(prefix) = {
   // Color definitions
@@ -46,7 +43,7 @@
       font-weight: 350,
       color: "#fbf1c7",
       background: "var(--dk-gray0)",
-      padding: "0 10px",
+      padding: "5mm 10px 10cm 10px",
     ),
     "h1,h2,h3": (
       line-weight: 1.2,
@@ -59,7 +56,7 @@
     "a:visited": ( color: "var(--lt-purple)" ),
   ))
   // TODO: migrate this
-  xhtml.link(rel: "stylesheet", href: prefix + "_assets/pona.css")
+  html.link(rel: "stylesheet", href: prefix + "_assets/pona.css")
   // Navigation bar
   css.elems((
     ".topnav": (
@@ -96,52 +93,5 @@
       padding: "7px",
     )
   ))
-}
-
-#let navbar(current) = {
-  utils.navbar(
-    current: current,
-    ("home", "index.html", [*Home*]),
-    ("projects", "projects.html", [*Projects*]),
-    ("research", "research.html", [*Research*]),
-    ("tools", "tools.html", [*Tools*]),
-    ("share", "share", [*Documents*]),
-    ("pbm", "better-pbm-viewer/index.html", [*PBM Viewer*]),
-    ("pona", "lipu.html", [#pona.toki("o kama pona lon lipu mi")]),
-    ("typ2html", "typ2html/index.html", [*Typ2HTML*]),
-  )
-}
-
-#let navbar-research(current) = {
-  navbar("research")
-  utils.navbar(
-    current: current,
-    ("home", "research.html", [Overview]),
-    ("talks", "talks.html", [Talks]),
-    ("papers", "papers.html", [Publications]),
-    ("treebor", "treebor/index.html", [Tree Borrows]),
-    ("phd", "phd.html", [PhD]),
-  )
-}
-
-#let under-reconstruction() = {
-  utils.alert-banner[
-    *Under reconstruction* \
-    This webpage is being refactored, sorry for the disturbance.
-  ]
-}
-
-#let img-link(image, url, title) = {
-  link(url, {
-    xhtml.img(src: image, width: "20", height: "20", title: title)
-  })
-}
-
-#let github-link(base) = {
-  img-link("_img/github.svg", "https://github.com/" + base, base)
-}
-
-#let email-link(base) = {
-  img-link("_img/mail.svg", "", base)
 }
 

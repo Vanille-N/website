@@ -1,4 +1,4 @@
-#import "/_src/lib/mod.typ": xhtml, css
+#import "/_src/t2h/mod.typ": html, css
 #import "/_src/utils/mod.typ": global, header
 
 #global.style("")
@@ -24,23 +24,23 @@ A curated list of lesser-known software I strongly recommend.
     github: "_img/github.svg",
     crate: "_img/crates.png",
   )
-  xhtml.a(href: as-url.at(key)(val), {
-    xhtml.img(src: as-icon.at(key), width: "15px", height: "15px")
+  html.a(href: as-url.at(key)(val), {
+    html.img(src: as-icon.at(key), width: "15px", height: "15px")
   })
 }
 
 #let badge(name, img: "", what: [], links: (:)) = {
-  xhtml.div(class: "badge", {
-    xhtml.div(class: "badge-left", {
-      xhtml.img(src: "_img/" + img, width: "64px", height: "64px")
-      xhtml.div(class: "badge-title", { name })
-      xhtml.div(class: "badge-links", {
+  html.div(class: "badge", {
+    html.div(class: "badge-left", {
+      html.img(src: "_img/" + img, width: "64px", height: "64px")
+      html.div(class: "badge-title", { name })
+      html.div(class: "badge-links", {
         for (key, val) in links {
           interpret-link(key, val)
         }
       })
     })
-    xhtml.div(class: "badge-right", {
+    html.div(class: "badge-right", {
       what
     })
   })
@@ -103,7 +103,7 @@ A curated list of lesser-known software I strongly recommend.
   ),
 ))
 
-#xhtml.div(class: "badge-grid", {
+#html.div(class: "badge-grid", {
   badge([i3], img: "i3.svg",
     what: [i3 is a tiling window manager,
       which means it's convenient to use without a mouse,

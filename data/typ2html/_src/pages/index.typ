@@ -37,11 +37,11 @@ This page is intended:
   because that would be #link("https://typst.app/docs/reference/html/elem/")[trivial],
   but rather of how to leverage this one function to obtain nontrivial results.
 
-Via some #link("meta.html#_src/excerpt.typ")[dark magic], I shall embed in this document
+Via some #link("meta.html#_src/t2h/excerpt.typ")[dark magic], I shall embed in this document
 not just the output but also the source code that generates it,
 helping towards the goal of this being a usable showcase and tutorial.
 
-You can find the full source code of this page #link("meta.html#_src/index.typ")[here].
+You can find the full source code of this page #link("meta.html#_src/pages/index.typ")[here].
 
 // {title:
 == Getting started
@@ -105,7 +105,7 @@ where to build for example a \
 #excerpt.inline("#html.elem(\"div\", attrs: (class: \"test\"), { [inner] })").
 
 I find that it is slighly more convenient to have the following in
-#link("meta.html#_src/html.typ")[`html.typ`]:
+#link("meta.html#_src/t2h/html.typ")[`html.typ`]:
 #excerpt.incl("_src/t2h/html.typ", "func")
 and then instanciate it for each element as such:
 #excerpt.incl("_src/t2h/html.typ", "apply")
@@ -202,7 +202,7 @@ Here I offer some very common functions that help set the layout.
 I've found that often the appearance is easy to set as just raw CSS,
 but the layout (centered / horizontal / vertical / grid / ...) is cumbersome.
 Here are functions that should help!
-See #link("_src/struct.typ")[`struct.typ`] for the definition of these functions.
+See #link("_src/t2h/struct.typ")[`struct.typ`] for the definition of these functions.
 The goal is that these functions should provide as close an interface to the
 real Typst version as possible.
 
@@ -341,7 +341,7 @@ This mimics Typst's `align` function.
 
 === Side note: lengths
 
-Thanks to a #link("meta.html#_src/css.typ")[type-based translation from Typst to CSS],
+Thanks to a #link("meta.html#_src/t2h/css.typ")[type-based translation from Typst to CSS],
 you can actually use any of Typst's length types wherever the CSS expects a length.
 In addition, you can also directly use whatever string is valid CSS for a length,
 e.g. in pixels which is not a valid Typst unit of length.

@@ -1,12 +1,13 @@
-#import "../lib/mod.typ": xhtml, css
-#import "../utils/mod.typ": global, header, links, people
+#import "/_src/t2h/mod.typ": html, css, struct
+#import "/_src/utils/mod.typ": global, header, links, people
 
 #global.style("")
 #header.navbar-website("home")
 
-= Neven Villani (Vanille)
+= Neven Villani
+a.k.a. Vanille, jan Newen
 
-#xhtml.img(src: "_img/portrait.jpg")
+#html.img(src: "_img/portrait.jpg")
 
 #links.github-link("Vanille-N")
 #links.email-link("Personnal: neven (dot) villani (at) crans.org")
@@ -54,10 +55,10 @@
 }
 
 #let timeline-entry(dates: [], title: [], hover-text: "", inner: (), collab: none, details: none) = {
-  xhtml.div(class: "entry", title: hover-text, {
-    xhtml.div(class: "date", { dates })
-    xhtml.div(class: "title", { title })
-    xhtml.div(class: "details", { details })
+  html.div(class: "entry", title: hover-text, {
+    html.div(class: "date", { dates })
+    html.div(class: "title", { title })
+    html.div(class: "details", { details })
     for elem in inner {
       timeline-entry(..timeline-transform(elem))
     }
@@ -65,7 +66,7 @@
 }
 
 #let timeline(elems) = {
-  xhtml.div(class: "timeline", {
+  html.div(class: "timeline", {
     for elem in elems.rev() {
       timeline-entry(..timeline-transform(elem))
     }
