@@ -440,14 +440,50 @@ or simply to implement more features. I have plans for:
 - images
 - hrule
 
-Don't hesitate to browse the source code in more detail, either #link("meta.html")[here]
-or #link("https://github.com/vanille-n/website/tree/master/data/typ2html")[on the repo].
+#let badge(title, url: "", img: "") = {
+  box(width: "100px", outset: "20px", {
+    link(url)[#html.img(src: "_assets/" + img, title: title, width: "80px")]
+  })
+}
 
-If you have suggestions you can open an
-#link("https://github.com/login?return_to=https://github.com/Vanille-N/website/issues")[issue]
-or #link("https://github.com/Vanille-N/website/compare")[pull request].
+#box(width: 100%)[
 
-// TODO: there's something to do with links in general.
+#badge(
+  "Source code",
+  url: "meta.html",
+  img: "link.svg",
+)
+
+#badge(
+  "Repository",
+  url: "https://github.com/vanille-n/website/tree/master/data/typ2html",
+  img: "github.svg",
+)
+
+#badge(
+  "Open an issue",
+  url: "https://github.com/login?return_to=https://github.com/Vanille-N/website/issues",
+  img: "github-issue.svg",
+)
+
+#badge(
+  "Open a pull request",
+  url: "https://github.com/Vanille-N/website/compare",
+  img: "github-pull.svg",
+)
+
+#badge(
+  "HTML export feature tracker",
+  url: "https://github.com/typst/typst/issues/5512",
+  img: "github-typst.svg",
+)
+
+]
+
+// TODO: I can do something nice with links in general.
+// Like show an icon next to them.
+
+// TODO: let the improved typst-to-css apply to HTML elements.
 
 #include "/_src/footer.typ"
 

@@ -22,15 +22,128 @@ a:visited { color: var(--lt-purple); }</style>
     <style>.alert { background-color: var(--lt-red); text-align: center; color: var(--black); padding: 7px; }</style>
     <div class="topnav"><a href="index.html"><strong>Home</strong></a><a href="" class="active"><strong>Projects</strong></a><a href="research.html"><strong>Research</strong></a><a href="tools.html"><strong>Tools</strong></a><a href="share/index.html"><strong>Documents</strong></a><a href="better-pbm-viewer/index.html"><strong>PBM Viewer</strong></a><a href="lipu.html"><span class="sitelen-pona">o kama pona lon lipu mi</span></a><a href="typ2html/index.html"><strong>Typ2HTML</strong></a></div>
     <div class="alert"><strong>Under reconstruction</strong><br>This webpage is being refactored, sorry for the disturbance.</div>
-    <h3>Projects</h3>
-    <p>The projects in this list are at various stages of being completed / stalled / abandoned, but I am at least somewhat proud of all of them. For a more complete list, see my [GitHub page](<a href="https://github.com/Vanille-N">https://github.com/Vanille-N</a>).</p>
-    <ul>
-      <li>[Pytrace (Rust)](<a href="https://github.com/Vanille-N/ray_tracer">https://github.com/Vanille-N/ray_tracer</a>), able to render videos and high-quality images, also available as a Python library</li>
-      <li>[COCass (OCaml)](<a href="https://github.com/Vanille-N/cocass">https://github.com/Vanille-N/cocass</a>), native compiler for a small C without floating-point arithmetic, but with added exception handling</li>
-      <li>[Forklang (C)](<a href="https://github.com/Vanille-N/forklang">https://github.com/Vanille-N/forklang</a>), a small non-deterministic language to validate parallelized protocols</li>
-      <li>[Billig (Rust)](<a href="https://github.com/Vanille-N/billig">https://github.com/Vanille-N/billig</a>) is a DSL to record expenses, ergonomic enough for my current daily usage but still a work in progress</li>
-      <li>[Chandeliers (Rust)](<a href="https://github.com/Vanille-N/chandeliers">https://github.com/Vanille-N/chandeliers</a>) is a proc macro library that implements the [Lustre language](<a href="https://en.wikipedia.org/wiki/Lustre_(programming_language)">https://en.wikipedia.org/wiki/Lustre_(programming_language)</a>) inside Rust.</li>
-      <li>[Minihell (OCaml)](<a href="https://gitlab.com/Vanille-N/mpri-2.4-project-2023-2024">https://gitlab.com/Vanille-N/mpri-2.4-project-2023-2024</a>) is a type inference engine for a toy language implemented for the [MPRI class 2.4 (Functionnal Programming)](<a href="https://gitlab.inria.fr/fpottier/mpri-2.4-public/blob/master/README.md">https://gitlab.inria.fr/fpottier/mpri-2.4-public/blob/master/README.md</a>). The language is ML-style without polymorphism and supports inductive algebraic datatypes.</li>
-    </ul>
+    <style>.badge-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 0.8rem; }
+.badge { background: var(--black); border-radius: 2px; padding: 0.7rem; display: flex; flex-direction: row; align-items: center; transition: 0.2s; color: var(--lt-purple); }
+.badge:hover { border-radius: 2px 2px 60px 2px; background: var(--white); color: var(--black); }
+.badge-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 0.5rem; text-align: center; }
+.badge-left { width: 450px; display: flex; align-items: center; flex-direction: column; }
+.badge-right { flex-grow: 1; width: 500px; font-size: 10pt; color: var(--black); padding: 1mm; }
+.badge-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.2rem; }
+.badge-links a { background: var(--dk-gray0); padding: 0.1rem 0.5rem; border-radius: 8px; transition: background 0.2s; }
+.badge-links a:hover { background: var(--dk-gray2); }</style>
+    <div class="badge-grid">
+      <div class="badge">
+        <div class="badge-left">
+          <img src="_img/rust.svg" width="64px" height="64px">
+          <div class="badge-title">Pytrace</div>
+          <div class="badge-links"><a href="https://github.com/Vanille-N/ray_tracer"><img src="_img/github.svg" width="15px" height="15px"></a></div>
+        </div>
+        <div class="badge-right">A ray tracer to render scenes with accurate shadows. Includes a Python API.</div>
+      </div>
+      <div class="badge">
+        <div class="badge-left">
+          <img src="_img/ocaml.svg" width="64px" height="64px">
+          <div class="badge-title">COCass</div>
+          <div class="badge-links"><a href="https://github.com/Vanille-N/cocass"><img src="_img/github.svg" width="15px" height="15px"></a></div>
+        </div>
+        <div class="badge-right">A compiler from a toy version of C to x86 64-bit assembly.</div>
+      </div>
+      <div class="badge">
+        <div class="badge-left">
+          <img src="_img/c.svg" width="64px" height="64px">
+          <div class="badge-title">Forklang</div>
+          <div class="badge-links"><a href="https://github.com/Vanille-N/forklang"><img src="_img/github.svg" width="15px" height="15px"></a></div>
+        </div>
+        <div class="badge-right">A toy language with nondeterminism, to implement and verify distributed protocols.</div>
+      </div>
+      <div class="badge">
+        <div class="badge-left">
+          <img src="_img/rust.svg" width="64px" height="64px">
+          <div class="badge-title">Billig</div>
+          <div class="badge-links"><a href="https://github.com/Vanille-N/billig"><img src="_img/github.svg" width="15px" height="15px"></a></div>
+        </div>
+        <div class="badge-right"></div>
+      </div>
+      <div class="badge">
+        <div class="badge-left">
+          <img src="_img/rust.svg" width="64px" height="64px">
+          <div class="badge-title">Chandeliers</div>
+          <div class="badge-links"><a href="https://github.com/Vanille-N/chandeliers"><img src="_img/github.svg" width="15px" height="15px"></a></div>
+        </div>
+        <div class="badge-right"></div>
+      </div>
+      <div class="badge">
+        <div class="badge-left">
+          <img src="_img/ocaml.svg" width="64px" height="64px">
+          <div class="badge-title">Minihell</div>
+          <div class="badge-links"><a href="https://gitlab.com/Vanille-N/mpri-2.4-project-2023-2024"><img src="_img/gitlab.svg" width="15px" height="15px"></a></div>
+        </div>
+        <div class="badge-right"></div>
+      </div>
+      <div class="badge">
+        <div class="badge-left">
+          <img src="_img/ocaml.svg" width="64px" height="64px">
+          <div class="badge-title">ParCoSys</div>
+          <div class="badge-links"><a href="https://gricad-gitlab.univ-grenoble-alpes.fr/neven/parcosys"><img src="_img/gitlab.svg" width="15px" height="15px"></a></div>
+        </div>
+        <div class="badge-right"></div>
+      </div>
+      <div class="badge">
+        <div class="badge-left">
+          <img src="_img/rust.svg" width="64px" height="64px">
+          <div class="badge-title">Wallrnd</div>
+          <div class="badge-links"><a href="https://github.com/Vanille-N/wallrnd"><img src="_img/github.svg" width="15px" height="15px"></a></div>
+        </div>
+        <div class="badge-right"></div>
+      </div>
+      <div class="badge">
+        <div class="badge-left">
+          <img src="_img/scala.svg" width="64px" height="64px">
+          <div class="badge-title">Roguelike</div>
+          <div class="badge-links"><a href="https://github.com/Vanille-N/roguelike"><img src="_img/github.svg" width="15px" height="15px"></a></div>
+        </div>
+        <div class="badge-right"></div>
+      </div>
+      <div class="badge">
+        <div class="badge-left">
+          <img src="_img/cpp.svg" width="64px" height="64px">
+          <div class="badge-title">Thermohaline</div>
+          <div class="badge-links"><a href="https://github.com/Vanille-N/TIPE"><img src="_img/github.svg" width="15px" height="15px"></a></div>
+        </div>
+        <div class="badge-right"></div>
+      </div>
+      <div class="badge">
+        <div class="badge-left">
+          <img src="_img/rust.svg" width="64px" height="64px">
+          <div class="badge-title">Rask</div>
+          <div class="badge-links"><a href="https://github.com/Vanille-N/rask"><img src="_img/github.svg" width="15px" height="15px"></a></div>
+        </div>
+        <div class="badge-right"></div>
+      </div>
+      <div class="badge">
+        <div class="badge-left">
+          <img src="_img/c.svg" width="64px" height="64px">
+          <div class="badge-title">CTM</div>
+          <div class="badge-links"><a href="https://github.com/Vanille-N/turing_machine"><img src="_img/github.svg" width="15px" height="15px"></a></div>
+        </div>
+        <div class="badge-right"></div>
+      </div>
+      <div class="badge">
+        <div class="badge-left">
+          <img src="_img/cpp.svg" width="64px" height="64px">
+          <div class="badge-title">Mandelbrot</div>
+          <div class="badge-links"><a href="https://github.com/Vanille-N/mandelbrot"><img src="_img/github.svg" width="15px" height="15px"></a></div>
+        </div>
+        <div class="badge-right"></div>
+      </div>
+      <div class="badge">
+        <div class="badge-left">
+          <img src="_img/cpp.svg" width="64px" height="64px">
+          <div class="badge-title">Sorts</div>
+          <div class="badge-links"><a href="https://github.com/Vanille-N/sorts_visualization"><img src="_img/github.svg" width="15px" height="15px"></a></div>
+        </div>
+        <div class="badge-right"></div>
+      </div>
+    </div>
   </body>
 </html>

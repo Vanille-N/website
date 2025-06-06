@@ -1,122 +1,208 @@
+#import "/_src/t2h/mod.typ": html, css
 #import "/_src/utils/mod.typ": global, header
 
 #global.style("")
 #header.navbar-website("projects")
 #header.under-reconstruction()
 
-== Projects
+#let link-generic(base) = "https://" + base
+#let link-arch(base) = link-generic("wiki.archlinux.org/title/" + base)
+#let link-github(base) = link-generic("github.com/Vanille-N/" + base)
+#let link-gitlab(base) = link-generic("gitlab.com/Vanille-N/" + base)
+#let link-gricad(base) = link-generic("gricad-gitlab.univ-grenoble-alpes.fr/neven/" + base)
+#let link-crates(base) = link-generic("crates.io/crates/" + base)
 
-#let projects = (
-  (
-    name: [Pytrace],
+#let interpret-link(key, val) = {
+  let as-url = (
+    github: link-github,
+    gitlab: link-gitlab,
+    gricad: link-gricad,
+  )
+  let as-icon = (
+    github: "_img/github.svg",
+    gitlab: "_img/gitlab.svg",
+    gricad: "_img/gitlab.svg",
+  )
+  html.a(href: as-url.at(key)(val), {
+    html.img(src: as-icon.at(key), width: "15px", height: "15px")
+  })
+}
+
+#let badge(name, lang: "", urls: (:), what: "") = {
+  html.div(class: "badge", {
+    html.div(class: "badge-left", {
+      html.img(src: "_img/" + lang + ".svg", width: "64px", height: "64px")
+      html.div(class: "badge-title", { name })
+      html.div(class: "badge-links", {
+        for (key, val) in urls {
+          interpret-link(key, val)
+        }
+      })
+    })
+    html.div(class: "badge-right", {
+      what
+    })
+  })
+}
+
+#css.elems((
+  ".badge-grid": (
+    display: "grid",
+    grid-template-columns: "repeat(auto-fill, minmax(250px, 1fr))",
+    gap: "0.8rem",
+  ),
+  ".badge": (
+    background: "var(--black)",
+    border-radius: "2px",
+    padding: "0.7rem",
+    display: "flex",
+    flex-direction: "row",
+    align-items: "center",
+    transition: "0.2s",
+    color: "var(--lt-purple)",
+  ),
+  ".badge:hover": (
+    border-radius: "2px 2px 60px 2px",
+    background: "var(--white)",
+    color: "var(--black)",
+  ),
+  ".badge-title": (
+    font-size: "1.2rem",
+    font-weight: "bold",
+    margin-bottom: "0.5rem",
+    text-align: "center",
+  ),
+  ".badge-left": (
+    width: "450px",
+    display: "flex",
+    align-items: "center",
+    flex-direction: "column",
+  ),
+  ".badge-right": (
+    flex-grow: 1,
+    width: "500px",
+    font-size: "10pt",
+    color: "var(--black)",
+    padding: "1mm",
+  ),
+  ".badge-links": (
+    display: "flex",
+    flex-wrap: "wrap",
+    justify-content: "center",
+    gap: "0.2rem",
+  ),
+  ".badge-links a": (
+    background: "var(--dk-gray0)",
+    padding: "0.1rem 0.5rem",
+    border-radius: "8px",
+    transition: "background 0.2s",
+  ),
+  ".badge-links a:hover": (
+    background: "var(--dk-gray2)",
+  ),
+))
+
+#html.div(class: "badge-grid", {
+  badge([Pytrace],
     lang: "rust",
     urls: (
-      github: "pytrace",
+      github: "ray_tracer",
     ),
-  ),
+    what: [A ray tracer to render scenes with accurate shadows.
+    Includes a Python API.],
+  )
   
-  (
-    name: [COCass],
+  badge([COCass],
     lang: "ocaml",
     urls: (
       github: "cocass",
     ),
-  ),
+    what: [A compiler from a toy version of C to x86 64-bit assembly.],
+  )
 
-  (
-    name: [Forklang],
+  badge([Forklang],
     lang: "c",
     urls: (
       github: "forklang",
-    )
-  ),
+    ),
+    what: [A toy language with nondeterminism, to implement and verify distributed protocols.],
+  )
 
-  (
-    name: [Billig],
+  badge([Billig],
     lang: "rust",
     urls: (
       github: "billig",
     ),
-  ),
+  )
 
-  (
-    name: [Chandeliers],
+  badge([Chandeliers],
     lang: "rust",
     urls: (
       github: "chandeliers",
     ),
-  ),
+  )
 
-  (
-    name: [Minihell],
+  badge([Minihell],
     lang: "ocaml",
     urls: (
-      gitlab:
+      gitlab: "mpri-2.4-project-2023-2024",
     ),
-  ),
+  )
 
-  (
-    name: [ParCoSys],
+  badge([ParCoSys],
     lang: "ocaml",
     urls: (
       gricad: "parcosys",
     ),
-  ),
+  )
 
-  (
-    name: [Wallrnd],
+  badge([Wallrnd],
     lang: "rust",
     urls: (
       github: "wallrnd",
     ),
-  ),
+  )
 
-  (
-    name: [Roguelike],
+  badge([Roguelike],
     lang: "scala",
     urls: (
       github: "roguelike",
     ),
-  ),
+  )
 
-  (
-    name: [Thermohaline],
+  badge([Thermohaline],
     lang: "cpp",
     urls: (
       github: "TIPE",
     ),
-  ),
+  )
 
-  (
-    name: [Rask],
+  badge([Rask],
     lang: "rust",
     urls: (
       github: "rask",
     ),
-  ),
+  )
 
-  (
-    name: [CTM],
+  badge([CTM],
     lang: "c",
     urls: (
       github: "turing_machine",
     ),
-  ),
+  )
 
-  (
-    name: [Mandelbrot],
+  badge([Mandelbrot],
     lang: "cpp",
     urls: (
       github: "mandelbrot",
     ),
-  ),
+  )
 
-  (
-    name: [Sorts],
+  badge([Sorts],
     lang: "cpp",
     urls: (
       github: "sorts_visualization",
     ),
-  ),
-)
+  )
+})
 
