@@ -3,54 +3,52 @@
 Served at [my homepage](https://perso.crans.org/vanille),
 thanks to the [Crans [fr]](https://www.crans.org/).
 
-## Contents
+## Navigation
 
-```
-data                         The main folder where everything happens
-  |--- better-pbm-viewer     A Bitmap and Pixmap image generator/editor/viewer
-  |--- pics                  Small photo gallery
-  |--- share                 Various documents for school/research/configuration
-  |--- treebor               Sources for the Tree Borrows in-depth explanation
-  |--- ijo-pona              mi pali e ijo kepeken toki pona la ona li lon ni
-```
+### If you are here for **Tree Borrows**:
+
+The root folder is [data/treebor/](https://github.com/Vanille-N/website/tree/master/data/treebor),
+with the source code (Markdown)
+stored in [src/](https://github.com/Vanille-N/website/tree/master/data/treebor/src).
+
+To build:
+- `make core.html` for one specific file,
+- `make all` for the entire project.
+
+
+### If you are here for **Typ2HTML**:
+
+The root folder is [data/typ2html/](https://github.com/Vanille-N/website/tree/master/data/typ2html),
+with the source code (Typst)
+stored in [_src/](https://github.com/Vanille-N/website/tree/master/data/typ2html/_src).
+
+To build:
+- `just compile index` for one specific file,
+- `just compile-all` for the entire project,
+- `just watch-all` to dynamically rebuild-on-change.
+
+### Other
+
+- The source code (Typst) of the homepage is in
+  [data/_src](https://github.com/Vanille-N/website/tree/master/data/_src)
+- Some public documents (e.g. preprints) are stored in
+  [data/share/](https://github.com/Vanille-N/website/tree/master/data/share)
 
 ## Dependencies
 
-### Major
+### For **Tree Borrows**
 
-- [`pandoc`](https://pandoc.org/)
-- [`python`](https://www.python.org/)
+- `pandoc`
+- `make`
 
-### Minor
+### For **Typ2HTML**
 
-`tar`, `rsync`, `fd`
+- `typst` (>= 0.13.0)
+- `just`
 
-### Administrative
+### For the whole website
 
-- `remote`, a personal script (wrapper around `rsync` + `ssh`) to push to the server
-
-## Structure
-
-This web page is built by a recursive `make` system. Each `Makefile` defines
-a module, with possible submodules, and the website is a hierarchy of all
-the modules.
-
-### Location
-
-The website structure follows the directory structure:
-
-- `data/**/foo/Makefile` defines the actions for `foo`
-- `data/**/foo/` is online at `perso.crans.org/vanille/**/foo`
-
-### Build
-
-The build system uses the `.target` directory as a build directory:
-
-- `data/**/foo/.target` is the build directory for `foo`
-- `data/**/foo/bar/.target` is the build directory for the submodule `bar`
-- `data/**/foo/bar/.target` is symlinked to `data/**/foo/.target/bar`,
-effectively moving data to the root by permuting the `.target` folder
-
-Finally `data/.target` is resolved to `www` which is then pushed to
-the server.
+- `bash`
+- `rsync`
+- `tar`
 
