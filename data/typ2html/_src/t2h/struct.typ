@@ -101,7 +101,7 @@
 // TODO: comment
 #let box-base = (
   display: "inline-flex", flex-direction: "line",
-  justify-content: "center", align-items: "center",
+  //justify-content: "center", align-items: "center",
   flex-wrap: "wrap",
 )
 #let box-style(

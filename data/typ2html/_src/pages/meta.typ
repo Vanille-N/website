@@ -16,7 +16,7 @@ Also available directly
 #print("_assets/global.css", lang: "css")
 
 #{
-  for t2hfile in ("mod", "html", "css", "struct", "excerpt") {
+  for t2hfile in ("mod", "html", "css", "js", "struct", "excerpt") {
     print("_src/t2h/" + t2hfile + ".typ")
   }
 

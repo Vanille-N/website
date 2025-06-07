@@ -1,4 +1,4 @@
-#import "/_src/t2h/mod.typ": html, css, struct
+#import "/_src/t2h/mod.typ": html, css, js, struct
 #import "/_src/utils/mod.typ": global, header, people, links
 
 #global.style("")
@@ -158,7 +158,7 @@ for which the coverability problem is in 2EXPTIME and PSPACE-hard.",
   }
 }
 
-#html.script("
+#js.inline(```js
   var tooltip = document.querySelectorAll('.abstract');
 
   document.addEventListener('mousemove', movetooltip, false);
@@ -168,5 +168,5 @@ for which the coverability problem is in 2EXPTIME and PSPACE-hard.",
         tooltip[i].style.left = e.pageX + 'px';
         tooltip[i].style.top = e.pageY + 'px';
     }
-  }"
-)
+  }
+```)

@@ -1,4 +1,4 @@
-#import "/_src/t2h/mod.typ": html, css, struct
+#import "/_src/t2h/mod.typ": html, css, js, struct
 #import "/_src/utils/mod.typ": global, links, header
 
 #global.style("")
@@ -159,18 +159,18 @@
 
 ]
 
-#html.script("
-  var coll = document.getElementsByClassName(\"collapsible\");
+#js.inline(```js
+  var coll = document.getElementsByClassName("collapsible");
 
   for (var i = coll.length; i--;) {
-    coll[i].addEventListener(\"click\", function() {
-      this.classList.toggle(\"active\");
+    coll[i].addEventListener("click", function() {
+      this.classList.toggle("active");
       var content = this.nextElementSibling;
-      if (content.style.display === \"block\") {
-        content.style.display = \"none\";
+      if (content.style.display === "block") {
+        content.style.display = "none";
       } else {
-        content.style.display = \"block\";
+        content.style.display = "block";
       }
     });
   }
-")
+```)

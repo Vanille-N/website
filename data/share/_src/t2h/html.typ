@@ -19,8 +19,10 @@
 #let link = htmlfunc("link")
 #let pre = htmlfunc("pre")
 #let style = htmlfunc("style")
-#let script = htmlfunc("script")
+#let button = htmlfunc("button")
 #let code = htmlfunc("code")
 #let footer = htmlfunc("footer")
-#let button = htmlfunc("button")
 
+#let script(..any) = {
+  panic("Do not emit a <script> element without getting it checked by `js.external` or `js.inline`")
+}
