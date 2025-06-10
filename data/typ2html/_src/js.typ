@@ -1,16 +1,13 @@
-// Currently it is not possible to have Typst export the code within
-// <script>...</script> properly because it will turn '<' into '&lt;'.
-// For lack of a satisfying workaround, we'll be content for now with
-// a compilation error if we try to include one of '<', '>', '&'.
-
+// Typst will translate "<", ">", "&" to "&lt;", "&gt", "&amp;",
+// making it impossible to store the JS code in the body of the <script>
+// element. Instead we store it in the label which is kept raw.
 #let inline(block) = {
-  let raw = block.text
-  for c in ("<", ">", "&") {
-    if raw.contains("<") {
-      panic("The character '" + c + "' is not properly handled by Typst. Change your code to avoid it.")
-    }
-  }
-  html.elem("script", raw)
+  html.elem("script",
+    attrs: (src: {
+      "data:application/javascript,"
+      block.text.replace("\"", "%22").replace("&", "%26")
+    }),
+  )
 }
 
 #let external(file) = {
