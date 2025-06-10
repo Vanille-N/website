@@ -29,6 +29,7 @@
 }
 
 #let navbar-website(current) = {
+  set document(title: "Vanille's Homepage")
   make-navbar(
     current: current,
     ("home", "index.html", [*Home*]),

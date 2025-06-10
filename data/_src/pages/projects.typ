@@ -133,6 +133,7 @@
     urls: (
       github: "billig",
     ),
+    what: [Expense tracker with a feature to amortize purchases over the relevant period.],
   )
 
   badge([Chandeliers],
@@ -140,6 +141,7 @@
     urls: (
       github: "chandeliers",
     ),
+    what: [Inline Lustre code in Rust via a compiler written in procedural macros.],
   )
 
   badge([Minihell],
@@ -147,6 +149,7 @@
     urls: (
       gitlab: "mpri-2.4-project-2023-2024",
     ),
+    what: [Type inference for a lambda-calculus-like language with algebraic datatypes and recursivity.],
   )
 
   badge([ParCoSys],
@@ -154,6 +157,7 @@
     urls: (
       gricad: "parcosys",
     ),
+    what: [Parameterized coverability solver for systems specified by HR-style graph grammars.],
   )
 
   badge([Wallrnd],
@@ -161,6 +165,7 @@
     urls: (
       github: "wallrnd",
     ),
+    what: [Generator of random geometric wallpapers depending on the time of the day.],
   )
 
   badge([Roguelike],
@@ -168,6 +173,7 @@
     urls: (
       github: "roguelike",
     ),
+    what: [A small 2-player game.],
   )
 
   badge([Thermohaline],
@@ -175,6 +181,7 @@
     urls: (
       github: "TIPE",
     ),
+    what: [Simulation of the thermohaline oceanic circulation for the TIPE.],
   )
 
   badge([Rask],
@@ -182,6 +189,7 @@
     urls: (
       github: "rask",
     ),
+    what: [A small interpreted Scheme-like language.],
   )
 
   badge([CTM],
@@ -189,6 +197,7 @@
     urls: (
       github: "turing_machine",
     ),
+    what: [Turing machines in the C preprocessor.],
   )
 
   badge([Mandelbrot],
@@ -196,6 +205,7 @@
     urls: (
       github: "mandelbrot",
     ),
+    what: [Navigate and make screenshots of the Mandelbrot set.],
   )
 
   badge([Sorts],
@@ -203,6 +213,7 @@
     urls: (
       github: "sorts_visualization",
     ),
+    what: [Visualize several sorting algorithms in the style of "The Sound of Sorting".],
   )
 })
 
