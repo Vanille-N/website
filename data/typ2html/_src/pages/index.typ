@@ -1,5 +1,5 @@
 #let this = "_src/pages/index.typ"
-#let common = "_src/common.typ"
+#let highlight = "_src/common/highlight.typ"
 
 // These markers are used to paste pieces of code in the final document.
 // See `excerpt.typ`.
@@ -8,10 +8,10 @@
 // :setup}
 
 // {prelude:
-#import "/_src/t2h/mod.typ": html, css, struct, excerpt
+#import "/_src/mod.typ": html, css, struct, excerpt
 // :prelude}
 
-#include "/_src/common.typ"
+#include "/_src/common/highlight.typ"
 
 = Typst to HTML: playground, tutorial, and showcase
 
@@ -37,7 +37,7 @@ This page is intended:
   because that would be #link("https://typst.app/docs/reference/html/elem/")[trivial],
   but rather of how to leverage this one function to obtain nontrivial results.
 
-Via some #link("meta.html#_src/t2h/excerpt.typ")[dark magic], I shall embed in this document
+Via some #link("meta.html#_src/excerpt.typ")[dark magic], I shall embed in this document
 not just the output but also the source code that generates it,
 helping towards the goal of this being a usable showcase and tutorial.
 
@@ -83,7 +83,7 @@ Some stuff just works out of the box.
 == Build process
 
 Before we get into more technical stuff, a small note on my build process.
-- `_src/t2h/` contains `html.typ`, `css.typ`, i.e. files that are very generic
+- `_src/` contains `html.typ`, `css.typ`, i.e. files that are very generic
   and I expect to be easily reusable;
 - `_src/pages/` contains `index.typ`, and I have my `justfile` set to compile
   every `_src/pages/{XYZ}.typ` into `{XYZ}.html`;
@@ -105,12 +105,12 @@ where to build for example a \
 #excerpt.inline("#html.elem(\"div\", attrs: (class: \"test\"), { [inner] })").
 
 I find that it is slighly more convenient to have the following in
-#link("meta.html#_src/t2h/html.typ")[`html.typ`]:
-#excerpt.incl("_src/t2h/html.typ", "func")
+#link("meta.html#_src/html.typ")[`html.typ`]:
+#excerpt.incl("_src/html.typ", "func")
 and then instanciate it for each element as such:
-#excerpt.incl("_src/t2h/html.typ", "apply")
+#excerpt.incl("_src/html.typ", "apply")
 
-This means that after importing `"/_src/t2h/mod.typ": html`,
+This means that after importing `"/_src/mod.typ": html`,
 for the same `<div class="test">inner</div>`, we can now write
 `html.div(class: "test", { [inner] })`
 
@@ -145,7 +145,7 @@ All of these methods can be replicated in Typst.
 
 You can import a pre-written CSS that dictates the style of headers
 and the color palette that you see in this document as such:
-#excerpt.incl(common, "style")
+#excerpt.incl(highlight, "style")
 #excerpt.incl("_assets/global.css", "main", lang: "css")
 (see #link("meta.html#_assets/global.css")[`global.css`] if you're curious where
 the colors are defined)
@@ -194,7 +194,7 @@ As for much more complex styling, you can always resort to calling external JS c
 In this document, this is the method I use to provide syntax highlighting for code
 snippets through #link("https://highlightjs.org/")[`highlight.js`]:
 
-#excerpt.incl(common, "highlight")
+#excerpt.incl(highlight, "highlight")
 
 == Document layout
 
@@ -202,7 +202,7 @@ Here I offer some very common functions that help set the layout.
 I've found that often the appearance is easy to set as just raw CSS,
 but the layout (centered / horizontal / vertical / grid / ...) is cumbersome.
 Here are functions that should help!
-See #link("_src/t2h/struct.typ")[`struct.typ`] for the definition of these functions.
+See #link("_src/struct.typ")[`struct.typ`] for the definition of these functions.
 The goal is that these functions should provide as close an interface to the
 real Typst version as possible.
 
@@ -341,7 +341,7 @@ This mimics Typst's `align` function.
 
 === Side note: lengths
 
-Thanks to a #link("meta.html#_src/t2h/css.typ")[type-based translation from Typst to CSS],
+Thanks to a #link("meta.html#_src/css.typ")[type-based translation from Typst to CSS],
 you can actually use any of Typst's length types wherever the CSS expects a length.
 In addition, you can also directly use whatever string is valid CSS for a length,
 e.g. in pixels which is not a valid Typst unit of length.
@@ -485,5 +485,5 @@ or simply to implement more features. I have plans for:
 
 // TODO: let the improved typst-to-css apply to HTML elements.
 
-#include "/_src/footer.typ"
+#include "/_src/common/footer.typ"
 

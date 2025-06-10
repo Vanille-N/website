@@ -1,4 +1,4 @@
-#import "/_src/t2h/mod.typ": css, html, struct
+#import "/_src/mod.typ": css, html, struct
 
 #import struct: *
 

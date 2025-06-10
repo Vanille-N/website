@@ -1,4 +1,4 @@
-#import "/_src/t2h/mod.typ": html, css, js, struct
+#import "/typ2html/_src/mod.typ": html, css, js, struct
 #import "/_src/utils/mod.typ": global, header, people, links
 
 #global.style("")

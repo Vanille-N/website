@@ -1,4 +1,4 @@
-#import "/_src/t2h/mod.typ": html, css, js
+#import "/_src/mod.typ": html, css, js
 
 // {style:
 // Concretely this expands to <link rel="stylesheet" href="_assets/global.css">

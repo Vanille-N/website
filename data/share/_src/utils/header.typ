@@ -1,4 +1,4 @@
-#import "/_src/t2h/mod.typ": html
+#import "/typ2html/_src/mod.typ": html
 #import "pona.typ"
 
 #let alert-banner(content) = {

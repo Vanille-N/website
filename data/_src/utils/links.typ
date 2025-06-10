@@ -1,4 +1,4 @@
-#import "/_src/t2h/mod.typ": html, css
+#import "/typ2html/_src/mod.typ": html, css
 
 #let img-link(image, url, title, size: "20") = {
   link(url, {

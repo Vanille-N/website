@@ -1,8 +1,8 @@
 compile-raw SRC TGT:
-  typst compile --features html --format html --root . {{SRC}} {{TGT}}
+  typst compile --features html --format html --root=.. {{SRC}} {{TGT}}
 
 watch-raw SRC TGT:
-  typst watch --features html --format html --root . --no-serve {{SRC}} {{TGT}}
+  typst watch --features html --format html --root=.. --no-serve {{SRC}} {{TGT}}
 
 compile BASE:
   just compile-raw _src/pages/{{BASE}}.typ {{BASE}}.html

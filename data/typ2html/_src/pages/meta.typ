@@ -1,6 +1,6 @@
-#import "/_src/t2h/mod.typ": html, css, excerpt
+#import "/_src/mod.typ": html, css, excerpt
 
-#include "/_src/common.typ"
+#include "/_src/common/highlight.typ"
 
 = Source code of #link("index.html")[Typ2HTML]
 
@@ -17,11 +17,11 @@ Also available directly
 
 #{
   for t2hfile in ("mod", "html", "css", "js", "struct", "excerpt") {
-    print("_src/t2h/" + t2hfile + ".typ")
+    print("_src/" + t2hfile + ".typ")
   }
 
-  for auxfile in ("common", "footer") {
-    print("_src/" + auxfile + ".typ")
+  for auxfile in ("highlight", "footer") {
+    print("_src/common/" + auxfile + ".typ")
   }
 
   for pagefile in ("index", "meta") {
@@ -29,5 +29,5 @@ Also available directly
   }
 }
 
-#include "/_src/footer.typ"
+#include "/_src/common/footer.typ"
 
