@@ -17,7 +17,7 @@
 // As soon as the scripts have loaded, highlight all code blocks.
 #js.inline(```js
   const run = window.$typst$parserModule.then(() => {
-    hljs.registerLanguage('typst', window.hljsTypst({}))
+    hljs.registerLanguage('typst', window.hljsTypst({}));
     hljs.highlightAll();
   });
 ```)
