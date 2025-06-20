@@ -3,11 +3,12 @@
 #global.style("")
 #header.navbar-website("pona")
 
-#pona.toki[
-  toki a \
-  mi jan [ namako en weka en namako ] \ \
-  tenpo ni la mi ante e nasin sitelen pi lipu ni \
-  ni3 la lipu ni li jo ala e ijo mute \
-  tenpo kama la mi pana e ijo sin lon lipu ni
-]
+#let tp = pona.toki
+
+#show text: t => tp(t)
+
+toki a \
+mi jan [namako en weka en namako] \
+mi jan sona pi ilo nanpa lon ma [kala alasa nena sona esun] \
+ijo musi la mi pana e ona tawa lipu ni \
 

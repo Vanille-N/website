@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   version="1.1"
+   id="svg265"
+   width="57.825859"
+   height="76.721855"
+   viewBox="0 0 57.825859 76.721855"
+   sodipodi:docname="cav-reusable.svg"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs269" />
+  <sodipodi:namedview
+     id="namedview267"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="7.263072"
+     inkscape:cx="26.15973"
+     inkscape:cy="38.344656"
+     inkscape:window-width="958"
+     inkscape:window-height="1154"
+     inkscape:window-x="0"
+     inkscape:window-y="22"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g273">
+    <inkscape:page
+       x="0"
+       y="0"
+       id="page271"
+       width="57.825859"
+       height="76.721855" />
+  </sodipodi:namedview>
+  <g
+     id="g273"
+     inkscape:groupmode="layer"
+     inkscape:label="Page 1"
+     transform="matrix(1.3333333,0,0,1.3333333,-0.23484736,0.05267806)">
+    <g
+       id="g275"
+       transform="translate(0.38093653,0.1442039)">
+      <g
+         id="g277">
+        <path
+           d="m 4.676,0.426 h 34.015 c 2.356,0 4.254,1.894 4.254,4.25 v 48.191 c 0,2.356 -1.898,4.25 -4.254,4.25 H 4.676 c -2.356,0 -4.25,-1.894 -4.25,-4.25 V 4.676 c 0,-2.356 1.894,-4.25 4.25,-4.25 z"
+           style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#ad5f00;stroke-width:0.850394;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           id="path279" />
+      </g>
+      <path
+         d="m 4.676,0.426 c -2.356,0 -4.25,1.894 -4.25,4.25 v 35.875 c 6.824,2.441 14.012,3.703 21.258,3.73 C 28.934,44.258 36.121,43 42.945,40.559 V 4.676 c 0,-2.356 -1.898,-4.25 -4.254,-4.25 z"
+         style="fill:#ad5f00;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path281" />
+      <text
+         xml:space="preserve"
+         transform="translate(3.830877,52.664063)"
+         style="font-variant:normal;font-weight:bold;font-size:7.30001px;font-family:'TeX Gyre Adventor';-inkscape-font-specification:TeXGyreAdventor-Bold;writing-mode:lr-tb;fill:#ad5f00;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         id="text285"><tspan
+           x="0 4.650104 9.7309084 14.527012 18.147816 23.38192 28.608723 30.776825"
+           y="0"
+           sodipodi:role="line"
+           id="tspan283">Reusable</tspan></text>
+      <text
+         xml:space="preserve"
+         transform="translate(10.505877,12.763106)"
+         style="font-variant:normal;font-weight:bold;font-size:10.7308px;font-family:'TeX Gyre Adventor';-inkscape-font-specification:TeXGyreAdventor-Bold;writing-mode:lr-tb;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         id="text289"><tspan
+           x="0 8.2090664 15.345053"
+           y="0"
+           sodipodi:role="line"
+           id="tspan287">CAV</tspan></text>
+      <text
+         xml:space="preserve"
+         transform="translate(3.967671,30.420733)"
+         style="font-variant:normal;font-weight:bold;font-size:6.99999px;font-family:'TeX Gyre Adventor';-inkscape-font-specification:TeXGyreAdventor-Bold;writing-mode:lr-tb;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         id="text295"><tspan
+           x="0 3.6399932 7.3849864 12.004978 13.684975 17.884966 22.504959 24.604954 26.28495 30.764942"
+           y="0"
+           sodipodi:role="line"
+           id="tspan291">Evaluation</tspan><tspan
+           x="5.5080447 10.688035 13.033031 15.133027 16.813025 18.77302 23.393011 27.873003"
+           y="-7.5387759"
+           sodipodi:role="line"
+           id="tspan293">Artifact</tspan></text>
+      <path
+         d="m 12.84,38.609 1.805,0.887 -0.286,-1.992 1.403,-1.442 -1.981,-0.343 -0.941,-1.781 -0.938,1.781 -1.984,0.343 1.402,1.442 -0.285,1.992 z"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path297" />
+      <path
+         d="m 21.684,38.609 1.808,0.887 -0.289,-1.992 1.402,-1.442 -1.98,-0.343 -0.941,-1.781 -0.938,1.781 -1.984,0.343 1.402,1.442 -0.285,1.992 z"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path299" />
+      <path
+         d="m 30.527,38.609 1.809,0.887 -0.289,-1.992 1.402,-1.442 -1.98,-0.343 -0.942,-1.781 -0.937,1.781 -1.985,0.343 1.403,1.442 -0.285,1.992 z"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path301" />
+    </g>
+  </g>
+</svg>

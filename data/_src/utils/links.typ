@@ -16,4 +16,5 @@
 
 
 #let url-default(url) = "https://" + url
+#let url-local(url) = url
 #let url-arxiv(doi) = "https://arxiv.org/abs/" + doi

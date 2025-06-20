@@ -33,9 +33,11 @@
     outset: 1mm,
     radius: (bottom-left: 5mm, top-right: 5mm),
   {
+    struct.align(left, {
     struct.box(outset: (x: 5mm))[#links.img-link("_img/pdf.svg", args.url, "pdf", size: "20")]
     struct.box(outset: (x: 1mm))[#strong[#args.title]]
     struct.box(outset: (x: 5mm))[#struct.text(fill: "var(--lt-gray3)")[ \@ #args.where]]
+    })
   })
 }
 

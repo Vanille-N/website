@@ -19,9 +19,11 @@
     title: [Mending Partial Solutions with Few Changes],
     coauthors: (people.d-melnyk, people.j-suomela),
     urls: (
-      article: "drops.dagstuhl.de/entities/document/10.4230/LIPIcs.OPODIS.2022.21",
-      arxiv: "2209.05363",
+      article: "https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.OPODIS.2022.21",
+      arxiv: links.url-arxiv("2209.05363"),
+      beamer: "share/satge/m1/beamer.pdf",
     ),
+    badges: (),
     abstract: "In this paper, we study the notion of mending, i.e. given a partial solution to a graph problem, we investigate how much effort is needed to turn it into a proper solution. For example, if we have a partial coloring of a graph, how hard is it to turn it into a proper coloring?",
   ),
 
@@ -35,8 +37,10 @@
       Specified by Vertex Replacement Graph Grammars],
     coauthors: (people.m-bozga, people.a-sangnier, people.r-iosif),
     urls: (
-      arxiv: "2505.01269",
+      arxiv: links.url-arxiv("2505.01269"),
+      beamer: "share/phd/beamer-netys25.pdf",
     ),
+    badges: (),
     abstract: "We consider the parametric reachability problem (PRP) for families of networks described by vertex-replacement (VR) graph grammars, where network nodes run replicas of finite-state processes that communicate via binary handshaking. We show that the PRP problem for VR grammars can be effectively reduced to the PRP problem for hyperedge-replacement (HR) grammars at the cost of introducing extra edges for routing messages.",
   ),
 
@@ -47,8 +51,14 @@
     title: [Tree Borrows],
     coauthors: (people.d-dreyer, people.j-hostert, people.r-jung),
     urls: (
-      home: "plf.inf.ethz.ch/research/pldi25-tree-borrows.html",
-      preprint: "perso.crans.org/vanille/treebor/aux/preprint.pdf",
+      article: "https://dl.acm.org/doi/10.1145/3735592",
+      home: "https://plf.inf.ethz.ch/research/pldi25-tree-borrows.html",
+      preprint: "https://perso.crans.org/vanille/treebor/aux/preprint.pdf",
+      beamer: "share/satge/arpe/pldi.pdf",
+    ),
+    badges: (
+      distinguished: "",
+      acm3: "https://doi.org/10.5281/zenodo.15002703",
     ),
     abstract: "The Rust programming language is well known for its ownership-based
     type system, which offers strong guarantees like memory safety and data race freedom.
@@ -70,7 +80,10 @@
       for the Verification of Structured Parameterized Networks],
     coauthors: (people.a-sangnier, people.r-iosif),
     urls: (
-      arxiv: "2502.15391",
+      arxiv: links.url-arxiv("2502.15391"),
+    ),
+    badges: (
+      cav3: "https://zenodo.org/records/15223051",
     ),
     abstract: "We consider the verification of parameterized networks of replicated
 processes whose architecture is described by hyperedge-replacement
@@ -135,23 +148,43 @@ for which the coverability problem is in 2EXPTIME and PSPACE-hard.",
       }))
       // Right region with title, coauthors, links
       struct.box(class: "paper", width: 100% - 3cm)[#struct.align(left)[
-        #struct.box(width: 100%)[*#paper.title*]
-        #struct.box(width: 100%)[with #{paper.coauthors.map(people.fmt-full-name).join(", ")}]
-        #struct.box(width: 100%, {
-          for (key, url) in paper.urls {
-            let image = (
-              arxiv: "_img/arxiv.svg",
-              article: "_img/journal.svg",
-              preprint: "_img/pdf.svg",
-              home: "_img/home.svg",
-            ).at(key)
-            let url-interp = (
-              arxiv: links.url-arxiv,
-            ).at(key, default: links.url-default)
-            struct.box(outset: (x: 1mm), {
-              links.img-link(image, url-interp(url), key, size: "30")
-            })
-          }
+        #struct.box(width: 100%)[#struct.align(left)[*#paper.title*]]
+        #struct.box(width: 100%)[#struct.align(left)[with #{paper.coauthors.map(people.fmt-full-name).join(", ")}]]
+        #struct.box(width: 50%, {
+          struct.align(left, {
+            for (key, url) in paper.urls {
+              let image = (
+                arxiv: "_img/arxiv.svg",
+                article: "_img/journal.svg",
+                preprint: "_img/pdf.svg",
+                home: "_img/home.svg",
+                beamer: "_img/beamer.svg",
+              ).at(key)
+              struct.box(outset: (x: 1mm), {
+                links.img-link(image, url, key, size: "30")
+              })
+            }
+          })
+        })
+        #struct.box(width: 50%, {
+          struct.align(right, {
+            for (key, url) in paper.badges {
+              let image = (
+                distinguished: "_img/gold.svg",
+                acm3: "_img/acm-reusable.svg",
+                cav3: "_img/cav-reusable.svg",
+              ).at(key)
+              let text = (
+                distinguished: "Distinguished Paper Award",
+                acm3: "Artifact Reusable",
+                cav3: "Artifact Reusable",
+              ).at(key)
+              struct.box(outset: (x: 1mm), {
+                links.img-link(image, url, text, size: "30")
+              })
+            }
+          })
+
         })
       ]]
     }))
