@@ -19,10 +19,10 @@ A curated list of lesser-known software I strongly recommend.
     crate: link-crates,
   )
   let as-icon = (
-    main: "_img/home.svg",
-    arch: "_img/arch.svg",
-    github: "_img/github.svg",
-    crate: "_img/crates.png",
+    main: "_img/generic/home.svg",
+    arch: "_img/logos/arch.svg",
+    github: "_img/logos/github.svg",
+    crate: "_img/logos/crates.png",
   )
   html.a(href: as-url.at(key)(val), {
     html.img(src: as-icon.at(key), width: "15px", height: "15px")
@@ -104,7 +104,7 @@ A curated list of lesser-known software I strongly recommend.
 ))
 
 #html.div(class: "badge-grid", {
-  badge([i3], img: "i3.svg",
+  badge([i3], img: "logos/i3.svg",
     what: [i3 is a tiling window manager,
       which means it's convenient to use without a mouse,
       it's very customizable, and it optimizes the use of screen space],
@@ -114,7 +114,7 @@ A curated list of lesser-known software I strongly recommend.
     ),
   )
 
-  badge([Typst], img: "typst.png",
+  badge([Typst], img: "lang/typst.png",
     what: [Typst is a language that primarily compiles to PDF,
       in the style of LaTeX but better.
       This website is generated entirely in Typst!],
@@ -125,7 +125,7 @@ A curated list of lesser-known software I strongly recommend.
     ),
   )
 
-  badge([starship], img: "starship.png",
+  badge([starship], img: "logos/starship.png",
     what: [Starship is a shell prompt (everything before the `$` in your terminal),
       with many customization options.],
     links: (
@@ -135,7 +135,7 @@ A curated list of lesser-known software I strongly recommend.
     ),
   )
 
-  badge([Freetube], img: "freetube.png",
+  badge([Freetube], img: "logos/freetube.png",
     what: [Freetube is an open source Youtube client.
       No ads, integrated download button, no login needed.
       Occasionally breaks when Youtube changes its API.],
@@ -144,7 +144,7 @@ A curated list of lesser-known software I strongly recommend.
     ),
   )
 
-  badge([bat], img: "bat.svg",
+  badge([bat], img: "logos/bat.svg",
     what: [If you find `cat` too bland when viewing source code,
       use `bat` instead. Includes line numbering and syntax highlighting.],
     links: (
@@ -153,7 +153,7 @@ A curated list of lesser-known software I strongly recommend.
     ),
   )
 
-  badge([ripgrep], img: "crates.png",
+  badge([ripgrep], img: "logos/crates.png",
     what: [Same as `grep`, but with better defaults and excellent performance.],
     links: (
       github: "BurntSushi/ripgrep",
@@ -161,7 +161,7 @@ A curated list of lesser-known software I strongly recommend.
     ),
   )
 
-  badge([tealdeer], img: "tealdeer.png",
+  badge([tealdeer], img: "logos/tealdeer.png",
     what: [Short man pages with examples.
       Ideal when you forgot the arguments for `tar`
       but don't want to go through a thousand-page long `man`.],
@@ -171,7 +171,7 @@ A curated list of lesser-known software I strongly recommend.
     ),
   )
 
-  badge([mpv], img: "mpv.png",
+  badge([mpv], img: "logos/mpv.png",
     what: [Minimalist music and video player,
       with keybindings.],
     links: (
@@ -180,7 +180,7 @@ A curated list of lesser-known software I strongly recommend.
     ),
   )
 
-  badge([skim], img: "skim.png",
+  badge([skim], img: "logos/skim.png",
     what: [Fuzzy file finder, entirely in the terminal.
       Great at filtering through large amounts of files when
       you have only a vague idea of the filename you saved them under.],
@@ -190,7 +190,7 @@ A curated list of lesser-known software I strongly recommend.
     ),
   )
 
-  badge([fd], img: "crates.png",
+  badge([fd], img: "logos/crates.png",
     what: [An alternative to `find`, much easier to use.
       Perfect when you know parts of the
       name of a file and want to know its location.],
@@ -200,7 +200,7 @@ A curated list of lesser-known software I strongly recommend.
     ),
   )
 
-  badge([zathura], img: "zathura.png",
+  badge([zathura], img: "logos/zathura.png",
     what: [Zathura is a lightweight PDF viewer with vim-like bindings and integrated dark mode],
     links: (
       main: "pwmt.org/projects/zathura",
@@ -208,7 +208,7 @@ A curated list of lesser-known software I strongly recommend.
     ),
   )
 
-  badge([hyperfine], img: "crates.png",
+  badge([hyperfine], img: "logos/crates.png",
     what: [A comprehensive benchmarking tool.
       Automatically handles the number of iterations,
       computes the average and standard deviation, etc.],
@@ -218,7 +218,7 @@ A curated list of lesser-known software I strongly recommend.
     ),
   )
 
-  badge([tokei], img: "crates.png",
+  badge([tokei], img: "logos/crates.png",
     what: [Quick way to count lines of code in a project,
       broken down by language.],
     links: (

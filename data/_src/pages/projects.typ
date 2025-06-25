@@ -19,9 +19,9 @@
     gricad: link-gricad,
   )
   let as-icon = (
-    github: "_img/github.svg",
-    gitlab: "_img/gitlab.svg",
-    gricad: "_img/gitlab.svg",
+    github: "_img/logos/github.svg",
+    gitlab: "_img/logos/gitlab.svg",
+    gricad: "_img/logos/gitlab.svg",
   )
   html.a(href: as-url.at(key)(val), {
     html.img(src: as-icon.at(key), width: "15px", height: "15px")
@@ -31,7 +31,7 @@
 #let badge(name, lang: "", urls: (:), what: "") = {
   html.div(class: "badge", {
     html.div(class: "badge-left", {
-      html.img(src: "_img/" + lang + ".svg", width: "64px", height: "64px")
+      html.img(src: "_img/lang/" + lang + ".svg", width: "64px", height: "64px")
       html.div(class: "badge-title", { name })
       html.div(class: "badge-links", {
         for (key, val) in urls {

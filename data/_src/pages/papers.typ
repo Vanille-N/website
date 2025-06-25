@@ -45,7 +45,7 @@
   ),
 
   (
-    status: status.accepted,
+    status: status.published,
     journal: [PLDI],
     location: [Seoul],
     title: [Tree Borrows],
@@ -55,6 +55,7 @@
       home: "https://plf.inf.ethz.ch/research/pldi25-tree-borrows.html",
       preprint: "https://perso.crans.org/vanille/treebor/aux/preprint.pdf",
       beamer: "share/satge/arpe/pldi.pdf",
+      video: "https://www.youtube.com/live/YhXlZp45HLs?si=_ZMYNXK2WRwJRLuJ&t=21467",
     ),
     badges: (
       distinguished: "",
@@ -107,7 +108,7 @@ for which the coverability problem is in 2EXPTIME and PSPACE-hard.",
   ),
   ".abstract": (
     display: "none",
-    margin-left: 1cm,
+    margin-top: 1cm,
     position: "absolute",
     z-index: 1000,
   )
@@ -154,11 +155,12 @@ for which the coverability problem is in 2EXPTIME and PSPACE-hard.",
           struct.align(left, {
             for (key, url) in paper.urls {
               let image = (
-                arxiv: "_img/arxiv.svg",
-                article: "_img/journal.svg",
-                preprint: "_img/pdf.svg",
-                home: "_img/home.svg",
-                beamer: "_img/beamer.svg",
+                arxiv: "_img/logos/arxiv.svg",
+                article: "_img/generic/journal.svg",
+                preprint: "_img/logos/pdf.svg",
+                home: "_img/generic/home.svg",
+                beamer: "_img/generic/beamer.svg",
+                video: "_img/generic/video.svg",
               ).at(key)
               struct.box(outset: (x: 1mm), {
                 links.img-link(image, url, key, size: "30")
@@ -170,9 +172,9 @@ for which the coverability problem is in 2EXPTIME and PSPACE-hard.",
           struct.align(right, {
             for (key, url) in paper.badges {
               let image = (
-                distinguished: "_img/gold.svg",
-                acm3: "_img/acm-reusable.svg",
-                cav3: "_img/cav-reusable.svg",
+                distinguished: "_img/generic/gold.svg",
+                acm3: "_img/artifacts/acm-reusable.svg",
+                cav3: "_img/artifacts/cav-reusable.svg",
               ).at(key)
               let text = (
                 distinguished: "Distinguished Paper Award",
@@ -198,7 +200,9 @@ for which the coverability problem is in 2EXPTIME and PSPACE-hard.",
 
   function movetooltip(e) {
     for (var i=tooltip.length; i--;) {
-        tooltip[i].style.left = e.pageX + 'px';
+        let width = tooltip[i].getBoundingClientRect().width;
+        let x = Math.min(e.pageX, tooltip[i].parentNode.getBoundingClientRect().right - width);
+        tooltip[i].style.left = x + 'px';
         tooltip[i].style.top = e.pageY + 'px';
     }
   }

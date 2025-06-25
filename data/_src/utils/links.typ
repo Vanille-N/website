@@ -7,11 +7,11 @@
 }
 
 #let github-link(base) = {
-  img-link("_img/github.svg", "https://github.com/" + base, base)
+  img-link("_img/logos/github.svg", "https://github.com/" + base, base)
 }
 
 #let email-link(base) = {
-  img-link("_img/mail.svg", "", base)
+  img-link("_img/generic/mail.svg", "", base)
 }
 
 
