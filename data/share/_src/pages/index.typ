@@ -69,6 +69,11 @@
 #section[Beamers][
 
 #entry(
+  title: [Counting Abstr. for the Verif. of Structured Parameterized Networks],
+  where: [CAV'25],
+  url: "phd/beamer-cav25.pdf",
+)
+#entry(
   title: [Verifying Parameterized Networks Specified by VR Grammars],
   where: [NETYS'25],
   url: "phd/beamer-netys25.pdf",

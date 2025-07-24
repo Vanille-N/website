@@ -35,7 +35,7 @@
     location: [Rabat],
     title: [Verifying Parameterized Networks
       Specified by Vertex Replacement Graph Grammars],
-    coauthors: (people.m-bozga, people.a-sangnier, people.r-iosif),
+    coauthors: (people.a-sangnier, people.r-iosif),
     urls: (
       arxiv: links.url-arxiv("2505.01269"),
       beamer: "share/phd/beamer-netys25.pdf",
@@ -55,7 +55,7 @@
       home: "https://plf.inf.ethz.ch/research/pldi25-tree-borrows.html",
       preprint: "https://perso.crans.org/vanille/treebor/aux/preprint.pdf",
       beamer: "share/satge/arpe/pldi.pdf",
-      video: "https://www.youtube.com/live/YhXlZp45HLs?si=_ZMYNXK2WRwJRLuJ&t=21467",
+      video: "https://www.youtube.com/watch?v=CJi_Fcs4bak",
     ),
     badges: (
       distinguished: "",
@@ -79,9 +79,10 @@
     location: [Zagreb],
     title: [Counting Abstraction and Decidability
       for the Verification of Structured Parameterized Networks],
-    coauthors: (people.a-sangnier, people.r-iosif),
+    coauthors: (people.m-bozga, people.a-sangnier, people.r-iosif),
     urls: (
       arxiv: links.url-arxiv("2502.15391"),
+      beamer: "share/phd/beamer-cav25.pdf",
     ),
     badges: (
       cav3: "https://zenodo.org/records/15223051",
