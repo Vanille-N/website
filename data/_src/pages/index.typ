@@ -7,11 +7,21 @@
 = Neven Villani
 a.k.a. Vanille, jan Newen
 
-#html.img(src: "_img/portrait.jpg")
+#struct.box(width: 100%)[
+  #struct.align(left)[
+    #html.img(src: "_img/portrait.jpg") \
+  ]
+]
 
-#links.github-link("Vanille-N")
-#links.email-link("Personnal: neven (dot) villani (at) crans.org")
-#links.email-link("Professional: neven (dot) villani (at) univ-grenoble-alpes.fr")
+#struct.box(inset: 5mm)[
+  #links.github-link("Vanille-N", size: "25")
+]
+#struct.box(inset: 5mm)[
+  #links.email-link(type: "Personnal", "neven.villani@crans.org", size: "25")
+]
+#struct.box(inset: 5mm)[
+  #links.email-link(type: "Professional", "neven.villani@univ-grenoble-alpes.fr", size: "25")
+]
 
 // TODO: Put a horizontal line here
 

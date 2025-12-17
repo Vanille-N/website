@@ -69,6 +69,11 @@
 #section[Beamers][
 
 #entry(
+  title: [On the Verification of Structured Parameterized Networks],
+  where: [AVM'25],
+  url: "phd/beamer-avm25.pdf",
+)
+#entry(
   title: [Counting Abstr. for the Verif. of Structured Parameterized Networks],
   where: [CAV'25],
   url: "phd/beamer-cav25.pdf",

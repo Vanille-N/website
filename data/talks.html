@@ -6,23 +6,257 @@
     <title>Vanille's Homepage</title>
   </head>
   <body>
-    <style>:root { --black: #1d2021; --dk-gray0: #282828; --dk-gray1: #3c3836; --dk-gray2: #504945; --dk-gray3: #665c54; --dk-gray4: #7c6f64; --gray: #928374; --white: #fbf1c7; --lt-gray0: #ebdbb2; --lt-gray1: #d5c4a1; --lt-gray2: #bdae93; --lt-gray3: #a89984; --dk-red: #cc241d; --dk-green: #98971a; --dk-yellow: #d79921; --dk-blue: #458588; --dk-purple: #b16286; --dk-aqua: #689d6a; --dk-orange: #d65d0e; --lt-red: #fb4934; --lt-green: #b8bb26; --lt-yellow: #fabd2f; --lt-blue: #83a598; --lt-purple: #d3869b; --lt-aqua: #8ec07c; --lt-orange: #fe8019; }</style>
-    <style>html { background-color: var(--black); }
-body { margin: 40px auto; max-width: 1200px; line-height: 1.5; font-size: 18px; font-weight: 350; color: #fbf1c7; background: var(--dk-gray0); padding: 5mm 10px 10cm 10px; }
-h1,h2,h3 { line-weight: 1.2; color: var(--lt-green); }
-h1 { font-weight: 800; }
-h2 { font-weight: 700; }
-h3 { font-weight: 600; }
-a { color: var(--dk-aqua); }
-a:visited { color: var(--lt-purple); }</style>
+    <style>
+      :root { --black: #1d2021; --dk-gray0: #282828; --dk-gray1: #3c3836; --dk-gray2: #504945; --dk-gray3: #665c54; --dk-gray4: #7c6f64; --gray: #928374; --white: #fbf1c7; --lt-gray0: #ebdbb2; --lt-gray1: #d5c4a1; --lt-gray2: #bdae93; --lt-gray3: #a89984; --dk-red: #cc241d; --dk-green: #98971a; --dk-yellow: #d79921; --dk-blue: #458588; --dk-purple: #b16286; --dk-aqua: #689d6a; --dk-orange: #d65d0e; --lt-red: #fb4934; --lt-green: #b8bb26; --lt-yellow: #fabd2f; --lt-blue: #83a598; --lt-purple: #d3869b; --lt-aqua: #8ec07c; --lt-orange: #fe8019; }
+    </style>
+    <style>
+      html { background-color: var(--black); }
+      body { margin: 40px auto; max-width: 1200px; line-height: 1.5; font-size: 18px; font-weight: 350; color: #fbf1c7; background: var(--dk-gray0); padding: 5mm 10px 10cm 10px; }
+      h1,h2,h3 { line-weight: 1.2; color: var(--lt-green); }
+      h1 { font-weight: 800; }
+      h2 { font-weight: 700; }
+      h3 { font-weight: 600; }
+      a { color: var(--dk-aqua); }
+      a:visited { color: var(--lt-purple); }
+    </style>
     <link rel="stylesheet" href="_assets/pona.css">
-    <style>.topnav { background-color: var(--dk-gray1); overflow: hidden; border-radius: 10px; }
-.topnav a { float: left; color: var(--dk-green); text-align: center; padding: 14px 16px; text-decoration: none; font-size: 17px; border: 1px solid var(--black); }
-.topnav a:hover { background-color: var(--dk-gray2); color: var(--lt-green); transition: 0.2s; }
-.topnav a.active { background-color: var(--lt-green); color: var(--black); }</style>
-    <style>.alert { background-color: var(--lt-red); text-align: center; color: var(--black); padding: 7px; }</style>
-    <div class="topnav"><a href="index.html"><strong>Home</strong></a><a href="projects.html"><strong>Projects</strong></a><a href="" class="active"><strong>Research</strong></a><a href="tools.html"><strong>Tools</strong></a><a href="share/index.html"><strong>Documents</strong></a><a href="better-pbm-viewer/index.html"><strong>PBM Viewer</strong></a><a href="lipu.html"><span class="sitelen-pona">o kama pona lon lipu mi</span></a><a href="typ2html/index.html"><strong>Typ2HTML</strong></a></div>
-    <div class="topnav"><a href="research.html">Overview</a><a href="" class="active">Talks</a><a href="papers.html">Publications</a><a href="treebor/index.html">Tree Borrows</a><a href="phd.html">PhD</a></div>
-    <div class="alert"><strong>Under reconstruction</strong><br>This webpage is being refactored, sorry for the disturbance.</div>
+    <style>
+      .topnav { background-color: var(--dk-gray1); overflow: hidden; border-radius: 10px; }
+      .topnav a { float: left; color: var(--dk-green); text-align: center; padding: 14px 16px; text-decoration: none; font-size: 17px; border: 1px solid var(--black); }
+      .topnav a:hover { background-color: var(--dk-gray2); color: var(--lt-green); transition: 0.2s; }
+      .topnav a.active { background-color: var(--lt-green); color: var(--black); }
+    </style>
+    <style>
+      .alert { background-color: var(--lt-red); text-align: center; color: var(--black); padding: 7px; }
+    </style>
+    <div class="topnav"><a href="index.html"><strong>Home</strong></a><a href="projects.html"><strong>Projects</strong></a><a href class="active"><strong>Research</strong></a><a href="tools.html"><strong>Tools</strong></a><a href="share/index.html"><strong>Documents</strong></a><a href="better-pbm-viewer/index.html"><strong>PBM Viewer</strong></a><a href="lipu.html"><span class="sitelen-pona">o kama pona lon lipu mi</span></a><a href="typ2html/index.html"><strong>Typ2HTML</strong></a></div>
+    <div class="topnav"><a href="research.html">Overview</a><a href="talks.html">Talks</a><a href class="active">Publications</a><a href="treebor/index.html">Tree Borrows</a><a href="phd.html">PhD</a></div>
+    <style>
+      .paper:hover .abstract { display: block; }
+      .abstract { display: none; margin-top: 28.346456692913385pt; position: absolute; z-index: 1000; }
+    </style>
+    <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 100%;">
+      <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: center; justify-content: center;">
+        <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 45%; height: 1pt; background-color: var(--lt-orange);"></div>
+        <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 10%;">
+          <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: center; justify-content: center;"><span style="font-size: 20pt; color: var(--lt-orange);"><strong>2025</strong></span></div>
+        </div>
+        <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 45%; height: 1pt; background-color: var(--lt-orange);"></div>
+      </div>
+    </div>
+    <div class="paper" style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 100%; background-color: var(--dk-gray1); padding-top: 5.669291338582677pt; padding-bottom: 5.669291338582677pt; margin: 2.8346456692913384pt;">
+      <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: left; justify-content: flex-start;">
+        <div class="abstract">
+          <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 340.15748031496065pt; border-radius: 0pt 14.173228346456693pt 14.173228346456693pt 14.173228346456693pt; background-color: var(--dk-gray2); padding: 14.173228346456693pt;">
+            <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: left; justify-content: flex-start;"><span style="font-size: 11pt;"></span></div>
+          </div>
+        </div>
+        <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 85.03937007874016pt;">
+          <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; margin-bottom: auto; text-align: center; justify-content: center;">
+            <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap;"><span style="color: var(--lt-gray2);"><strong>AVM</strong><br>(Timisoara)</span></div>
+            <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 100%;"></div>
+          </div>
+        </div>
+        <div class="paper" style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: calc(100% + 0em - 85.03937007874016pt);">
+          <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: left; justify-content: flex-start;">
+            <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 100%;">
+              <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: left; justify-content: flex-start;"><strong>On the Verification of Structured Parameterized Networks</strong></div>
+            </div>
+            <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 50%;">
+              <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: left; justify-content: flex-start;">
+                <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; margin-left: 2.8346456692913384pt; margin-right: 2.8346456692913384pt;"><a href="share/phd/beamer-avm25.pdf"><img src="_img/generic/beamer.svg" width="30" height="30" title="beamer"></a></div>
+              </div>
+            </div>
+            <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 50%;">
+              <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: right; justify-content: flex-end;"><span style="color: var(--gray);">Sep. 24</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="paper" style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 100%; background-color: var(--dk-gray1); padding-top: 5.669291338582677pt; padding-bottom: 5.669291338582677pt; margin: 2.8346456692913384pt;">
+      <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: left; justify-content: flex-start;">
+        <div class="abstract">
+          <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 340.15748031496065pt; border-radius: 0pt 14.173228346456693pt 14.173228346456693pt 14.173228346456693pt; background-color: var(--dk-gray2); padding: 14.173228346456693pt;">
+            <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: left; justify-content: flex-start;"><span style="font-size: 11pt;">We consider the verification of parameterized networks of replicated<br>processes whose architecture is described by hyperedge-replacement<br>graph grammars. We present a counting abstraction able to produce,<br>from a graph grammar describing a parameterized system,<br>a finite set of Petri nets that over-approximate the behaviors of the original<br>system. Moreover, we identify a decidable fragment,<br>for which the coverability problem is in 2EXPTIME and PSPACE-hard.</span></div>
+          </div>
+        </div>
+        <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 85.03937007874016pt;">
+          <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; margin-bottom: auto; text-align: center; justify-content: center;">
+            <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap;"><span style="color: var(--lt-gray2);"><strong>CAV</strong><br>(Zagreb)</span></div>
+            <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 100%;"></div>
+          </div>
+        </div>
+        <div class="paper" style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: calc(100% + 0em - 85.03937007874016pt);">
+          <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: left; justify-content: flex-start;">
+            <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 100%;">
+              <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: left; justify-content: flex-start;"><strong>Counting Abstraction and Decidability for the Verification of Structured Parameterized Networks</strong></div>
+            </div>
+            <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 50%;">
+              <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: left; justify-content: flex-start;">
+                <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; margin-left: 2.8346456692913384pt; margin-right: 2.8346456692913384pt;"><a href="share/phd/beamer-cav25.pdf"><img src="_img/generic/beamer.svg" width="30" height="30" title="beamer"></a></div>
+              </div>
+            </div>
+            <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 50%;">
+              <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: right; justify-content: flex-end;"><span style="color: var(--gray);">Jul. 25</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="paper" style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 100%; background-color: var(--dk-gray1); padding-top: 5.669291338582677pt; padding-bottom: 5.669291338582677pt; margin: 2.8346456692913384pt;">
+      <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: left; justify-content: flex-start;">
+        <div class="abstract">
+          <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 340.15748031496065pt; border-radius: 0pt 14.173228346456693pt 14.173228346456693pt 14.173228346456693pt; background-color: var(--dk-gray2); padding: 14.173228346456693pt;">
+            <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: left; justify-content: flex-start;"><span style="font-size: 11pt;">The Rust programming language is well known for its ownership-based<br><span style="white-space: pre-wrap">&#x20;&#x20;&#x20;&#x20;</span>type system, which offers strong guarantees like memory safety and data race freedom.<br><span style="white-space: pre-wrap">&#x20;&#x20;&#x20;&#x20;</span>However, Rust also provides unsafe escape hatches, for which safety is not guaranteed<span style="white-space: pre-wrap">&#x20;</span><br><span style="white-space: pre-wrap">&#x20;&#x20;&#x20;&#x20;</span>automatically and must instead be manually upheld by the programmer.<br><span style="white-space: pre-wrap">&#x20;&#x20;&#x20;&#x20;</span>This creates a tension. On the one hand, compilers would like to exploit the strong<span style="white-space: pre-wrap">&#x20;</span><br><span style="white-space: pre-wrap">&#x20;&#x20;&#x20;&#x20;</span>guarantees of the type system in order to unlock powerful intraprocedural optimizations.<br><span style="white-space: pre-wrap">&#x20;&#x20;&#x20;&#x20;</span>On the other hand, those optimizations are easily invalidated by “badly behaved” unsafe code.<br><span style="white-space: pre-wrap">&#x20;&#x20;&#x20;&#x20;</span>To ensure correctness of such optimizations, it thus becomes necessary to clearly define what<span style="white-space: pre-wrap">&#x20;</span><br><span style="white-space: pre-wrap">&#x20;&#x20;&#x20;&#x20;</span>unsafe code is “badly behaved”.<br><span style="white-space: pre-wrap">&#x20;&#x20;&#x20;&#x20;</span>We present Tree Borrows, a set of rules improving on prior work to achieve this goal.</span></div>
+          </div>
+        </div>
+        <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 85.03937007874016pt;">
+          <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; margin-bottom: auto; text-align: center; justify-content: center;">
+            <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap;"><span style="color: var(--lt-gray2);"><strong>PLDI</strong><br>(Seoul)</span></div>
+            <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 100%;"></div>
+          </div>
+        </div>
+        <div class="paper" style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: calc(100% + 0em - 85.03937007874016pt);">
+          <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: left; justify-content: flex-start;">
+            <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 100%;">
+              <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: left; justify-content: flex-start;"><strong>Tree Borrows</strong></div>
+            </div>
+            <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 50%;">
+              <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: left; justify-content: flex-start;">
+                <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; margin-left: 2.8346456692913384pt; margin-right: 2.8346456692913384pt;"><a href="share/satge/arpe/pldi.pdf"><img src="_img/generic/beamer.svg" width="30" height="30" title="beamer"></a></div>
+                <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; margin-left: 2.8346456692913384pt; margin-right: 2.8346456692913384pt;"><a href="https://www.youtube.com/watch?v=CJi_Fcs4bak"><img src="_img/generic/video.svg" width="30" height="30" title="video"></a></div>
+              </div>
+            </div>
+            <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 50%;">
+              <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: right; justify-content: flex-end;"><span style="color: var(--gray);">Jun. 19</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="paper" style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 100%; background-color: var(--dk-gray1); padding-top: 5.669291338582677pt; padding-bottom: 5.669291338582677pt; margin: 2.8346456692913384pt;">
+      <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: left; justify-content: flex-start;">
+        <div class="abstract">
+          <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 340.15748031496065pt; border-radius: 0pt 14.173228346456693pt 14.173228346456693pt 14.173228346456693pt; background-color: var(--dk-gray2); padding: 14.173228346456693pt;">
+            <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: left; justify-content: flex-start;"><span style="font-size: 11pt;">We consider the parametric reachability problem (PRP) for families of networks described by vertex-replacement (VR) graph grammars, where network nodes run replicas of finite-state processes that communicate via binary handshaking. We show that the PRP problem for VR grammars can be effectively reduced to the PRP problem for hyperedge-replacement (HR) grammars at the cost of introducing extra edges for routing messages.</span></div>
+          </div>
+        </div>
+        <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 85.03937007874016pt;">
+          <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; margin-bottom: auto; text-align: center; justify-content: center;">
+            <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap;"><span style="color: var(--lt-gray2);"><strong>NETYS</strong><br>(Rabat)</span></div>
+            <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 100%;"></div>
+          </div>
+        </div>
+        <div class="paper" style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: calc(100% + 0em - 85.03937007874016pt);">
+          <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: left; justify-content: flex-start;">
+            <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 100%;">
+              <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: left; justify-content: flex-start;"><strong>Verifying Parameterized Networks Specified by Vertex Replacement Graph Grammars</strong></div>
+            </div>
+            <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 50%;">
+              <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: left; justify-content: flex-start;">
+                <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; margin-left: 2.8346456692913384pt; margin-right: 2.8346456692913384pt;"><a href="share/phd/beamer-netys25.pdf"><img src="_img/generic/beamer.svg" width="30" height="30" title="beamer"></a></div>
+              </div>
+            </div>
+            <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 50%;">
+              <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: right; justify-content: flex-end;"><span style="color: var(--gray);">May 21</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 100%;">
+      <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: center; justify-content: center;">
+        <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 45%; height: 1pt; background-color: var(--lt-orange);"></div>
+        <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 10%;">
+          <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: center; justify-content: center;"><span style="font-size: 20pt; color: var(--lt-orange);"><strong>2022</strong></span></div>
+        </div>
+        <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 45%; height: 1pt; background-color: var(--lt-orange);"></div>
+      </div>
+    </div>
+    <div class="paper" style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 100%; background-color: var(--dk-gray1); padding-top: 5.669291338582677pt; padding-bottom: 5.669291338582677pt; margin: 2.8346456692913384pt;">
+      <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: left; justify-content: flex-start;">
+        <div class="abstract">
+          <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 340.15748031496065pt; border-radius: 0pt 14.173228346456693pt 14.173228346456693pt 14.173228346456693pt; background-color: var(--dk-gray2); padding: 14.173228346456693pt;">
+            <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: left; justify-content: flex-start;"><span style="font-size: 11pt;">In this paper, we study the notion of mending, i.e. given a partial solution to a graph problem, we investigate how much effort is needed to turn it into a proper solution. For example, if we have a partial coloring of a graph, how hard is it to turn it into a proper coloring?</span></div>
+          </div>
+        </div>
+        <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 85.03937007874016pt;">
+          <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; margin-bottom: auto; text-align: center; justify-content: center;">
+            <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap;"><span style="color: var(--lt-gray2);"><strong>OPODIS</strong><br>(Brussels)</span></div>
+            <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 100%;"></div>
+          </div>
+        </div>
+        <div class="paper" style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: calc(100% + 0em - 85.03937007874016pt);">
+          <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: left; justify-content: flex-start;">
+            <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 100%;">
+              <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: left; justify-content: flex-start;"><strong>Mending Partial Solutions with Few Changes</strong></div>
+            </div>
+            <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 50%;">
+              <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: left; justify-content: flex-start;">
+                <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; margin-left: 2.8346456692913384pt; margin-right: 2.8346456692913384pt;"><a href="share/satge/m1/beamer.pdf"><img src="_img/generic/beamer.svg" width="30" height="30" title="beamer"></a></div>
+              </div>
+            </div>
+            <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 50%;">
+              <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: right; justify-content: flex-end;"><span style="color: var(--gray);">Dec. 14</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 100%;">
+      <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: center; justify-content: center;">
+        <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 45%; height: 1pt; background-color: var(--lt-orange);"></div>
+        <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 10%;">
+          <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: center; justify-content: center;"><span style="font-size: 20pt; color: var(--lt-orange);"><strong>2020</strong></span></div>
+        </div>
+        <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 45%; height: 1pt; background-color: var(--lt-orange);"></div>
+      </div>
+    </div>
+    <div class="paper" style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 100%; background-color: var(--dk-gray1); padding-top: 5.669291338582677pt; padding-bottom: 5.669291338582677pt; margin: 2.8346456692913384pt;">
+      <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: left; justify-content: flex-start;">
+        <div class="abstract">
+          <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 340.15748031496065pt; border-radius: 0pt 14.173228346456693pt 14.173228346456693pt 14.173228346456693pt; background-color: var(--dk-gray2); padding: 14.173228346456693pt;">
+            <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: left; justify-content: flex-start;"><span style="font-size: 11pt;">Project on oceanic circulation due to haline and thermal forces. Submitted to the oral part of the entry exam to ENS.</span></div>
+          </div>
+        </div>
+        <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 85.03937007874016pt;">
+          <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; margin-bottom: auto; text-align: center; justify-content: center;">
+            <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap;"><span style="color: var(--lt-gray2);"><strong>X-ENS</strong><br>(Paris)</span></div>
+            <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 100%;">
+              <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: center; justify-content: center;"><span style="color: var(--lt-red);"><strong>Cancelled</strong></span></div>
+            </div>
+          </div>
+        </div>
+        <div class="paper" style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: calc(100% + 0em - 85.03937007874016pt);">
+          <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: left; justify-content: flex-start;">
+            <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 100%;">
+              <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: left; justify-content: flex-start;"><strong>Hysteresis in a model of thermohaline oceanic circulation</strong></div>
+            </div>
+            <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 50%;">
+              <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: left; justify-content: flex-start;">
+                <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; margin-left: 2.8346456692913384pt; margin-right: 2.8346456692913384pt;"><a href="https://github.com/Vanille-N/TIPE"><img src="_img/logos/github.svg" width="30" height="30" title="github"></a></div>
+              </div>
+            </div>
+            <div style="display: inline-flex; flex-direction: line; justify-content: center; align-items: center; flex-wrap: wrap; width: 50%;">
+              <div style="width: 100%; display: flex; flex-wrap: wrap; flex-direction: row; text-align: right; justify-content: flex-end;"><span style="color: var(--gray);">Jul. ??</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="data:application/javascript,  var tooltip = document.querySelectorAll('.abstract');
+
+  document.addEventListener('mousemove', movetooltip, false);
+
+  function movetooltip(e) {
+    for (var i=tooltip.length; i--;) {
+        let width = tooltip[i].getBoundingClientRect().width;
+        let x = Math.min(e.pageX, tooltip[i].parentNode.getBoundingClientRect().right - width);
+        tooltip[i].style.left = x + 'px';
+        tooltip[i].style.top = e.pageY + 'px';
+    }
+  }">
+    </script>
   </body>
 </html>

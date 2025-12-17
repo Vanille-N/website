@@ -22,6 +22,8 @@
 #let button = htmlfunc("button")
 #let code = htmlfunc("code")
 #let footer = htmlfunc("footer")
+#let input = htmlfunc("input")
+#let label = htmlfunc("label")
 
 #let script(..any) = {
   panic("Do not emit a <script> element without getting it checked by `js.external` or `js.inline`")

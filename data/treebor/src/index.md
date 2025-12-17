@@ -46,12 +46,9 @@ you can consult [the diff](diff.1.html).
 
 
 > <span class="info">
-(Nov. 2024) Tree Borrows has been submitted for publication!
+(Jun 2024) Tree Borrows has been published at PLDI in
+[Seoul](https://pldi25.sigplan.org/details/pldi-2025-papers/42/Tree-Borrows)! <br>
 You may read a preprint [here](aux/preprint.pdf). <br>
-
-(May 2024) Tree Borrows has been accepted for publication at PLDI'25 <br>
-I will be giving the talk next June in [Seoul](https://pldi25.sigplan.org/details/pldi-2025-papers/42/Tree-Borrows) <br>
-
 An alternative mirror for the preprint can be found on
 [J. Hostert's website](https://jhostert.de/news/ann_03_tree_borrows_submitted/),
 who joined the project to work on several aspects,

@@ -1,32 +1,208 @@
-#import "/_src/utils/mod.typ": header, global
+#import "/typ2html/_src/mod.typ": html, css, js, struct
+#import "/_src/utils/mod.typ": global, header, people, links
 
 #global.style("")
-#header.navbar-research("talks")
-#header.under-reconstruction()
+#header.navbar-research("papers")
 
-#let cancelled = []
-#let todo = []
-
-#let talks = (
-  (
-    title: [Hysteresis in a model of thermohaline oceanic circulation],
-    at: [X-ENS],
-  ),
-  (
-    title: [Recognition of Dynamic Unit Disk Graphs],
-    at: [AATG],
-  ),
-  (
-    title: [Mending Partial Solutions with Few Changes],
-    at: [OPODIS],
-  ),
-  (
-    title: [Tree Borrows],
-    at: [RFMIG],
-  ),
-  (
-    title: [Tree Borrows],
-    at: [PLDI],
-  ),
+#let status = (
+  cancelled: struct.box(width: 100%)[#struct.align(center)[#struct.text(fill: "var(--lt-red)")[*Cancelled*]]],
+  done: struct.box(width: 100%)[],
+  upcoming: struct.box(width: 100%)[#struct.align(center)[#struct.text(fill: "var(--lt-green)")[*Soon*]]],
 )
 
+#let published = (
+  (
+    status: status.cancelled,
+    venue: [X-ENS],
+    location: [Paris],
+    date: [Jul. ??],
+    title: [Hysteresis in a model of thermohaline oceanic circulation],
+    urls: (
+      github: links.url-github("Vanille-N/TIPE"),
+    ),
+    abstract: "Project on oceanic circulation due to haline and thermal forces. Submitted to the oral part of the entry exam to ENS.",
+  ),
+
+  2020,
+
+  (
+    status: status.done,
+    venue: [OPODIS],
+    location: [Brussels],
+    date: [Dec. 14],
+    title: [Mending Partial Solutions with Few Changes],
+    urls: (
+      beamer: "share/satge/m1/beamer.pdf",
+    ),
+    abstract: "In this paper, we study the notion of mending, i.e. given a partial solution to a graph problem, we investigate how much effort is needed to turn it into a proper solution. For example, if we have a partial coloring of a graph, how hard is it to turn it into a proper coloring?",
+  ),
+
+  2022,
+
+  // TODO: online TB stuff
+  // TODO: ETAPS
+
+  (
+    status: status.done,
+    venue: [NETYS],
+    location: [Rabat],
+    date: [May 21],
+    title: [Verifying Parameterized Networks
+      Specified by Vertex Replacement Graph Grammars],
+    urls: (
+      beamer: "share/phd/beamer-netys25.pdf",
+    ),
+    abstract: "We consider the parametric reachability problem (PRP) for families of networks described by vertex-replacement (VR) graph grammars, where network nodes run replicas of finite-state processes that communicate via binary handshaking. We show that the PRP problem for VR grammars can be effectively reduced to the PRP problem for hyperedge-replacement (HR) grammars at the cost of introducing extra edges for routing messages.",
+  ),
+
+  (
+    status: status.done,
+    venue: [PLDI],
+    location: [Seoul],
+    date: [Jun. 19],
+    title: [Tree Borrows],
+    urls: (
+      beamer: "share/satge/arpe/pldi.pdf",
+      video: "https://www.youtube.com/watch?v=CJi_Fcs4bak",
+    ),
+    abstract: "The Rust programming language is well known for its ownership-based
+    type system, which offers strong guarantees like memory safety and data race freedom.
+    However, Rust also provides unsafe escape hatches, for which safety is not guaranteed 
+    automatically and must instead be manually upheld by the programmer.
+    This creates a tension. On the one hand, compilers would like to exploit the strong 
+    guarantees of the type system in order to unlock powerful intraprocedural optimizations.
+    On the other hand, those optimizations are easily invalidated by “badly behaved” unsafe code.
+    To ensure correctness of such optimizations, it thus becomes necessary to clearly define what 
+    unsafe code is “badly behaved”.
+    We present Tree Borrows, a set of rules improving on prior work to achieve this goal.",
+  ),
+
+  (
+    status: status.done,
+    venue: [CAV],
+    location: [Zagreb],
+    date: [Jul. 25],
+    title: [Counting Abstraction and Decidability
+      for the Verification of Structured Parameterized Networks],
+    urls: (
+      beamer: "share/phd/beamer-cav25.pdf",
+    ),
+    abstract: "We consider the verification of parameterized networks of replicated
+processes whose architecture is described by hyperedge-replacement
+graph grammars. We present a counting abstraction able to produce,
+from a graph grammar describing a parameterized system,
+a finite set of Petri nets that over-approximate the behaviors of the original
+system. Moreover, we identify a decidable fragment,
+for which the coverability problem is in 2EXPTIME and PSPACE-hard.",
+  ),
+
+  (
+    status: status.done,
+    venue: [AVM],
+    location: [Timisoara],
+    date: [Sep. 24],
+    title: [On the Verification of Structured Parameterized Networks],
+    urls: (
+      beamer: "share/phd/beamer-avm25.pdf",
+    ),
+    abstract: "",
+  ),
+
+  2025,
+)
+
+// This is a trick to display the abstract when we hover over the paper.
+// See below
+// (1) what we put in <div class="abstract">
+// (2) some JS code to pilot the movement according to mouse events.
+#css.elems((
+  ".paper:hover .abstract": (
+    display: "block",
+  ),
+  ".abstract": (
+    display: "none",
+    margin-top: 1cm,
+    position: "absolute",
+    z-index: 1000,
+  )
+))
+
+#{
+  for paper in published.rev() {
+    // Ints represent year separators, not actual papers
+    if type(paper) == int {
+      struct.box(width: 100%, struct.align(center + horizon, {
+        struct.box(width: 45%, height: 1pt, fill: "var(--lt-orange)")[]
+        struct.box(width: 10%)[#struct.align(center + horizon)[
+          #struct.text(fill: "var(--lt-orange)", size: 20pt)[*#paper*]
+        ]]
+        struct.box(width: 45%, height: 1pt, fill: "var(--lt-orange)")[]
+      }))
+      continue
+    }
+    // Format one paper entry
+    struct.box(class: "paper", inset: (y: 2mm), outset: 1mm, width: 100%, fill: "var(--dk-gray1)", struct.align(left, {
+      // Floating abstract follows mouse
+      html.div(class: "abstract", {
+        struct.box(
+          width: 12cm,
+          fill: "var(--dk-gray2)",
+          radius: (top-left: 0mm, rest: 5mm),
+          inset: 5mm,
+          struct.align(left)[#struct.text(size: 11pt)[
+            #paper.abstract
+        ]])
+      })
+      // Left region with paper, location, status
+      struct.box(width: 3cm, struct.align(center + top, {
+        struct.box[
+          #struct.text(fill: "var(--lt-gray2)")[*#paper.venue* \ (#paper.location)]
+        ]
+        paper.status
+      }))
+      // Right region with title, coauthors, links
+      struct.box(class: "paper", width: 100% - 3cm)[#struct.align(left)[
+        #struct.box(width: 100%)[#struct.align(left)[*#paper.title*]]
+        #struct.box(width: 50%, {
+          struct.align(left, {
+            for (key, url) in paper.urls {
+              let image = (
+                arxiv: "_img/logos/arxiv.svg",
+                article: "_img/generic/journal.svg",
+                preprint: "_img/logos/pdf.svg",
+                home: "_img/generic/home.svg",
+                beamer: "_img/generic/beamer.svg",
+                video: "_img/generic/video.svg",
+                book: "_img/generic/book.svg",
+                github: "_img/logos/github.svg",
+              ).at(key)
+              struct.box(outset: (x: 1mm), {
+                links.img-link(image, url, key, size: "30")
+              })
+            }
+          })
+        })
+        #struct.box(width: 50%, {
+          struct.align(right, {
+            struct.text(fill: "var(--gray)")[#{paper.date}]
+          })
+        })
+      ]]
+    }))
+  }
+}
+
+#js.inline(```js
+  var tooltip = document.querySelectorAll('.abstract');
+
+  document.addEventListener('mousemove', movetooltip, false);
+
+  function movetooltip(e) {
+    for (var i=tooltip.length; i--;) {
+        let width = tooltip[i].getBoundingClientRect().width;
+        let x = Math.min(e.pageX, tooltip[i].parentNode.getBoundingClientRect().right - width);
+        tooltip[i].style.left = x + 'px';
+        tooltip[i].style.top = e.pageY + 'px';
+    }
+  }
+```)

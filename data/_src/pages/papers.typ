@@ -19,8 +19,8 @@
     title: [Mending Partial Solutions with Few Changes],
     coauthors: (people.d-melnyk, people.j-suomela),
     urls: (
-      article: "https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.OPODIS.2022.21",
       arxiv: links.url-arxiv("2209.05363"),
+      article: "https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.OPODIS.2022.21",
       beamer: "share/satge/m1/beamer.pdf",
     ),
     badges: (),
@@ -30,7 +30,7 @@
   2022,
 
   (
-    status: status.occurred,
+    status: status.published,
     journal: [NETYS],
     location: [Rabat],
     title: [Verifying Parameterized Networks
@@ -38,6 +38,7 @@
     coauthors: (people.a-sangnier, people.r-iosif),
     urls: (
       arxiv: links.url-arxiv("2505.01269"),
+      book: "https://link.springer.com/book/10.1007/978-3-032-00347-8",
       beamer: "share/phd/beamer-netys25.pdf",
     ),
     badges: (),
@@ -51,14 +52,14 @@
     title: [Tree Borrows],
     coauthors: (people.d-dreyer, people.j-hostert, people.r-jung),
     urls: (
-      article: "https://dl.acm.org/doi/10.1145/3735592",
-      home: "https://plf.inf.ethz.ch/research/pldi25-tree-borrows.html",
       preprint: "https://perso.crans.org/vanille/treebor/aux/preprint.pdf",
+      article: "https://dl.acm.org/doi/10.1145/3735592",
       beamer: "share/satge/arpe/pldi.pdf",
+      home: "https://plf.inf.ethz.ch/research/pldi25-tree-borrows.html",
       video: "https://www.youtube.com/watch?v=CJi_Fcs4bak",
     ),
     badges: (
-      distinguished: "",
+      distinguished: "https://pldi25.sigplan.org/details/pldi-2025-papers/42/Tree-Borrows",
       acm3: "https://doi.org/10.5281/zenodo.15002703",
     ),
     abstract: "The Rust programming language is well known for its ownership-based
@@ -74,7 +75,7 @@
   ),
 
   (
-    status: status.accepted,
+    status: status.published,
     journal: [CAV],
     location: [Zagreb],
     title: [Counting Abstraction and Decidability
@@ -82,6 +83,7 @@
     coauthors: (people.m-bozga, people.a-sangnier, people.r-iosif),
     urls: (
       arxiv: links.url-arxiv("2502.15391"),
+      book: "https://link.springer.com/book/10.1007/978-3-031-98682-6",
       beamer: "share/phd/beamer-cav25.pdf",
     ),
     badges: (
@@ -162,6 +164,7 @@ for which the coverability problem is in 2EXPTIME and PSPACE-hard.",
                 home: "_img/generic/home.svg",
                 beamer: "_img/generic/beamer.svg",
                 video: "_img/generic/video.svg",
+                book: "_img/generic/book.svg",
               ).at(key)
               struct.box(outset: (x: 1mm), {
                 links.img-link(image, url, key, size: "30")
